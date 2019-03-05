@@ -1,0 +1,1 @@
+# cfn-mackerel-macro
