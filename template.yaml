@@ -2,6 +2,11 @@ AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: provide a CloudFormation macro for creating Mackerel resources.
 
+Parameters: 
+  ApiKey: 
+    Type: String
+    Description: API Key
+
 Resources:
   ResourceFunction:
     Type: AWS::Serverless::Function
@@ -19,6 +24,7 @@ Resources:
       Environment:
         Variables:
           LAMBDA_ARN: !GetAtt ResourceFunction.Arn
+          MACKEREL_APIKEY: !Ref ApiKey
 
   Macro:
     Type: AWS::CloudFormation::Macro
