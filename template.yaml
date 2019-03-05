@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: provide a CloudFormation macro for creating Mackerel resources.
+
+Resources:
+  ResourceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: go1.x
+      CodeUri: ./resource
+      Handler: main
+
+  MacroFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.7
+      CodeUri: ./macro
+      Handler: app.handler
+      Environment:
+        Variables:
+          LAMBDA_ARN: !GetAtt ResourceFunction.Arn
+
+  Macro:
+    Type: AWS::CloudFormation::Macro
+    Properties:
+      Name: Mackerel
+      FunctionName: !GetAtt MacroFunction.Arn
