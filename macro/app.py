@@ -5,7 +5,7 @@ PREFIX = "Mackerel::"
 
 def handle_template(request_id, template):
     for _, resource in template.get("Resources", {}).items():
-        if resource["Type"].startswith("PREFIX"):
+        if resource["Type"].startswith(PREFIX):
             properties = resource.get("Properties", {})
             properties["ServiceToken"] = LAMBDA_ARN
             resource.update({

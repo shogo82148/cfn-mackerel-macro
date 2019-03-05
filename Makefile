@@ -6,7 +6,9 @@ help: ## Show this text.
 
 .PHONY: all test clean help
 
-all: resource $(SRC_FILES) go.mod go.sum ## Build a package
+all: resource/main ## Build a package
+
+resource/main: resource $(SRC_FILES) go.mod go.sum
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o resource/main .
 
 resource:
