@@ -2,6 +2,7 @@ package cfn
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"sync"
 
@@ -71,4 +72,24 @@ func (f *Function) buildID(ctx context.Context, resourceType string, ids ...stri
 
 	ret := append([]string{"mkr", org.Name, resourceType}, ids...)
 	return strings.Join(ret, ":"), nil
+}
+
+// parseID parses ID of Mackerel resources.
+func (f *Function) parseID(ctx context.Context, id string, n int) (string, []string, error) {
+	org, err := f.getorg(ctx)
+	if err != nil {
+		return "", nil, err
+	}
+
+	ids := strings.Split(id, ":")
+	if len(ids) < n+3 {
+		return "", nil, fmt.Errorf("invalid mkr id: %s", id)
+	}
+	if ids[0] != "mkr" {
+		return "", nil, fmt.Errorf("invalid mkr id: %s", id)
+	}
+	if ids[1] != org.Name {
+		return "", nil, fmt.Errorf("invalid org name in id: %s", id)
+	}
+	return ids[2], ids[3:], nil
 }
