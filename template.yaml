@@ -14,6 +14,9 @@ Resources:
       Runtime: go1.x
       CodeUri: ./resource
       Handler: main
+      Environment:
+        Variables:
+          MACKEREL_APIKEY: !Ref ApiKey
 
   MacroFunction:
     Type: AWS::Serverless::Function
@@ -24,7 +27,6 @@ Resources:
       Environment:
         Variables:
           LAMBDA_ARN: !GetAtt ResourceFunction.Arn
-          MACKEREL_APIKEY: !Ref ApiKey
 
   Macro:
     Type: AWS::CloudFormation::Macro

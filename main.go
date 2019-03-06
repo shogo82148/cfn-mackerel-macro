@@ -1,22 +1,16 @@
 package main
 
 import (
-	"context"
+	"os"
 
-	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/shogo82148/cfn-mackerel-macro/cfn"
 )
 
 func main() {
-	lambda.Start(handle)
-}
-
-func handle(ctx context.Context, event *cfn.Event) error {
-	resp := cfn.NewResponse(event)
-
-	// TODO: implement
-	resp.Status = cfn.StatusSuccess
-	resp.PhysicalResourceID = "mackerel:foobar"
-
-	return resp.Send()
+	apikey := os.Getenv("MACKEREL_APIKEY")
+	f := cfn.Function{
+		APIKey: apikey,
+	}
+	lambda.Start(f.LambdaWrap())
 }
