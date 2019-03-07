@@ -2,10 +2,10 @@ package cfn
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/cfn"
+	"github.com/koron/go-dproxy"
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel"
 )
 
@@ -27,14 +27,14 @@ func (r *role) handle(ctx context.Context) (physicalResourceID string, data map[
 }
 
 func (r *role) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	name, ok := r.Event.ResourceProperties["Name"].(string)
-	if !ok {
-		return "", nil, errors.New("Name is missing")
+	var d dproxy.Drain
+	in := dproxy.New(r.Event.ResourceProperties)
+	name := d.String(in.M("Name"))
+	service := d.String(in.M("Service"))
+	if err := d.CombineErrors(); err != nil {
+		return "", nil, err
 	}
-	service, ok := r.Event.ResourceProperties["Service"].(string)
-	if !ok {
-		return "", nil, errors.New("Service is missing")
-	}
+
 	typ, serviceName, err := r.Function.parseID(ctx, service, 1)
 	if err != nil {
 		return "", nil, fmt.Errorf("Failed to parse Service ID: %s", err)
@@ -61,21 +61,16 @@ func (r *role) create(ctx context.Context) (physicalResourceID string, data map[
 }
 
 func (r *role) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	name, ok := r.Event.ResourceProperties["Name"].(string)
-	if !ok {
-		return "", nil, errors.New("Name is missing")
-	}
-	oldName, ok := r.Event.OldResourceProperties["Name"].(string)
-	if !ok {
-		return "", nil, errors.New("Name is missing")
-	}
-	service, ok := r.Event.OldResourceProperties["Service"].(string)
-	if !ok {
-		return "", nil, errors.New("Service is missing")
-	}
-	oldService, ok := r.Event.OldResourceProperties["Service"].(string)
-	if !ok {
-		return "", nil, errors.New("Service is missing")
+	var d dproxy.Drain
+	in := dproxy.New(r.Event.ResourceProperties)
+	old := dproxy.New(r.Event.OldResourceProperties)
+
+	name := d.String(in.M("Name"))
+	service := d.String(in.M("Service"))
+	oldName := d.String(old.M("Name"))
+	oldService := d.String(old.M("Service"))
+	if err := d.CombineErrors(); err != nil {
+		return "", nil, err
 	}
 
 	if name == oldName && service == oldService {

@@ -2,10 +2,10 @@ package cfn
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/cfn"
+	"github.com/koron/go-dproxy"
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel"
 )
 
@@ -27,9 +27,10 @@ func (s *service) handle(ctx context.Context) (physicalResourceID string, data m
 }
 
 func (s *service) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	name, ok := s.Event.ResourceProperties["Name"].(string)
-	if !ok {
-		return "", nil, errors.New("Name is missing")
+	in := dproxy.New(s.Event.ResourceProperties)
+	name, err := in.M("Name").String()
+	if err != nil {
+		return "", nil, err
 	}
 
 	c := s.Function.getclient()
@@ -51,13 +52,14 @@ func (s *service) create(ctx context.Context) (physicalResourceID string, data m
 }
 
 func (s *service) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	name, ok := s.Event.ResourceProperties["Name"].(string)
-	if !ok {
-		return "", nil, errors.New("Name is missing")
-	}
-	oldName, ok := s.Event.OldResourceProperties["Name"].(string)
-	if !ok {
-		return "", nil, errors.New("Name is missing")
+	var d dproxy.Drain
+	in := dproxy.New(s.Event.ResourceProperties)
+	old := dproxy.New(s.Event.OldResourceProperties)
+
+	name := d.String(in.M("Name"))
+	oldName := d.String(old.M("Name"))
+	if err := d.CombineErrors(); err != nil {
+		return "", nil, err
 	}
 
 	if name == oldName {
