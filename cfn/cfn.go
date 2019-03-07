@@ -29,6 +29,12 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 			Event:    event,
 		}
 		return s.handle(ctx)
+	case "Role":
+		r := &role{
+			Function: f,
+			Event:    event,
+		}
+		return r.handle(ctx)
 	}
 	return "", nil, nil // fmt.Errorf("unkdnown type: %s", typ)
 }
