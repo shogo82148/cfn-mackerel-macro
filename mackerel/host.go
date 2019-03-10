@@ -58,6 +58,21 @@ func (c *Client) CreateHost(ctx context.Context, param *CreateHostParam) (string
 	return data.ID, nil
 }
 
+// UpdateHostParam is parameters for UpdateHost
+type UpdateHostParam CreateHostParam
+
+// UpdateHost updates the host's information.
+func (c *Client) UpdateHost(ctx context.Context, hostID string, param *UpdateHostParam) (string, error) {
+	var data struct {
+		ID string `json:"id"`
+	}
+	err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/hosts/%s", hostID), param, &data)
+	if err != nil {
+		return "", err
+	}
+	return data.ID, nil
+}
+
 // RetireHost make the host retuired.
 func (c *Client) RetireHost(ctx context.Context, id string) error {
 	param := map[string]string{}

@@ -27,18 +27,12 @@ func (h *host) handle(ctx context.Context) (physicalResourceID string, data map[
 }
 
 func (h *host) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	var d dproxy.Drain
-	in := dproxy.New(h.Event.ResourceProperties)
-	name := d.String(in.M("Name"))
-	if err := d.CombineErrors(); err != nil {
+	c := h.Function.getclient()
+	param, err := h.convertToParam(ctx, h.Event.ResourceProperties)
+	if err != nil {
 		return "", nil, err
 	}
-
-	c := h.Function.getclient()
-	hostID, err := c.CreateHost(ctx, &mackerel.CreateHostParam{
-		Name: name,
-		// TODO: memo
-	})
+	hostID, err := c.CreateHost(ctx, param)
 	if err != nil {
 		return "", nil, err
 	}
@@ -48,27 +42,56 @@ func (h *host) create(ctx context.Context) (physicalResourceID string, data map[
 		return "", nil, err
 	}
 	return id, map[string]interface{}{
-		"Name": name,
+		"Name": param.Name,
 	}, nil
 }
 
 func (h *host) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	var d dproxy.Drain
-	in := dproxy.New(h.Event.ResourceProperties)
-	old := dproxy.New(h.Event.OldResourceProperties)
-
-	name := d.String(in.M("Name"))
-	oldName := d.String(old.M("Name"))
-	if err := d.CombineErrors(); err != nil {
+	c := h.Function.getclient()
+	param, err := h.convertToParam(ctx, h.Event.ResourceProperties)
+	if err != nil {
+		return "", nil, err
+	}
+	_, id, err := h.Function.parseID(ctx, h.Event.PhysicalResourceID, 1)
+	if err != nil {
+		return "", nil, err
+	}
+	_, err = c.UpdateHost(ctx, id[0], (*mackerel.UpdateHostParam)(param))
+	if err != nil {
 		return "", nil, err
 	}
 
-	// TODO: update information
-	_ = oldName
-
 	return h.Event.PhysicalResourceID, map[string]interface{}{
-		"Name": name,
+		"Name": param.Name,
 	}, nil
+}
+
+func (h *host) convertToParam(ctx context.Context, properties map[string]interface{}) (*mackerel.CreateHostParam, error) {
+	var param mackerel.CreateHostParam
+	var d dproxy.Drain
+	in := dproxy.New(properties)
+	param.Name = d.String(in.M("Name"))
+	roles := d.Array(in.M("Roles"))
+	if err := d.CombineErrors(); err != nil {
+		return nil, err
+	}
+
+	for _, r := range roles {
+		id, err := dproxy.New(r).String()
+		if err != nil {
+			return nil, err
+		}
+		typ, name, err := h.Function.parseID(ctx, id, 2)
+		if err != nil {
+			return nil, err
+		}
+		if typ != "role" {
+			return nil, fmt.Errorf("invalid type: %s", typ)
+		}
+		param.RoleFullnames = append(param.RoleFullnames, name[0]+":"+name[1])
+	}
+
+	return &param, nil
 }
 
 func (h *host) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
