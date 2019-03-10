@@ -189,11 +189,17 @@ func (f *Function) parseMonitorID(ctx context.Context, id string) (string, error
 
 func proxyDefault(proxy dproxy.Proxy, defaultValue interface{}) dproxy.Proxy {
 	err, ok := proxy.(dproxy.Error)
-	if !ok {
-		return proxy
+	if ok && err.ErrorType() == dproxy.Enotfound {
+		return dproxy.New(defaultValue)
 	}
-	if err.ErrorType() != dproxy.Enotfound {
-		return proxy
+	return proxy
+}
+
+func proxyOptionalFloat64(drain dproxy.Drain, proxy dproxy.Proxy) *float64 {
+	err, ok := proxy.(dproxy.Error)
+	if ok || err.ErrorType() != dproxy.Enotfound {
+		return nil
 	}
-	return dproxy.New(defaultValue)
+	v := drain.Float64(proxy)
+	return &v
 }

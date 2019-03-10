@@ -97,6 +97,42 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			ExcludeScopes:        excludeScopes,
 			NotificationInterval: uint64(d.Int64(proxyDefault(in.M("notificationInterval"), 0))),
 		}
+	case mackerel.MonitorTypeHostMeric.String():
+		var scopes, excludeScopes []string
+		for _, item := range d.Array(proxyDefault(in.M("Scopes"), []interface{}{})) {
+			s := d.String(dproxy.New(item))
+			if serviceName, err := m.Function.parseServiceID(ctx, s); err == nil {
+				scopes = append(scopes, serviceName)
+			} else if serviceName, roleName, err := m.Function.parseRoleID(ctx, s); err == nil {
+				scopes = append(scopes, serviceName+":"+roleName)
+			} else {
+				return nil, fmt.Errorf("scopes should be a service of a role: %s", s)
+			}
+		}
+		for _, item := range d.Array(proxyDefault(in.M("ExcludeScopes"), []interface{}{})) {
+			s := d.String(dproxy.New(item))
+			if serviceName, err := m.Function.parseServiceID(ctx, s); err == nil {
+				excludeScopes = append(excludeScopes, serviceName)
+			} else if serviceName, roleName, err := m.Function.parseRoleID(ctx, s); err == nil {
+				excludeScopes = append(excludeScopes, serviceName+":"+roleName)
+			} else {
+				return nil, fmt.Errorf("excludeScopes should be a service of a role: %s", s)
+			}
+		}
+		mm = &mackerel.MonitorHostMetric{
+			Type:                 mackerel.MonitorTypeHostMeric,
+			Name:                 d.String(in.M("Name")),
+			Memo:                 d.String(proxyDefault(in.M("Memo"), "")),
+			Duration:             uint64(d.Int64(proxyDefault(in.M("Duration"), 1))),
+			Metric:               d.String(in.M("Metric")),
+			Operator:             d.String(in.M("Operator")),
+			Warning:              proxyOptionalFloat64(d, in.M("Warning")),
+			Critical:             proxyOptionalFloat64(d, in.M("Critical")),
+			MaxCheckAttempts:     uint64(d.Int64(proxyDefault(in.M("MaxCheckAttempts"), 1))),
+			Scopes:               scopes,
+			ExcludeScopes:        excludeScopes,
+			NotificationInterval: uint64(d.Int64(proxyDefault(in.M("notificationInterval"), 0))),
+		}
 	default:
 		return nil, fmt.Errorf("unknown monitor type: %s", typ)
 	}

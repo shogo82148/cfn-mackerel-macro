@@ -24,16 +24,16 @@ const (
 	MonitorTypeConnectivity MonitorType = "connectivity"
 
 	// MonitorTypeHostMeric is a type for Host metric monitoring.
-	MonitorTypeHostMeric = "host"
+	MonitorTypeHostMeric MonitorType = "host"
 
 	// MonitorTypeServiceMetric is a type for Service metric monitoring.
-	MonitorTypeServiceMetric = "service"
+	MonitorTypeServiceMetric MonitorType = "service"
 
 	// MonitorTypeExternalHTTP is type for External monitoring.
-	MonitorTypeExternalHTTP = "external"
+	MonitorTypeExternalHTTP MonitorType = "external"
 
 	// MonitorTypeExpression is a type for Expression monitoring.
-	MonitorTypeExpression = "expression"
+	MonitorTypeExpression MonitorType = "expression"
 )
 
 func (t MonitorType) String() string {
