@@ -37,7 +37,7 @@ func (h *host) create(ctx context.Context) (physicalResourceID string, data map[
 		return "", nil, err
 	}
 
-	id, err := h.Function.buildID(ctx, "host", hostID)
+	id, err := h.Function.buildHostID(ctx, hostID)
 	if err != nil {
 		return "", nil, err
 	}
@@ -52,11 +52,11 @@ func (h *host) update(ctx context.Context) (physicalResourceID string, data map[
 	if err != nil {
 		return "", nil, err
 	}
-	_, id, err := h.Function.parseID(ctx, h.Event.PhysicalResourceID, 1)
+	id, err := h.Function.parseHostID(ctx, h.Event.PhysicalResourceID)
 	if err != nil {
 		return "", nil, err
 	}
-	_, err = c.UpdateHost(ctx, id[0], (*mackerel.UpdateHostParam)(param))
+	_, err = c.UpdateHost(ctx, id, (*mackerel.UpdateHostParam)(param))
 	if err != nil {
 		return "", nil, err
 	}
@@ -81,30 +81,24 @@ func (h *host) convertToParam(ctx context.Context, properties map[string]interfa
 		if err != nil {
 			return nil, err
 		}
-		typ, name, err := h.Function.parseID(ctx, id, 2)
+		serviceName, roleName, err := h.Function.parseRoleID(ctx, id)
 		if err != nil {
 			return nil, err
 		}
-		if typ != "role" {
-			return nil, fmt.Errorf("invalid type: %s", typ)
-		}
-		param.RoleFullnames = append(param.RoleFullnames, name[0]+":"+name[1])
+		param.RoleFullnames = append(param.RoleFullnames, serviceName+":"+roleName)
 	}
 
 	return &param, nil
 }
 
 func (h *host) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	typ, id, err := h.Function.parseID(ctx, h.Event.PhysicalResourceID, 1)
+	id, err := h.Function.parseHostID(ctx, h.Event.PhysicalResourceID)
 	if err != nil {
 		return "", nil, err
 	}
-	if typ != "host" {
-		return "", nil, fmt.Errorf("invlid resource type: %s", typ)
-	}
 
 	c := h.Function.getclient()
-	err = c.RetireHost(ctx, id[0])
+	err = c.RetireHost(ctx, id)
 	if err != nil {
 		return "", nil, err
 	}

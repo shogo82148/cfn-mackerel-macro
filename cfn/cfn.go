@@ -86,6 +86,18 @@ func (f *Function) buildID(ctx context.Context, resourceType string, ids ...stri
 	return strings.Join(ret, ":"), nil
 }
 
+func (f *Function) buildServiceID(ctx context.Context, serviceName string) (string, error) {
+	return f.buildID(ctx, "service", serviceName)
+}
+
+func (f *Function) buildRoleID(ctx context.Context, serviceName, roleName string) (string, error) {
+	return f.buildID(ctx, "role", serviceName, roleName)
+}
+
+func (f *Function) buildHostID(ctx context.Context, hostID string) (string, error) {
+	return f.buildID(ctx, "host", hostID)
+}
+
 // parseID parses ID of Mackerel resources.
 func (f *Function) parseID(ctx context.Context, id string, n int) (string, []string, error) {
 	org, err := f.getorg(ctx)
@@ -104,4 +116,37 @@ func (f *Function) parseID(ctx context.Context, id string, n int) (string, []str
 		return "", nil, fmt.Errorf("invalid org name in id: %s", id)
 	}
 	return ids[2], ids[3:], nil
+}
+
+func (f *Function) parseServiceID(ctx context.Context, id string) (string, error) {
+	typ, parts, err := f.parseID(ctx, id, 1)
+	if err != nil {
+		return "", err
+	}
+	if typ != "service" {
+		return "", fmt.Errorf("invalid type %s, expected service type", typ)
+	}
+	return parts[0], nil
+}
+
+func (f *Function) parseRoleID(ctx context.Context, id string) (string, string, error) {
+	typ, parts, err := f.parseID(ctx, id, 2)
+	if err != nil {
+		return "", "", err
+	}
+	if typ != "role" {
+		return "", "", fmt.Errorf("invalid type %s, expected role type", typ)
+	}
+	return parts[0], parts[1], nil
+}
+
+func (f *Function) parseHostID(ctx context.Context, id string) (string, error) {
+	typ, parts, err := f.parseID(ctx, id, 1)
+	if err != nil {
+		return "", err
+	}
+	if typ != "host" {
+		return "", fmt.Errorf("invalid type %s, expected host type", typ)
+	}
+	return parts[0], nil
 }

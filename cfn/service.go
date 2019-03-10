@@ -42,7 +42,7 @@ func (s *service) create(ctx context.Context) (physicalResourceID string, data m
 		return "", nil, err
 	}
 
-	id, err := s.Function.buildID(ctx, "service", ss.Name)
+	id, err := s.Function.buildServiceID(ctx, ss.Name)
 	if err != nil {
 		return "", nil, err
 	}
@@ -74,13 +74,13 @@ func (s *service) update(ctx context.Context) (physicalResourceID string, data m
 }
 
 func (s *service) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	_, id, err := s.Function.parseID(ctx, s.Event.PhysicalResourceID, 1)
+	serviceName, err := s.Function.parseServiceID(ctx, s.Event.PhysicalResourceID)
 	if err != nil {
 		return "", nil, err
 	}
 
 	c := s.Function.getclient()
-	ss, err := c.DeleteService(ctx, id[0])
+	ss, err := c.DeleteService(ctx, serviceName)
 	if err != nil {
 		return "", nil, err
 	}

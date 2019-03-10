@@ -35,23 +35,20 @@ func (r *role) create(ctx context.Context) (physicalResourceID string, data map[
 		return "", nil, err
 	}
 
-	typ, serviceName, err := r.Function.parseID(ctx, service, 1)
+	serviceName, err := r.Function.parseServiceID(ctx, service)
 	if err != nil {
 		return "", nil, fmt.Errorf("Failed to parse Service ID: %s", err)
 	}
-	if typ != "service" {
-		return "", nil, fmt.Errorf("Invlid type for Service: %s", service)
-	}
 
 	c := r.Function.getclient()
-	ss, err := c.CreateRole(ctx, serviceName[0], &mackerel.CreateRoleParam{
+	ss, err := c.CreateRole(ctx, serviceName, &mackerel.CreateRoleParam{
 		Name: name,
 	})
 	if err != nil {
 		return "", nil, err
 	}
 
-	id, err := r.Function.buildID(ctx, "role", serviceName[0], ss.Name)
+	id, err := r.Function.buildRoleID(ctx, serviceName, ss.Name)
 	if err != nil {
 		return "", nil, err
 	}
@@ -85,13 +82,13 @@ func (r *role) update(ctx context.Context) (physicalResourceID string, data map[
 }
 
 func (r *role) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	_, id, err := r.Function.parseID(ctx, r.Event.PhysicalResourceID, 1)
+	serviceName, roleName, err := r.Function.parseRoleID(ctx, r.Event.PhysicalResourceID)
 	if err != nil {
 		return "", nil, err
 	}
 
 	c := r.Function.getclient()
-	ss, err := c.DeleteRole(ctx, id[0], id[1])
+	ss, err := c.DeleteRole(ctx, serviceName, roleName)
 	if err != nil {
 		return "", nil, err
 	}
