@@ -126,11 +126,29 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			Duration:             uint64(d.Int64(proxyDefault(in.M("Duration"), 1))),
 			Metric:               d.String(in.M("Metric")),
 			Operator:             d.String(in.M("Operator")),
-			Warning:              proxyOptionalFloat64(d, in.M("Warning")),
-			Critical:             proxyOptionalFloat64(d, in.M("Critical")),
+			Warning:              proxyOptionalFloat64(&d, in.M("Warning")),
+			Critical:             proxyOptionalFloat64(&d, in.M("Critical")),
 			MaxCheckAttempts:     uint64(d.Int64(proxyDefault(in.M("MaxCheckAttempts"), 1))),
 			Scopes:               scopes,
 			ExcludeScopes:        excludeScopes,
+			NotificationInterval: uint64(d.Int64(proxyDefault(in.M("notificationInterval"), 0))),
+		}
+	case mackerel.MonitorTypeServiceMetric.String():
+		serviceName, err := m.Function.parseServiceID(ctx, d.String(in.M("Service")))
+		if err != nil {
+			return nil, err
+		}
+		mm = &mackerel.MonitorServiceMetric{
+			Type:                 mackerel.MonitorTypeHostMeric,
+			Name:                 d.String(in.M("Name")),
+			Memo:                 d.String(proxyDefault(in.M("Memo"), "")),
+			Duration:             uint64(d.Int64(proxyDefault(in.M("Duration"), 1))),
+			Service:              serviceName,
+			Metric:               d.String(in.M("Metric")),
+			Operator:             d.String(in.M("Operator")),
+			Warning:              proxyOptionalFloat64(&d, in.M("Warning")),
+			Critical:             proxyOptionalFloat64(&d, in.M("Critical")),
+			MaxCheckAttempts:     uint64(d.Int64(proxyDefault(in.M("MaxCheckAttempts"), 1))),
 			NotificationInterval: uint64(d.Int64(proxyDefault(in.M("notificationInterval"), 0))),
 		}
 	default:

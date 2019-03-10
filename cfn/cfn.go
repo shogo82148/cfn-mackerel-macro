@@ -3,12 +3,12 @@ package cfn
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 	"sync"
 
-	"github.com/koron/go-dproxy"
-
 	"github.com/aws/aws-lambda-go/cfn"
+	"github.com/koron/go-dproxy"
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel"
 )
 
@@ -195,11 +195,29 @@ func proxyDefault(proxy dproxy.Proxy, defaultValue interface{}) dproxy.Proxy {
 	return proxy
 }
 
-func proxyOptionalFloat64(drain dproxy.Drain, proxy dproxy.Proxy) *float64 {
+func proxyOptionalFloat64(drain *dproxy.Drain, proxy dproxy.Proxy) *float64 {
+	// the value is not found. return nil.
 	err, ok := proxy.(dproxy.Error)
-	if ok || err.ErrorType() != dproxy.Enotfound {
+	if ok && err.ErrorType() == dproxy.Enotfound {
 		return nil
 	}
-	v := drain.Float64(proxy)
-	return &v
+
+	// try to load float64
+	if v, err := proxy.Float64(); err == nil {
+		return &v
+	}
+
+	if v, err := proxy.String(); err == nil {
+		// try to parse the string as float64
+		f, err := strconv.ParseFloat(v, 64)
+		if err != nil {
+			drain.Float64(proxy)
+			return nil
+		}
+		return &f
+	}
+
+	// connot convert the value to float64
+	drain.Float64(proxy)
+	return nil
 }
