@@ -19,30 +19,49 @@ type Function struct {
 	org    *mackerel.Org
 }
 
+type resource interface {
+	create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error)
+	update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error)
+	delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error)
+}
+
 // Handle handles custom resource events of CloudForamtion.
 func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourceID string, data map[string]interface{}, err error) {
 	typ := strings.TrimPrefix(event.ResourceType, "Custom::")
+	var r resource
 	switch typ {
 	case "Service":
-		s := &service{
+		r = &service{
 			Function: f,
 			Event:    event,
 		}
-		return s.handle(ctx)
 	case "Role":
-		r := &role{
+		r = &role{
 			Function: f,
 			Event:    event,
 		}
-		return r.handle(ctx)
 	case "Host":
-		h := &host{
+		r = &host{
 			Function: f,
 			Event:    event,
 		}
-		return h.handle(ctx)
+	case "Monitor":
+		r = &monitor{
+			Function: f,
+			Event:    event,
+		}
+	default:
+		return "", nil, nil // fmt.Errorf("unkdnown type: %s", typ)
 	}
-	return "", nil, nil // fmt.Errorf("unkdnown type: %s", typ)
+	switch event.RequestType {
+	case cfn.RequestCreate:
+		return r.create(ctx)
+	case cfn.RequestUpdate:
+		return r.update(ctx)
+	case cfn.RequestDelete:
+		return r.delete(ctx)
+	}
+	return "", nil, fmt.Errorf("unknown request type: %s", event.RequestType)
 }
 
 // LambdaWrap returns a CustomResourceLambdaFunction which is something lambda.Start()
@@ -98,6 +117,10 @@ func (f *Function) buildHostID(ctx context.Context, hostID string) (string, erro
 	return f.buildID(ctx, "host", hostID)
 }
 
+func (f *Function) buildMonitorID(ctx context.Context, monitorID string) (string, error) {
+	return f.buildID(ctx, "monitor", monitorID)
+}
+
 // parseID parses ID of Mackerel resources.
 func (f *Function) parseID(ctx context.Context, id string, n int) (string, []string, error) {
 	org, err := f.getorg(ctx)
@@ -147,6 +170,17 @@ func (f *Function) parseHostID(ctx context.Context, id string) (string, error) {
 	}
 	if typ != "host" {
 		return "", fmt.Errorf("invalid type %s, expected host type", typ)
+	}
+	return parts[0], nil
+}
+
+func (f *Function) parseMonitorID(ctx context.Context, id string) (string, error) {
+	typ, parts, err := f.parseID(ctx, id, 1)
+	if err != nil {
+		return "", err
+	}
+	if typ != "monitor" {
+		return "", fmt.Errorf("invalid type %s, expected monitor type", typ)
 	}
 	return parts[0], nil
 }

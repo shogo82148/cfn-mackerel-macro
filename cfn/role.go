@@ -14,18 +14,6 @@ type role struct {
 	Event    cfn.Event
 }
 
-func (r *role) handle(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	switch r.Event.RequestType {
-	case cfn.RequestCreate:
-		return r.create(ctx)
-	case cfn.RequestUpdate:
-		return r.update(ctx)
-	case cfn.RequestDelete:
-		return r.delete(ctx)
-	}
-	return "", nil, fmt.Errorf("unknown request type: %s", r.Event.RequestType)
-}
-
 func (r *role) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
 	var d dproxy.Drain
 	in := dproxy.New(r.Event.ResourceProperties)

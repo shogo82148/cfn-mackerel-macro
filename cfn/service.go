@@ -2,7 +2,6 @@ package cfn
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/koron/go-dproxy"
@@ -12,18 +11,6 @@ import (
 type service struct {
 	Function *Function
 	Event    cfn.Event
-}
-
-func (s *service) handle(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	switch s.Event.RequestType {
-	case cfn.RequestCreate:
-		return s.create(ctx)
-	case cfn.RequestUpdate:
-		return s.update(ctx)
-	case cfn.RequestDelete:
-		return s.delete(ctx)
-	}
-	return "", nil, fmt.Errorf("unknown request type: %s", s.Event.RequestType)
 }
 
 func (s *service) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
