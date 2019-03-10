@@ -3,7 +3,7 @@ package cfn
 import (
 	"testing"
 
-	"github.com/koron/go-dproxy"
+	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
 )
 
 func TestProxyOptionalFloat64(t *testing.T) {

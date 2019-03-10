@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/cfn"
-	"github.com/koron/go-dproxy"
+	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel"
 )
 
