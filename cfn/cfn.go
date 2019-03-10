@@ -6,6 +6,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/koron/go-dproxy"
+
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel"
 )
@@ -183,4 +185,15 @@ func (f *Function) parseMonitorID(ctx context.Context, id string) (string, error
 		return "", fmt.Errorf("invalid type %s, expected monitor type", typ)
 	}
 	return parts[0], nil
+}
+
+func proxyDefault(proxy dproxy.Proxy, defaultValue interface{}) dproxy.Proxy {
+	err, ok := proxy.(dproxy.Error)
+	if !ok {
+		return proxy
+	}
+	if err.ErrorType() != dproxy.Enotfound {
+		return proxy
+	}
+	return dproxy.New(defaultValue)
 }

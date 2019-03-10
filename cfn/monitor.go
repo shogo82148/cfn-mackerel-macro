@@ -51,7 +51,7 @@ func (m *monitor) update(ctx context.Context) (physicalResourceID string, data m
 		return "", nil, err
 	}
 
-	return id, map[string]interface{}{
+	return m.Event.PhysicalResourceID, map[string]interface{}{
 		"Type": ret.MonitorType().String(),
 		"Name": ret.MonitorName(),
 	}, nil
@@ -71,9 +71,13 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 		mm = &mackerel.MonitorConnectivity{
 			Type: mackerel.MonitorTypeConnectivity,
 			Name: d.String(in.M("Name")),
+			Memo: d.String(proxyDefault(in.M("Memo"), "")),
 		}
 	default:
 		return nil, fmt.Errorf("unknown monitor type: %s", typ)
+	}
+	if err := d.CombineErrors(); err != nil {
+		return nil, err
 	}
 	return mm, nil
 }
