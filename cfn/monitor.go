@@ -193,6 +193,17 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			CertificationExpirationCritical: d.OptionalUint64(in.M("CertificationExpirationCritical")),
 			SkipCertificateVerification:     d.Bool(dproxy.Default(in.M("SkipCertificateVerification"), false)),
 		}
+	case mackerel.MonitorTypeExpression.String():
+		mm = &mackerel.MonitorExpression{
+			Type:                 mackerel.MonitorTypeExpression,
+			Name:                 d.String(in.M("Name")),
+			Memo:                 d.String(dproxy.Default(in.M("Memo"), "")),
+			Expression:           d.String(in.M("Expression")),
+			Operator:             d.String(in.M("Operator")),
+			Warning:              d.OptionalFloat64(in.M("Warning")),
+			Critical:             d.OptionalFloat64(in.M("Critical")),
+			NotificationInterval: d.Uint64(dproxy.Default(in.M("NotificationInterval"), 0)),
+		}
 	default:
 		return nil, fmt.Errorf("unknown monitor type: %s", typ)
 	}
