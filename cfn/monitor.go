@@ -142,7 +142,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			Type:                 mackerel.MonitorTypeHostMeric,
 			Name:                 d.String(in.M("Name")),
 			Memo:                 d.String(dproxy.Default(in.M("Memo"), "")),
-			Duration:             uint64(d.Int64(dproxy.Default(in.M("Duration"), 1))),
+			Duration:             d.Uint64(dproxy.Default(in.M("Duration"), 1)),
 			Service:              serviceName,
 			Metric:               d.String(in.M("Metric")),
 			Operator:             d.String(in.M("Operator")),
@@ -150,6 +150,48 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			Critical:             d.OptionalFloat64(in.M("Critical")),
 			MaxCheckAttempts:     d.Uint64(dproxy.Default(in.M("MaxCheckAttempts"), 1)),
 			NotificationInterval: d.Uint64(dproxy.Default(in.M("notificationInterval"), 0)),
+		}
+	case mackerel.MonitorTypeExternalHTTP.String():
+		var serviceName string
+		if s := d.OptionalString(in.M("Service")); s != nil {
+			var err error
+			serviceName, err = m.Function.parseServiceID(ctx, *s)
+			if err != nil {
+				return nil, err
+			}
+		}
+		var headers []mackerel.HeaderField
+		h, err := in.M("Headers").ProxySet().ProxyArray()
+		if err == nil {
+			headers = make([]mackerel.HeaderField, 0, len(h))
+			for _, item := range h {
+				headers = append(headers, mackerel.HeaderField{
+					Name:  d.String(item.M("Name")),
+					Value: d.String(item.M("Value")),
+				})
+			}
+		} else if perr, ok := err.(dproxy.Error); !ok || perr.ErrorType() != dproxy.Enotfound {
+			return nil, err
+		}
+		mm = &mackerel.MonitorExternalHTTP{
+			Type:        mackerel.MonitorTypeExternalHTTP,
+			Name:        d.String(in.M("Name")),
+			Memo:        d.String(dproxy.Default(in.M("Memo"), "")),
+			URL:         d.String(in.M("Url")),
+			Method:      d.String(dproxy.Default(in.M("Method"), "GET")),
+			RequestBody: d.String(dproxy.Default(in.M("RequestBody"), "")),
+
+			Service:              serviceName,
+			NotificationInterval: d.Uint64(dproxy.Default(in.M("NotificationInterval"), 0)),
+			ResponseTimeWarning:  d.OptionalFloat64(in.M("ResponseTimeWarning")),
+			ResponseTimeCritical: d.OptionalFloat64(in.M("ResponseTimeCritical")),
+			ResponseTimeDuration: d.OptionalUint64(dproxy.Default(in.M("ResponseTimeDuration"), 1)),
+			ContainsString:       d.String(dproxy.Default(in.M("ContainsString"), "")),
+			MaxCheckAttempts:     d.Uint64(dproxy.Default(in.M("MaxCheckAttempts"), 1)),
+
+			CertificationExpirationWarning:  d.OptionalUint64(in.M("CertificationExpirationWarning")),
+			CertificationExpirationCritical: d.OptionalUint64(in.M("CertificationExpirationCritical")),
+			SkipCertificateVerification:     d.Bool(dproxy.Default(in.M("SkipCertificateVerification"), false)),
 		}
 	default:
 		return nil, fmt.Errorf("unknown monitor type: %s", typ)
