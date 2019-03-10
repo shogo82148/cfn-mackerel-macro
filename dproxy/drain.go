@@ -52,9 +52,37 @@ func (d *Drain) Bool(p Proxy) bool {
 	return v
 }
 
+// OptionalBool returns the pointer of its value. If the value is not found, return nil.
+func (d *Drain) OptionalBool(p Proxy) *bool {
+	v, err := p.OptionalBool()
+	d.put(err)
+	return v
+}
+
 // Int64 returns int64 value and stores an error.
 func (d *Drain) Int64(p Proxy) int64 {
 	v, err := p.Int64()
+	d.put(err)
+	return v
+}
+
+// OptionalInt64 returns the pointer of its value. If the value is not found, return nil.
+func (d *Drain) OptionalInt64(p Proxy) *int64 {
+	v, err := p.OptionalInt64()
+	d.put(err)
+	return v
+}
+
+// Uint64 returns int64 value and stores an error.
+func (d *Drain) Uint64(p Proxy) uint64 {
+	v, err := p.Uint64()
+	d.put(err)
+	return v
+}
+
+// OptionalUint64 returns the pointer of its value. If the value is not found, return nil.
+func (d *Drain) OptionalUint64(p Proxy) *uint64 {
+	v, err := p.OptionalUint64()
 	d.put(err)
 	return v
 }
@@ -66,9 +94,23 @@ func (d *Drain) Float64(p Proxy) float64 {
 	return v
 }
 
+// OptionalFloat64 returns the pointer of its value. If the value is not found, return nil.
+func (d *Drain) OptionalFloat64(p Proxy) *float64 {
+	v, err := p.OptionalFloat64()
+	d.put(err)
+	return v
+}
+
 // String returns string value and stores an error.
 func (d *Drain) String(p Proxy) string {
 	v, err := p.String()
+	d.put(err)
+	return v
+}
+
+// OptionalString returns the pointer of its value. If the value is not found, return nil.
+func (d *Drain) OptionalString(p Proxy) *string {
+	v, err := p.OptionalString()
 	d.put(err)
 	return v
 }

@@ -12,14 +12,32 @@ type Proxy interface {
 	// Bool returns its value.  If value isn't the type, it returns error.
 	Bool() (bool, error)
 
+	// OptionalBool returns the pointer of its value. If the value is not found, return nil.
+	OptionalBool() (*bool, error)
+
 	// Int64 returns its value.  If value isn't the type, it returns error.
 	Int64() (int64, error)
+
+	// OptionalInt64 returns the pointer of its value. If the value is not found, return nil.
+	OptionalInt64() (*int64, error)
+
+	// Uint64 returns its value.  If value isn't the type, it returns error.
+	Uint64() (uint64, error)
+
+	// OptionalUint64 returns the pointer of its value. If the value is not found, return nil.
+	OptionalUint64() (*uint64, error)
 
 	// Float64 returns its value.  If value isn't the type, it returns error.
 	Float64() (float64, error)
 
+	// OptionalFloat64 returns the pointer of its value. If the value is not found, return nil.
+	OptionalFloat64() (*float64, error)
+
 	// String returns its value.  If value isn't the type, it returns error.
 	String() (string, error)
+
+	// OptionalString returns its value.  If value isn't the type, it returns error.
+	OptionalString() (*string, error)
 
 	// Array returns its value.  If value isn't the type, it returns error.
 	Array() ([]interface{}, error)
