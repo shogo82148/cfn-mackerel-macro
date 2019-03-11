@@ -37,15 +37,15 @@ func (h *host) update(ctx context.Context) (physicalResourceID string, data map[
 	c := h.Function.getclient()
 	param, err := h.convertToParam(ctx, h.Event.ResourceProperties)
 	if err != nil {
-		return "", nil, err
+		return h.Event.PhysicalResourceID, nil, err
 	}
 	id, err := h.Function.parseHostID(ctx, h.Event.PhysicalResourceID)
 	if err != nil {
-		return "", nil, err
+		return h.Event.PhysicalResourceID, nil, err
 	}
 	_, err = c.UpdateHost(ctx, id, (*mackerel.UpdateHostParam)(param))
 	if err != nil {
-		return "", nil, err
+		return h.Event.PhysicalResourceID, nil, err
 	}
 
 	return h.Event.PhysicalResourceID, map[string]interface{}{
@@ -81,13 +81,13 @@ func (h *host) convertToParam(ctx context.Context, properties map[string]interfa
 func (h *host) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
 	id, err := h.Function.parseHostID(ctx, h.Event.PhysicalResourceID)
 	if err != nil {
-		return "", nil, err
+		return h.Event.PhysicalResourceID, nil, err
 	}
 
 	c := h.Function.getclient()
 	err = c.RetireHost(ctx, id)
 	if err != nil {
-		return "", nil, err
+		return h.Event.PhysicalResourceID, nil, err
 	}
 
 	return h.Event.PhysicalResourceID, map[string]interface{}{}, nil

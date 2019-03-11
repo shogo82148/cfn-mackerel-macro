@@ -72,13 +72,13 @@ func (r *role) update(ctx context.Context) (physicalResourceID string, data map[
 func (r *role) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
 	serviceName, roleName, err := r.Function.parseRoleID(ctx, r.Event.PhysicalResourceID)
 	if err != nil {
-		return "", nil, err
+		return r.Event.PhysicalResourceID, nil, err
 	}
 
 	c := r.Function.getclient()
 	ss, err := c.DeleteRole(ctx, serviceName, roleName)
 	if err != nil {
-		return "", nil, err
+		return r.Event.PhysicalResourceID, nil, err
 	}
 
 	return r.Event.PhysicalResourceID, map[string]interface{}{

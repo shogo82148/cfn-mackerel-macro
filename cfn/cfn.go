@@ -27,6 +27,11 @@ type resource interface {
 
 // Handle handles custom resource events of CloudForamtion.
 func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourceID string, data map[string]interface{}, err error) {
+	if strings.HasPrefix(event.PhysicalResourceID, "mkr::error:") {
+		// it is dummy resource, just ignore it
+		return event.PhysicalResourceID, nil, nil
+	}
+
 	typ := strings.TrimPrefix(event.ResourceType, "Custom::")
 	var r resource
 	switch typ {
@@ -60,13 +65,20 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 	}
 	switch event.RequestType {
 	case cfn.RequestCreate:
-		return r.create(ctx)
+		physicalResourceID, data, err = r.create(ctx)
 	case cfn.RequestUpdate:
-		return r.update(ctx)
+		physicalResourceID, data, err = r.update(ctx)
 	case cfn.RequestDelete:
-		return r.delete(ctx)
+		physicalResourceID, data, err = r.delete(ctx)
+	default:
+		err = fmt.Errorf("unknown request type: %s", event.RequestType)
 	}
-	return "", nil, fmt.Errorf("unknown request type: %s", event.RequestType)
+	if physicalResourceID == "" {
+		// physicalResourceID must not empty.
+		// return dummy resource id.
+		physicalResourceID = "mkr::error:" + event.RequestID
+	}
+	return
 }
 
 // LambdaWrap returns a CustomResourceLambdaFunction which is something lambda.Start()

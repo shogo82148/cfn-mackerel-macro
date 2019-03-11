@@ -63,13 +63,13 @@ func (s *service) update(ctx context.Context) (physicalResourceID string, data m
 func (s *service) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
 	serviceName, err := s.Function.parseServiceID(ctx, s.Event.PhysicalResourceID)
 	if err != nil {
-		return "", nil, err
+		return s.Event.PhysicalResourceID, nil, err
 	}
 
 	c := s.Function.getclient()
 	ss, err := c.DeleteService(ctx, serviceName)
 	if err != nil {
-		return "", nil, err
+		return s.Event.PhysicalResourceID, nil, err
 	}
 
 	return s.Event.PhysicalResourceID, map[string]interface{}{

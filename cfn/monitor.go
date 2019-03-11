@@ -38,17 +38,17 @@ func (m *monitor) create(ctx context.Context) (physicalResourceID string, data m
 func (m *monitor) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
 	id, err := m.Function.parseMonitorID(ctx, m.Event.PhysicalResourceID)
 	if err != nil {
-		return "", nil, err
+		return m.Event.PhysicalResourceID, nil, err
 	}
 
 	c := m.Function.getclient()
 	mm, err := m.convertToParam(ctx, m.Event.ResourceProperties)
 	if err != nil {
-		return "", nil, err
+		return m.Event.PhysicalResourceID, nil, err
 	}
 	ret, err := c.UpdateMonitor(ctx, id, mm)
 	if err != nil {
-		return "", nil, err
+		return m.Event.PhysicalResourceID, nil, err
 	}
 
 	return m.Event.PhysicalResourceID, map[string]interface{}{
@@ -216,13 +216,13 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 func (m *monitor) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
 	monitorID, err := m.Function.parseMonitorID(ctx, m.Event.PhysicalResourceID)
 	if err != nil {
-		return "", nil, err
+		return m.Event.PhysicalResourceID, nil, err
 	}
 
 	c := m.Function.getclient()
 	_, err = c.DeleteMonitor(ctx, monitorID)
 	if err != nil {
-		return "", nil, err
+		return m.Event.PhysicalResourceID, nil, err
 	}
 
 	return m.Event.PhysicalResourceID, map[string]interface{}{}, nil

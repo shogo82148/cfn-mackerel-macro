@@ -35,15 +35,15 @@ func (d *dashboard) update(ctx context.Context) (physicalResourceID string, data
 	c := d.Function.getclient()
 	param, err := d.convertToParam(ctx, d.Event.ResourceProperties)
 	if err != nil {
-		return "", nil, err
+		return d.Event.PhysicalResourceID, nil, err
 	}
 	id, err := d.Function.parseDashboardID(ctx, d.Event.PhysicalResourceID)
 	if err != nil {
-		return "", nil, err
+		return d.Event.PhysicalResourceID, nil, err
 	}
 	_, err = c.UpdateDashboard(ctx, id, param)
 	if err != nil {
-		return "", nil, err
+		return d.Event.PhysicalResourceID, nil, err
 	}
 
 	return d.Event.PhysicalResourceID, map[string]interface{}{}, nil
@@ -83,13 +83,13 @@ func (d *dashboard) convertToParam(ctx context.Context, properties map[string]in
 func (d *dashboard) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
 	id, err := d.Function.parseDashboardID(ctx, d.Event.PhysicalResourceID)
 	if err != nil {
-		return "", nil, err
+		return d.Event.PhysicalResourceID, nil, err
 	}
 
 	c := d.Function.getclient()
 	_, err = c.DeleteDashboard(ctx, id)
 	if err != nil {
-		return "", nil, err
+		return d.Event.PhysicalResourceID, nil, err
 	}
 
 	return d.Event.PhysicalResourceID, map[string]interface{}{}, nil
