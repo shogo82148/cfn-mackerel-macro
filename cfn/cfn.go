@@ -50,6 +50,11 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 			Function: f,
 			Event:    event,
 		}
+	case "Dashboard":
+		r = &dashboard{
+			Function: f,
+			Event:    event,
+		}
 	default:
 		return "", nil, nil // fmt.Errorf("unkdnown type: %s", typ)
 	}
@@ -121,6 +126,10 @@ func (f *Function) buildMonitorID(ctx context.Context, monitorID string) (string
 	return f.buildID(ctx, "monitor", monitorID)
 }
 
+func (f *Function) buildDashboardID(ctx context.Context, dashboardID string) (string, error) {
+	return f.buildID(ctx, "dashboard", dashboardID)
+}
+
 // parseID parses ID of Mackerel resources.
 func (f *Function) parseID(ctx context.Context, id string, n int) (string, []string, error) {
 	org, err := f.getorg(ctx)
@@ -180,6 +189,17 @@ func (f *Function) parseMonitorID(ctx context.Context, id string) (string, error
 		return "", err
 	}
 	if typ != "monitor" {
+		return "", fmt.Errorf("invalid type %s, expected monitor type", typ)
+	}
+	return parts[0], nil
+}
+
+func (f *Function) parseDashboardID(ctx context.Context, id string) (string, error) {
+	typ, parts, err := f.parseID(ctx, id, 1)
+	if err != nil {
+		return "", err
+	}
+	if typ != "dashboard" {
 		return "", fmt.Errorf("invalid type %s, expected monitor type", typ)
 	}
 	return parts[0], nil
