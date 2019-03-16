@@ -38,6 +38,11 @@ func (d *Drain) CombineErrors() error {
 	return drainError(d.errors)
 }
 
+// Put collects errors.
+func (d *Drain) Put(err error) {
+	d.put(err)
+}
+
 func (d *Drain) put(err error) {
 	if err == nil {
 		return

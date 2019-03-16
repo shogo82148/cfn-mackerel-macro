@@ -52,32 +52,76 @@ func (d *dashboard) update(ctx context.Context) (physicalResourceID string, data
 func (d *dashboard) convertToParam(ctx context.Context, properties map[string]interface{}) (*mackerel.Dashboard, error) {
 	var dp dproxy.Drain
 	in := dproxy.New(properties)
+
+	widgets := []mackerel.Widget{}
+	for _, w := range dp.ProxyArray(in.M("Widgets").ProxySet()) {
+		widgets = append(widgets, d.convertWidget(ctx, &dp, w))
+	}
+
 	param := &mackerel.Dashboard{
 		Title:   dp.String(in.M("Title")),
 		Memo:    dp.String(dproxy.Default(in.M("Memo"), "")),
 		URLPath: dp.String(in.M("UrlPath")),
-		Widgets: []mackerel.Widget{
-			&mackerel.WidgetGraph{
-				Type:  mackerel.WidgetTypeGraph,
-				Title: "foobar",
-				Graph: &mackerel.GraphHost{
-					Type:   mackerel.GraphTypeHost,
-					HostID: "3yAYEDLXKL5",
-					Name:   "foobar",
-				},
-				Layout: &mackerel.Layout{
-					X:      0,
-					Y:      0,
-					Width:  24,
-					Height: 6,
-				},
-			},
-		},
+		Widgets: widgets,
 	}
 	if err := dp.CombineErrors(); err != nil {
 		return nil, err
 	}
 	return param, nil
+}
+
+func (d *dashboard) convertWidget(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.Widget {
+	typ, err := properties.M("Type").String()
+	if err != nil {
+		dp.Put(err)
+		return nil
+	}
+	switch typ {
+	case mackerel.WidgetTypeGraph.String():
+		return &mackerel.WidgetGraph{
+			Type:   mackerel.WidgetTypeGraph,
+			Title:  dp.String(dproxy.Default(properties.M("Title"), "")),
+			Graph:  d.convertGraph(ctx, dp, properties.M("Graph")),
+			Layout: d.convertLayout(dp, properties.M("Layout")),
+		}
+	}
+	return nil
+}
+
+func (d *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.Graph {
+	typ, err := properties.M("Type").String()
+	if err != nil {
+		dp.Put(err)
+		return nil
+	}
+	switch typ {
+	case mackerel.GraphTypeHost.String():
+		id, err := properties.M("Host").String()
+		if err != nil {
+			dp.Put(err)
+			return nil
+		}
+		hostID, err := d.Function.parseHostID(ctx, id)
+		if err != nil {
+			dp.Put(err)
+			return nil
+		}
+		return &mackerel.GraphHost{
+			Type:   mackerel.GraphTypeHost,
+			HostID: hostID,
+			Name:   dp.String(properties.M("Name")),
+		}
+	}
+	return nil
+}
+
+func (d *dashboard) convertLayout(dp *dproxy.Drain, properties dproxy.Proxy) *mackerel.Layout {
+	return &mackerel.Layout{
+		X:      dp.Uint64(properties.M("X")),
+		Y:      dp.Uint64(properties.M("Y")),
+		Width:  dp.Uint64(properties.M("Width")),
+		Height: dp.Uint64(properties.M("Height")),
+	}
 }
 
 func (d *dashboard) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {

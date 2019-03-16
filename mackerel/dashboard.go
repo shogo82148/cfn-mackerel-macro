@@ -66,6 +66,10 @@ func (w *WidgetGraph) WidgetLayout() *Layout { return w.Layout }
 // GraphType is a type of a graph widget.
 type GraphType string
 
+func (t GraphType) String() string {
+	return string(t)
+}
+
 const (
 	// GraphTypeHost is a host metric graph.
 	GraphTypeHost GraphType = "host"
