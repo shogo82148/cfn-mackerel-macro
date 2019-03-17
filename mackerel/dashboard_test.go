@@ -122,6 +122,39 @@ func TestFindDashboard(t *testing.T) {
 				t.Errorf("want %#v, got %#v", tc.want, got)
 			}
 		})
+
+		t.Run(fmt.Sprintf("DeleteDashboard-%d", i), func(t *testing.T) {
+			ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.Method != http.MethodDelete {
+					t.Errorf("unexpected method: want %s, got %s", http.MethodDelete, r.Method)
+				}
+				if r.URL.Path != "/api/v0/dashboards/foobar" {
+					t.Errorf("unexpected path, want %s, got %s", "/api/v0/dashboards/foobar", r.URL.Path)
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
+				enc := json.NewEncoder(w)
+				enc.Encode(tc.resp)
+			}))
+			defer ts.Close()
+
+			u, err := url.Parse(ts.URL)
+			if err != nil {
+				t.Fatal(err)
+			}
+			c := &Client{
+				BaseURL:    u,
+				HTTPClient: ts.Client(),
+			}
+			got, err := c.DeleteDashboard(context.Background(), "foobar")
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("want %#v, got %#v", tc.want, got)
+			}
+		})
 	}
 }
 
