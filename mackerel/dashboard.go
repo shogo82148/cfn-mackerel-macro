@@ -168,6 +168,26 @@ var _ Graph = (*GraphHost)(nil)
 // GraphType returns GraphTypeHost.
 func (g *GraphHost) GraphType() GraphType { return GraphTypeHost }
 
+// FindDashboards finds dashboards.
+func (c *Client) FindDashboards(ctx context.Context) ([]*Dashboard, error) {
+	ret := []*Dashboard{}
+	err := c.do(ctx, http.MethodGet, "/api/v0/dashboards", nil, &ret)
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
+}
+
+// FindDashboard find the dashboard.
+func (c *Client) FindDashboard(ctx context.Context, dashboardID string) (*Dashboard, error) {
+	ret := &Dashboard{}
+	err := c.do(ctx, http.MethodGet, fmt.Sprintf("/api/v0/dashboards/%s", dashboardID), nil, ret)
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
+}
+
 // CreateDashboard creates a new dashboard.
 func (c *Client) CreateDashboard(ctx context.Context, param *Dashboard) (*Dashboard, error) {
 	ret := &Dashboard{}
