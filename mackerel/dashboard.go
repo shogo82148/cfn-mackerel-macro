@@ -155,6 +155,9 @@ func (t GraphType) String() string {
 const (
 	// GraphTypeHost is a host metric graph.
 	GraphTypeHost GraphType = "host"
+
+	// GraphTypeRole is a role metric graph.
+	GraphTypeRole GraphType = "role"
 )
 
 // Graph is a graph definition of a graph widget.
@@ -176,6 +179,8 @@ func (g *graph) UnmarshalJSON(b []byte) error {
 	switch data.Type {
 	case GraphTypeHost:
 		g.Graph = &GraphHost{}
+	case GraphTypeRole:
+		g.Graph = &GraphRole{}
 	default:
 		return fmt.Errorf("unknown widget type: %s", data.Type)
 	}
@@ -197,6 +202,27 @@ func (g *GraphHost) GraphType() GraphType { return GraphTypeHost }
 // MarshalJSON implements json.Marshaler.
 func (g *GraphHost) MarshalJSON() ([]byte, error) {
 	type graph GraphHost
+	data := *(*graph)(g)
+	data.Type = g.GraphType()
+	return json.Marshal(data)
+}
+
+// GraphRole is a role metric graph.
+type GraphRole struct {
+	Type         GraphType `json:"type"`
+	RoleFullname string    `json:"roleFullname"`
+	Name         string    `json:"name"`
+	IsStacked    bool      `json:"isStacked,omitempty"`
+}
+
+var _ Graph = (*GraphRole)(nil)
+
+// GraphType returns GraphTypeRole.
+func (g *GraphRole) GraphType() GraphType { return GraphTypeRole }
+
+// MarshalJSON implements json.Marshaler.
+func (g *GraphRole) MarshalJSON() ([]byte, error) {
+	type graph GraphRole
 	data := *(*graph)(g)
 	data.Type = g.GraphType()
 	return json.Marshal(data)

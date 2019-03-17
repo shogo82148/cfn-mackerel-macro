@@ -197,6 +197,42 @@ func TestCreateDashboard(t *testing.T) {
 				},
 			},
 		},
+		{
+			in: &Dashboard{
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						// the type field will be autocomplete from the Golang's type.
+						// Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Graph: &GraphRole{
+							// the type field will be autocomplete from the Golang's type.
+							// Type:   GraphTypeRole,
+							RoleFullname: "role-hogehoge:host-foobar",
+							Name:         "host-graph",
+							IsStacked:    true,
+						},
+					},
+				},
+			},
+			want: map[string]interface{}{
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []interface{}{
+					map[string]interface{}{
+						"type":  "graph",
+						"title": "graph title",
+						"graph": map[string]interface{}{
+							"type":         "role",
+							"roleFullname": "role-hogehoge:host-foobar",
+							"name":         "host-graph",
+							"isStacked":    true,
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for i, tc := range tests {

@@ -97,19 +97,22 @@ func (d *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properti
 	switch typ {
 	case mackerel.GraphTypeHost.String():
 		id, err := properties.M("Host").String()
-		if err != nil {
-			dp.Put(err)
-			return nil
-		}
+		dp.Put(err)
 		hostID, err := d.Function.parseHostID(ctx, id)
-		if err != nil {
-			dp.Put(err)
-			return nil
-		}
+		dp.Put(err)
 		return &mackerel.GraphHost{
-			Type:   mackerel.GraphTypeHost,
 			HostID: hostID,
 			Name:   dp.String(properties.M("Name")),
+		}
+	case mackerel.GraphTypeRole.String():
+		id, err := properties.M("Role").String()
+		dp.Put(err)
+		serviceName, roleName, err := d.Function.parseRoleID(ctx, id)
+		dp.Put(err)
+		return &mackerel.GraphRole{
+			RoleFullname: serviceName + ":" + roleName,
+			Name:         dp.String(properties.M("Name")),
+			IsStacked:    dp.Bool(dproxy.Default(properties.M("IsStacked"), false)),
 		}
 	}
 	return nil
