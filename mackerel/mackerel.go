@@ -115,13 +115,26 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 }
 
 // Error is an error from the Mackerel.
-type Error struct {
-	StatusCode int
-	Message    string
+type Error interface {
+	StatusCode() int
+	Message() string
 }
 
-func (e Error) Error() string {
-	return fmt.Sprintf("status: %d, %s", e.StatusCode, e.Message)
+type mkrError struct {
+	statusCode int
+	message    string
+}
+
+func (e mkrError) Error() string {
+	return fmt.Sprintf("status: %d, %s", e.statusCode, e.message)
+}
+
+func (e mkrError) StatusCode() int {
+	return e.statusCode
+}
+
+func (e mkrError) Message() string {
+	return e.message
 }
 
 func handleError(resp *http.Response) error {
@@ -133,13 +146,13 @@ func handleError(resp *http.Response) error {
 	var data struct{ Error struct{ Message string } }
 	err = json.Unmarshal(b, &data)
 	if err != nil {
-		return Error{
-			StatusCode: resp.StatusCode,
-			Message:    string(b),
+		return mkrError{
+			statusCode: resp.StatusCode,
+			message:    string(b),
 		}
 	}
-	return Error{
-		StatusCode: resp.StatusCode,
-		Message:    data.Error.Message,
+	return mkrError{
+		statusCode: resp.StatusCode,
+		message:    data.Error.Message,
 	}
 }

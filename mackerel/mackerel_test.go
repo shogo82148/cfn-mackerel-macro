@@ -37,10 +37,10 @@ func TestError(t *testing.T) {
 		return
 	}
 
-	if merr.Message != "ERROR MESSAGE HERE" {
-		t.Errorf("unexpected error mesage: want %s, got %s", "ERROR MESSAGE HERE", merr.Message)
+	if merr.Message() != "ERROR MESSAGE HERE" {
+		t.Errorf("unexpected error mesage: want %s, got %s", "ERROR MESSAGE HERE", merr.Message())
 	}
-	if merr.StatusCode != http.StatusBadRequest {
-		t.Errorf("unexpected status code: want %d, got %d", http.StatusBadRequest, merr.StatusCode)
+	if merr.StatusCode() != http.StatusBadRequest {
+		t.Errorf("unexpected status code: want %d, got %d", http.StatusBadRequest, merr.StatusCode())
 	}
 }
