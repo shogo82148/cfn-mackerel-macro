@@ -123,6 +123,10 @@ func (d *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properti
 			ServiceName: serviceName,
 			Name:        dp.String(properties.M("Name")),
 		}
+	case mackerel.GraphTypeExpression.String():
+		return &mackerel.GraphExpression{
+			Expression: dp.String(properties.M("Expression")),
+		}
 	}
 	return nil
 }

@@ -132,6 +132,76 @@ func TestFindDashboard(t *testing.T) {
 				UpdatedAt: 1234567890,
 			},
 		},
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":  "graph",
+						"title": "graph title",
+						"graph": map[string]string{
+							"type":       "expression",
+							"expression": "host(22CXRB3pZmu, memory.*)",
+						},
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Graph: &GraphExpression{
+							Type:       GraphTypeExpression,
+							Expression: "host(22CXRB3pZmu, memory.*)",
+						},
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":  "graph",
+						"title": "graph title",
+						"graph": map[string]string{
+							"type": "unknown",
+						},
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Graph: &GraphUnknown{
+							Type: GraphTypeUnknown,
+						},
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
 	}
 
 	for i, tc := range tests {
@@ -340,6 +410,38 @@ func TestCreateDashboard(t *testing.T) {
 							"type":        "service",
 							"serviceName": "service-name",
 							"name":        "host-graph",
+						},
+					},
+				},
+			},
+		},
+		{
+			in: &Dashboard{
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						// the type field will be autocomplete from the Golang's type.
+						// Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Graph: &GraphExpression{
+							// the type field will be autocomplete from the Golang's type.
+							// Type:   GraphTypeExpression,
+							Expression: "host(22CXRB3pZmu, memory.*)",
+						},
+					},
+				},
+			},
+			want: map[string]interface{}{
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []interface{}{
+					map[string]interface{}{
+						"type":  "graph",
+						"title": "graph title",
+						"graph": map[string]interface{}{
+							"type":       "expression",
+							"expression": "host(22CXRB3pZmu, memory.*)",
 						},
 					},
 				},

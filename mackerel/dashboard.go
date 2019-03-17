@@ -161,6 +161,12 @@ const (
 
 	// GraphTypeService is a service metric graph.
 	GraphTypeService GraphType = "service"
+
+	// GraphTypeExpression is an expression graph.
+	GraphTypeExpression GraphType = "expression"
+
+	// GraphTypeUnknown is an unknown graph.
+	GraphTypeUnknown GraphType = "unknown"
 )
 
 // Graph is a graph definition of a graph widget.
@@ -186,6 +192,10 @@ func (g *graph) UnmarshalJSON(b []byte) error {
 		g.Graph = &GraphRole{}
 	case GraphTypeService:
 		g.Graph = &GraphService{}
+	case GraphTypeExpression:
+		g.Graph = &GraphExpression{}
+	case GraphTypeUnknown:
+		g.Graph = &GraphUnknown{}
 	default:
 		return fmt.Errorf("unknown widget type: %s", data.Type)
 	}
@@ -248,6 +258,41 @@ func (g *GraphService) GraphType() GraphType { return GraphTypeService }
 // MarshalJSON implements json.Marshaler.
 func (g *GraphService) MarshalJSON() ([]byte, error) {
 	type graph GraphService
+	data := *(*graph)(g)
+	data.Type = g.GraphType()
+	return json.Marshal(data)
+}
+
+// GraphExpression is an expression metric graph.
+type GraphExpression struct {
+	Type       GraphType `json:"type"`
+	Expression string    `json:"expression"`
+}
+
+var _ Graph = (*GraphExpression)(nil)
+
+// GraphType returns GraphTypeExpression.
+func (g *GraphExpression) GraphType() GraphType { return GraphTypeExpression }
+
+// MarshalJSON implements json.Marshaler.
+func (g *GraphExpression) MarshalJSON() ([]byte, error) {
+	type graph GraphExpression
+	data := *(*graph)(g)
+	data.Type = g.GraphType()
+	return json.Marshal(data)
+}
+
+// GraphUnknown is an unknown graph.
+type GraphUnknown struct {
+	Type GraphType `json:"type"`
+}
+
+// GraphType returns GraphTypeUnknown.
+func (g *GraphUnknown) GraphType() GraphType { return GraphTypeUnknown }
+
+// MarshalJSON implements json.Marshaler.
+func (g *GraphUnknown) MarshalJSON() ([]byte, error) {
+	type graph GraphUnknown
 	data := *(*graph)(g)
 	data.Type = g.GraphType()
 	return json.Marshal(data)
