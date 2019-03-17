@@ -9,13 +9,29 @@ import (
 
 // Dashboard is a dashborad.
 type Dashboard struct {
-	ID        string `json:"id,omitempty"`
-	Title     string `json:"title,omitempty"`
-	Memo      string `json:"memo,omitempty"`
-	URLPath   string `json:"urlPath,omitempty"`
-	Widgets   []Widget
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	UpdatedAt int64 `json:"updatedAt,omitempty"`
+	ID        string   `json:"id,omitempty"`
+	Title     string   `json:"title,omitempty"`
+	Memo      string   `json:"memo,omitempty"`
+	URLPath   string   `json:"urlPath,omitempty"`
+	Widgets   []Widget `json:"-"`
+	CreatedAt int64    `json:"createdAt,omitempty"`
+	UpdatedAt int64    `json:"updatedAt,omitempty"`
+}
+
+// MarshalJSON mashal JSON.
+func (d *Dashboard) MarshalJSON() ([]byte, error) {
+	type dashboard Dashboard
+	var data struct {
+		Widgets []widget `json:"widgets,omitempty"`
+		dashboard
+	}
+
+	data.dashboard = dashboard(*d)
+	data.Widgets = make([]widget, len(d.Widgets))
+	for i, w := range d.Widgets {
+		data.Widgets[i] = widget{w}
+	}
+	return json.Marshal(data)
 }
 
 // UnmarshalJSON unmashals JSON.
@@ -50,6 +66,8 @@ func (t WidgetType) String() string {
 
 // Widget is a widget.
 type Widget interface {
+	json.Marshaler
+	json.Unmarshaler
 	WidgetType() WidgetType
 	WidgetTitle() string
 	WidgetLayout() *Layout
@@ -102,7 +120,15 @@ func (w *WidgetGraph) WidgetTitle() string { return w.Title }
 // WidgetLayout returns the layout of the widget.
 func (w *WidgetGraph) WidgetLayout() *Layout { return w.Layout }
 
-// UnmarshalJSON unmashal JSON.
+// MarshalJSON implements the json.Marshaler.
+func (w *WidgetGraph) MarshalJSON() ([]byte, error) {
+	type widgetGraph WidgetGraph
+	data := *(*widgetGraph)(w)
+	data.Type = WidgetTypeGraph
+	return json.Marshal(data)
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
 func (w *WidgetGraph) UnmarshalJSON(b []byte) error {
 	// wrap Graph with graph type to use custom UnmarshalJSON func
 	type widgetGraph WidgetGraph

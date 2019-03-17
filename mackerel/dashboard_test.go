@@ -159,29 +159,75 @@ func TestFindDashboard(t *testing.T) {
 }
 
 func TestCreateDashboard(t *testing.T) {
-	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-	}))
-	defer ts.Close()
+	tests := []struct {
+		in   *Dashboard
+		want map[string]interface{}
+	}{
+		{
+			in: &Dashboard{
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Graph: &GraphHost{
+							Type:   GraphTypeHost,
+							HostID: "host-foobar",
+							Name:   "host-graph",
+						},
+					},
+				},
+			},
+			want: map[string]interface{}{
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []interface{}{
+					map[string]interface{}{
+						"type":  "graph",
+						"title": "graph title",
+						"graph": map[string]interface{}{
+							"type":   "host",
+							"hostId": "host-foobar",
+							"name":   "host-graph",
+						},
+					},
+				},
+			},
+		},
+	}
 
-	u, err := url.Parse(ts.URL)
-	if err != nil {
-		t.Fatal(err)
-	}
-	c := &Client{
-		BaseURL:    u,
-		HTTPClient: ts.Client(),
-	}
+	for i, tc := range tests {
+		t.Run(fmt.Sprintf("CreateDashboard-%d", i), func(t *testing.T) {
+			ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				var data map[string]interface{}
+				dec := json.NewDecoder(r.Body)
+				if err := dec.Decode(&data); err != nil {
+					t.Error(err)
+					return
+				}
+				if !reflect.DeepEqual(data, tc.want) {
+					t.Errorf("unexpected body: %#v, got %#v", tc.want, data)
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
+				fmt.Fprint(w, "{}")
+			}))
+			defer ts.Close()
 
-	ret, err := c.CreateDashboard(context.Background(), &Dashboard{
-		Title:   "title",
-		Memo:    "memo",
-		URLPath: "url path",
-		Widgets: []Widget{},
-	})
-	if err != nil {
-		t.Error(err)
+			u, err := url.Parse(ts.URL)
+			if err != nil {
+				t.Fatal(err)
+			}
+			c := &Client{
+				BaseURL:    u,
+				HTTPClient: ts.Client(),
+			}
+
+			_, err = c.CreateDashboard(context.Background(), tc.in)
+			if err != nil {
+				t.Error(err)
+			}
+		})
 	}
-	t.Log(ret)
 }
