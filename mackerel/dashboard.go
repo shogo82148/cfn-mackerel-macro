@@ -2,19 +2,38 @@ package mackerel
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
 // Dashboard is a dashborad.
 type Dashboard struct {
-	ID        string   `json:"id,omitempty"`
-	Title     string   `json:"title,omitempty"`
-	Memo      string   `json:"memo,omitempty"`
-	URLPath   string   `json:"urlPath,omitempty"`
-	Widgets   []Widget `json:"widgets,omitempty"`
-	CreatedAt int64    `json:"createdAt,omitempty"`
-	UpdatedAt int64    `json:"updatedAt,omitempty"`
+	ID        string `json:"id,omitempty"`
+	Title     string `json:"title,omitempty"`
+	Memo      string `json:"memo,omitempty"`
+	URLPath   string `json:"urlPath,omitempty"`
+	Widgets   []Widget
+	CreatedAt int64 `json:"createdAt,omitempty"`
+	UpdatedAt int64 `json:"updatedAt,omitempty"`
+}
+
+// UnmarshalJSON unmashals JSON.
+func (d *Dashboard) UnmarshalJSON(b []byte) error {
+	type dashboard Dashboard
+	var data struct {
+		Widgets []widget `json:"widgets,omitempty"`
+		dashboard
+	}
+	if err := json.Unmarshal(b, &data); err != nil {
+		return err
+	}
+	*d = Dashboard(data.dashboard)
+	d.Widgets = make([]Widget, len(data.Widgets))
+	for i, w := range data.Widgets {
+		d.Widgets[i] = w.Widget
+	}
+	return nil
 }
 
 // WidgetType is a type of dashboard widget.
@@ -44,6 +63,26 @@ type Layout struct {
 	Height uint64 `json:"height"`
 }
 
+type widget struct {
+	Widget
+}
+
+func (w *widget) UnmarshalJSON(b []byte) error {
+	var data struct {
+		Type WidgetType `json:"type"`
+	}
+	if err := json.Unmarshal(b, &data); err != nil {
+		return err
+	}
+	switch data.Type {
+	case WidgetTypeGraph:
+		w.Widget = &WidgetGraph{}
+	default:
+		return fmt.Errorf("unknown widget type: %s", data.Type)
+	}
+	return json.Unmarshal(b, &w.Widget)
+}
+
 // WidgetGraph is a graph widget.
 type WidgetGraph struct {
 	Type   WidgetType `json:"type"`
@@ -63,6 +102,23 @@ func (w *WidgetGraph) WidgetTitle() string { return w.Title }
 // WidgetLayout returns the layout of the widget.
 func (w *WidgetGraph) WidgetLayout() *Layout { return w.Layout }
 
+// UnmarshalJSON unmashal JSON.
+func (w *WidgetGraph) UnmarshalJSON(b []byte) error {
+	// wrap Graph with graph type to use custom UnmarshalJSON func
+	type widgetGraph WidgetGraph
+	data := (*widgetGraph)(w)
+	g := &graph{}
+	data.Graph = g
+
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+
+	w.Type = WidgetTypeGraph
+	w.Graph = g.Graph // unwrap Graph
+	return nil
+}
+
 // GraphType is a type of a graph widget.
 type GraphType string
 
@@ -78,6 +134,26 @@ const (
 // Graph is a graph definition of a graph widget.
 type Graph interface {
 	GraphType() GraphType
+}
+
+type graph struct {
+	Graph
+}
+
+func (g *graph) UnmarshalJSON(b []byte) error {
+	var data struct {
+		Type GraphType `json:"type"`
+	}
+	if err := json.Unmarshal(b, &data); err != nil {
+		return err
+	}
+	switch data.Type {
+	case GraphTypeHost:
+		g.Graph = &GraphHost{}
+	default:
+		return fmt.Errorf("unknown widget type: %s", data.Type)
+	}
+	return json.Unmarshal(b, &g.Graph)
 }
 
 // GraphHost is a host metric graph.
