@@ -158,6 +158,9 @@ const (
 
 	// GraphTypeRole is a role metric graph.
 	GraphTypeRole GraphType = "role"
+
+	// GraphTypeService is a service metric graph.
+	GraphTypeService GraphType = "service"
 )
 
 // Graph is a graph definition of a graph widget.
@@ -181,6 +184,8 @@ func (g *graph) UnmarshalJSON(b []byte) error {
 		g.Graph = &GraphHost{}
 	case GraphTypeRole:
 		g.Graph = &GraphRole{}
+	case GraphTypeService:
+		g.Graph = &GraphService{}
 	default:
 		return fmt.Errorf("unknown widget type: %s", data.Type)
 	}
@@ -223,6 +228,26 @@ func (g *GraphRole) GraphType() GraphType { return GraphTypeRole }
 // MarshalJSON implements json.Marshaler.
 func (g *GraphRole) MarshalJSON() ([]byte, error) {
 	type graph GraphRole
+	data := *(*graph)(g)
+	data.Type = g.GraphType()
+	return json.Marshal(data)
+}
+
+// GraphService is a service metric graph.
+type GraphService struct {
+	Type        GraphType `json:"type"`
+	ServiceName string    `json:"serviceName"`
+	Name        string    `json:"name"`
+}
+
+var _ Graph = (*GraphService)(nil)
+
+// GraphType returns GraphTypeService.
+func (g *GraphService) GraphType() GraphType { return GraphTypeService }
+
+// MarshalJSON implements json.Marshaler.
+func (g *GraphService) MarshalJSON() ([]byte, error) {
+	type graph GraphService
 	data := *(*graph)(g)
 	data.Type = g.GraphType()
 	return json.Marshal(data)

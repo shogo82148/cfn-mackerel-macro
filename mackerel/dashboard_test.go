@@ -54,6 +54,84 @@ func TestFindDashboard(t *testing.T) {
 				UpdatedAt: 1234567890,
 			},
 		},
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":  "graph",
+						"title": "graph title",
+						"graph": map[string]interface{}{
+							"type":         "role",
+							"roleFullname": "service-foo:role-bar",
+							"name":         "host-graph",
+							"isStacked":    true,
+						},
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Graph: &GraphRole{
+							Type:         GraphTypeRole,
+							RoleFullname: "service-foo:role-bar",
+							Name:         "host-graph",
+							IsStacked:    true,
+						},
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":  "graph",
+						"title": "graph title",
+						"graph": map[string]string{
+							"type":        "service",
+							"serviceName": "service-foo",
+							"name":        "metric-name",
+						},
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Graph: &GraphService{
+							Type:        GraphTypeService,
+							ServiceName: "service-foo",
+							Name:        "metric-name",
+						},
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
 	}
 
 	for i, tc := range tests {
@@ -209,7 +287,7 @@ func TestCreateDashboard(t *testing.T) {
 						Graph: &GraphRole{
 							// the type field will be autocomplete from the Golang's type.
 							// Type:   GraphTypeRole,
-							RoleFullname: "role-hogehoge:host-foobar",
+							RoleFullname: "service-foo:role-bar",
 							Name:         "host-graph",
 							IsStacked:    true,
 						},
@@ -225,9 +303,43 @@ func TestCreateDashboard(t *testing.T) {
 						"title": "graph title",
 						"graph": map[string]interface{}{
 							"type":         "role",
-							"roleFullname": "role-hogehoge:host-foobar",
+							"roleFullname": "service-foo:role-bar",
 							"name":         "host-graph",
 							"isStacked":    true,
+						},
+					},
+				},
+			},
+		},
+		{
+			in: &Dashboard{
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						// the type field will be autocomplete from the Golang's type.
+						// Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Graph: &GraphService{
+							// the type field will be autocomplete from the Golang's type.
+							// Type:   GraphTypeService,
+							ServiceName: "service-name",
+							Name:        "host-graph",
+						},
+					},
+				},
+			},
+			want: map[string]interface{}{
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []interface{}{
+					map[string]interface{}{
+						"type":  "graph",
+						"title": "graph title",
+						"graph": map[string]interface{}{
+							"type":        "service",
+							"serviceName": "service-name",
+							"name":        "host-graph",
 						},
 					},
 				},

@@ -114,6 +114,15 @@ func (d *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properti
 			Name:         dp.String(properties.M("Name")),
 			IsStacked:    dp.Bool(dproxy.Default(properties.M("IsStacked"), false)),
 		}
+	case mackerel.GraphTypeService.String():
+		id, err := properties.M("Service").String()
+		dp.Put(err)
+		serviceName, err := d.Function.parseServiceID(ctx, id)
+		dp.Put(err)
+		return &mackerel.GraphService{
+			ServiceName: serviceName,
+			Name:        dp.String(properties.M("Name")),
+		}
 	}
 	return nil
 }
