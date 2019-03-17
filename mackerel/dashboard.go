@@ -194,6 +194,14 @@ var _ Graph = (*GraphHost)(nil)
 // GraphType returns GraphTypeHost.
 func (g *GraphHost) GraphType() GraphType { return GraphTypeHost }
 
+// MarshalJSON implements json.Marshaler.
+func (g *GraphHost) MarshalJSON() ([]byte, error) {
+	type graph GraphHost
+	data := *(*graph)(g)
+	data.Type = g.GraphType()
+	return json.Marshal(data)
+}
+
 // FindDashboards finds dashboards.
 func (c *Client) FindDashboards(ctx context.Context) ([]*Dashboard, error) {
 	ret := []*Dashboard{}

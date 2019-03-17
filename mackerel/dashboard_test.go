@@ -169,10 +169,12 @@ func TestCreateDashboard(t *testing.T) {
 				URLPath: "url path",
 				Widgets: []Widget{
 					&WidgetGraph{
-						Type:  WidgetTypeGraph,
+						// the type field will be autocomplete from the Golang's type.
+						// Type:  WidgetTypeGraph,
 						Title: "graph title",
 						Graph: &GraphHost{
-							Type:   GraphTypeHost,
+							// the type field will be autocomplete from the Golang's type.
+							// Type:   GraphTypeHost,
 							HostID: "host-foobar",
 							Name:   "host-graph",
 						},
