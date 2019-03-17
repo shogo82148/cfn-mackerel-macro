@@ -129,8 +129,17 @@ func handleError(resp *http.Response) error {
 	if err != nil {
 		return err
 	}
+
+	var data struct{ Error struct{ Message string } }
+	err = json.Unmarshal(b, &data)
+	if err != nil {
+		return Error{
+			StatusCode: resp.StatusCode,
+			Message:    string(b),
+		}
+	}
 	return Error{
 		StatusCode: resp.StatusCode,
-		Message:    string(b),
+		Message:    data.Error.Message,
 	}
 }
