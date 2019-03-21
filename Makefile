@@ -15,7 +15,7 @@ resource:
 	mkdir -p resource
 
 test:
-	go test -v -race ./...
+	go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
 
 clean:
 	@rm -f packaged.yaml
