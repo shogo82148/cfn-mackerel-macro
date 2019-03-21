@@ -2,6 +2,7 @@ package cfn
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -79,12 +80,18 @@ func (d *dashboard) convertWidget(ctx context.Context, dp *dproxy.Drain, propert
 	switch typ {
 	case mackerel.WidgetTypeGraph.String():
 		return &mackerel.WidgetGraph{
-			Type:   mackerel.WidgetTypeGraph,
 			Title:  dp.String(dproxy.Default(properties.M("Title"), "")),
 			Graph:  d.convertGraph(ctx, dp, properties.M("Graph")),
 			Layout: d.convertLayout(dp, properties.M("Layout")),
 		}
+	case mackerel.WidgetTypeValue.String():
+		return &mackerel.WidgetValue{
+			Title:  dp.String(dproxy.Default(properties.M("Title"), "")),
+			Metric: d.convertMetric(ctx, dp, properties.M("Metric")),
+			Layout: d.convertLayout(dp, properties.M("Layout")),
+		}
 	}
+	dp.Put(fmt.Errorf("unknown widget type: %s", typ))
 	return nil
 }
 
@@ -125,6 +132,39 @@ func (d *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properti
 		}
 	case mackerel.GraphTypeExpression.String():
 		return &mackerel.GraphExpression{
+			Expression: dp.String(properties.M("Expression")),
+		}
+	}
+	return nil
+}
+
+func (d *dashboard) convertMetric(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.Metric {
+	typ, err := properties.M("Type").String()
+	if err != nil {
+		dp.Put(err)
+		return nil
+	}
+	switch typ {
+	case mackerel.MetricTypeHost.String():
+		id, err := properties.M("Host").String()
+		dp.Put(err)
+		hostID, err := d.Function.parseHostID(ctx, id)
+		dp.Put(err)
+		return &mackerel.MetricHost{
+			HostID: hostID,
+			Name:   dp.String(properties.M("Name")),
+		}
+	case mackerel.MetricTypeService.String():
+		id, err := properties.M("Service").String()
+		dp.Put(err)
+		serviceName, err := d.Function.parseServiceID(ctx, id)
+		dp.Put(err)
+		return &mackerel.MetricService{
+			ServiceName: serviceName,
+			Name:        dp.String(properties.M("Name")),
+		}
+	case mackerel.MetricTypeExpression.String():
+		return &mackerel.MetricExpression{
 			Expression: dp.String(properties.M("Expression")),
 		}
 	}

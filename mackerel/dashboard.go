@@ -58,6 +58,12 @@ type WidgetType string
 const (
 	// WidgetTypeGraph is a graph widget.
 	WidgetTypeGraph WidgetType = "graph"
+
+	// WidgetTypeValue is a value widget.
+	WidgetTypeValue WidgetType = "value"
+
+	// WidgetTypeMarkdown is a markdown widget.
+	WidgetTypeMarkdown WidgetType = "markdown"
 )
 
 func (t WidgetType) String() string {
@@ -95,6 +101,8 @@ func (w *widget) UnmarshalJSON(b []byte) error {
 	switch data.Type {
 	case WidgetTypeGraph:
 		w.Widget = &WidgetGraph{}
+	case WidgetTypeValue:
+		w.Widget = &WidgetValue{}
 	default:
 		return fmt.Errorf("unknown widget type: %s", data.Type)
 	}
@@ -142,6 +150,50 @@ func (w *WidgetGraph) UnmarshalJSON(b []byte) error {
 
 	w.Type = WidgetTypeGraph
 	w.Graph = g.Graph // unwrap Graph
+	return nil
+}
+
+// WidgetValue is a value widget.
+type WidgetValue struct {
+	Type   WidgetType `json:"type"`
+	Title  string     `json:"title"`
+	Metric Metric     `json:"metric,omitempty"`
+	Layout *Layout    `json:"layout,omitempty"`
+}
+
+var _ Widget = (*WidgetValue)(nil)
+
+// WidgetType returns WidgetTypeValue.
+func (w *WidgetValue) WidgetType() WidgetType { return WidgetTypeValue }
+
+// WidgetTitle returns the title of the widget.
+func (w *WidgetValue) WidgetTitle() string { return w.Title }
+
+// WidgetLayout returns the layout of the widget.
+func (w *WidgetValue) WidgetLayout() *Layout { return w.Layout }
+
+// MarshalJSON implements the json.Marshaler.
+func (w *WidgetValue) MarshalJSON() ([]byte, error) {
+	type widgetValue WidgetValue
+	data := *(*widgetValue)(w)
+	data.Type = WidgetTypeValue
+	return json.Marshal(data)
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (w *WidgetValue) UnmarshalJSON(b []byte) error {
+	// wrap Metric with metric type to use custom UnmarshalJSON func
+	type widgetValue WidgetValue
+	data := (*widgetValue)(w)
+	m := &metric{}
+	data.Metric = m
+
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+
+	w.Type = WidgetTypeValue
+	w.Metric = m.Metric // unwrap metric
 	return nil
 }
 
@@ -295,6 +347,133 @@ func (g *GraphUnknown) MarshalJSON() ([]byte, error) {
 	type graph GraphUnknown
 	data := *(*graph)(g)
 	data.Type = g.GraphType()
+	return json.Marshal(data)
+}
+
+// MetricType is a type of a metric.
+type MetricType string
+
+const (
+	// MetricTypeHost is a host metric.
+	MetricTypeHost MetricType = "host"
+
+	// MetricTypeService is a service metric graph.
+	MetricTypeService MetricType = "service"
+
+	// MetricTypeExpression is an expression graph.
+	MetricTypeExpression MetricType = "expression"
+
+	// MetricTypeUnknown is an unknown graph.
+	MetricTypeUnknown MetricType = "unknown"
+)
+
+func (t MetricType) String() string {
+	return string(t)
+}
+
+// Metric is a metric of metric widget.
+type Metric interface {
+	MetricType() MetricType
+}
+
+type metric struct {
+	Metric
+}
+
+func (m *metric) UnmarshalJSON(b []byte) error {
+	var data struct {
+		Type MetricType `json:"type"`
+	}
+	if err := json.Unmarshal(b, &data); err != nil {
+		return err
+	}
+	switch data.Type {
+	case MetricTypeHost:
+		m.Metric = &MetricHost{}
+	case MetricTypeService:
+		m.Metric = &MetricService{}
+	case MetricTypeExpression:
+		m.Metric = &MetricExpression{}
+	case MetricTypeUnknown:
+		m.Metric = &MetricUnknown{}
+	default:
+		return fmt.Errorf("unknown metric type: %s", data.Type)
+	}
+	return json.Unmarshal(b, &m.Metric)
+}
+
+// MetricHost is a host metric.
+type MetricHost struct {
+	Type   MetricType `json:"type"`
+	HostID string     `json:"hostId"`
+	Name   string     `json:"name"`
+}
+
+var _ Metric = (*MetricHost)(nil)
+
+// MetricType returns MetricTypeHost.
+func (m *MetricHost) MetricType() MetricType { return MetricTypeHost }
+
+// MarshalJSON implements json.Marshaler.
+func (m *MetricHost) MarshalJSON() ([]byte, error) {
+	type metric MetricHost
+	data := *(*metric)(m)
+	data.Type = m.MetricType()
+	return json.Marshal(data)
+}
+
+// MetricService is a service metric.
+type MetricService struct {
+	Type        MetricType `json:"type"`
+	ServiceName string     `json:"serviceName"`
+	Name        string     `json:"name"`
+}
+
+var _ Metric = (*MetricService)(nil)
+
+// MetricType returns MetricTypeService.
+func (m *MetricService) MetricType() MetricType { return MetricTypeService }
+
+// MarshalJSON implements json.Marshaler.
+func (m *MetricService) MarshalJSON() ([]byte, error) {
+	type metric MetricService
+	data := *(*metric)(m)
+	data.Type = m.MetricType()
+	return json.Marshal(data)
+}
+
+// MetricExpression is an expression metric Metric.
+type MetricExpression struct {
+	Type       MetricType `json:"type"`
+	Expression string     `json:"expression"`
+}
+
+var _ Metric = (*MetricExpression)(nil)
+
+// MetricType returns MetricTypeExpression.
+func (m *MetricExpression) MetricType() MetricType { return MetricTypeExpression }
+
+// MarshalJSON implements json.Marshaler.
+func (m *MetricExpression) MarshalJSON() ([]byte, error) {
+	type metric MetricExpression
+	data := *(*metric)(m)
+	data.Type = m.MetricType()
+	return json.Marshal(data)
+}
+
+// MetricUnknown is an unknown Metric.
+type MetricUnknown struct {
+	Type MetricType `json:"type"`
+}
+
+// MetricType returns MetricTypeUnknown.
+func (m *MetricUnknown) MetricType() MetricType { return MetricTypeUnknown }
+
+// MarshalJSON implements json.Marshaler.
+func (m *MetricUnknown) MarshalJSON() ([]byte, error) {
+	type metric MetricUnknown
+	data := *(*metric)(m)
+	data.Type = m.MetricType()
 	return json.Marshal(data)
 }
 

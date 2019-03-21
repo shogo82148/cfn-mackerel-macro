@@ -7,8 +7,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"reflect"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestFindDashboard(t *testing.T) {
@@ -16,6 +17,7 @@ func TestFindDashboard(t *testing.T) {
 		resp map[string]interface{} // the response of the mackerel api
 		want *Dashboard
 	}{
+		/////////// Graph Widgets
 		{
 			resp: map[string]interface{}{
 				"id":      "foobar",
@@ -202,6 +204,154 @@ func TestFindDashboard(t *testing.T) {
 				UpdatedAt: 1234567890,
 			},
 		},
+
+		/////////// Metric Widgets
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":  "value",
+						"title": "metric title",
+						"metric": map[string]string{
+							"type":   "host",
+							"hostId": "host-foobar",
+							"name":   "hogehoge",
+						},
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetValue{
+						Type:  WidgetTypeValue,
+						Title: "metric title",
+						Metric: &MetricHost{
+							Type:   MetricTypeHost,
+							HostID: "host-foobar",
+							Name:   "hogehoge",
+						},
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":  "value",
+						"title": "metric title",
+						"metric": map[string]string{
+							"type":        "service",
+							"serviceName": "service-foobar",
+							"name":        "hogehoge",
+						},
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetValue{
+						Type:  WidgetTypeValue,
+						Title: "metric title",
+						Metric: &MetricService{
+							Type:        MetricTypeService,
+							ServiceName: "service-foobar",
+							Name:        "hogehoge",
+						},
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":  "value",
+						"title": "metric title",
+						"metric": map[string]string{
+							"type":       "expression",
+							"expression": "host(22CXRB3pZmu, memory.*)",
+						},
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetValue{
+						Type:  WidgetTypeValue,
+						Title: "metric title",
+						Metric: &MetricExpression{
+							Type:       MetricTypeExpression,
+							Expression: "host(22CXRB3pZmu, memory.*)",
+						},
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":  "value",
+						"title": "metric title",
+						"metric": map[string]string{
+							"type": "unknown",
+						},
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetValue{
+						Type:  WidgetTypeValue,
+						Title: "metric title",
+						Metric: &MetricUnknown{
+							Type: MetricTypeUnknown,
+						},
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
 	}
 
 	for i, tc := range tests {
@@ -233,8 +383,8 @@ func TestFindDashboard(t *testing.T) {
 				t.Error(err)
 				return
 			}
-			if !reflect.DeepEqual(got, []*Dashboard{tc.want}) {
-				t.Errorf("want %#v, got %#v", []*Dashboard{tc.want}, got)
+			if diff := cmp.Diff(got, []*Dashboard{tc.want}); diff != "" {
+				t.Errorf("FindDashboards differs: (-got +want)\n%s", diff)
 			}
 		})
 
@@ -266,8 +416,8 @@ func TestFindDashboard(t *testing.T) {
 				t.Error(err)
 				return
 			}
-			if !reflect.DeepEqual(got, tc.want) {
-				t.Errorf("want %#v, got %#v", tc.want, got)
+			if diff := cmp.Diff(got, tc.want); diff != "" {
+				t.Errorf("FindDashboard differs: (-got +want)\n%s", diff)
 			}
 		})
 
@@ -299,8 +449,8 @@ func TestFindDashboard(t *testing.T) {
 				t.Error(err)
 				return
 			}
-			if !reflect.DeepEqual(got, tc.want) {
-				t.Errorf("want %#v, got %#v", tc.want, got)
+			if diff := cmp.Diff(got, tc.want); diff != "" {
+				t.Errorf("DeleteDashboard differs: (-got +want)\n%s", diff)
 			}
 		})
 	}
@@ -311,6 +461,7 @@ func TestCreateDashboard(t *testing.T) {
 		in   *Dashboard
 		want map[string]interface{}
 	}{
+		/////////// Graph Widgets
 		{
 			in: &Dashboard{
 				Title:   "title",
@@ -447,6 +598,106 @@ func TestCreateDashboard(t *testing.T) {
 				},
 			},
 		},
+		{
+			in: &Dashboard{
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetValue{
+						// the type field will be autocomplete from the Golang's type.
+						// Type:  WidgetTypeValue,
+						Title: "metric title",
+						Metric: &MetricHost{
+							// the type field will be autocomplete from the Golang's type.
+							// Type:   GraphTypeHost,
+							HostID: "host-foobar",
+							Name:   "host-metric",
+						},
+					},
+				},
+			},
+			want: map[string]interface{}{
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []interface{}{
+					map[string]interface{}{
+						"type":  "value",
+						"title": "metric title",
+						"metric": map[string]interface{}{
+							"type":   "host",
+							"hostId": "host-foobar",
+							"name":   "host-metric",
+						},
+					},
+				},
+			},
+		},
+		{
+			in: &Dashboard{
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetValue{
+						// the type field will be autocomplete from the Golang's type.
+						// Type:  WidgetTypeValue,
+						Title: "metric title",
+						Metric: &MetricService{
+							// the type field will be autocomplete from the Golang's type.
+							// Type:   GraphTypeService,
+							ServiceName: "service-foobar",
+							Name:        "service-metric",
+						},
+					},
+				},
+			},
+			want: map[string]interface{}{
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []interface{}{
+					map[string]interface{}{
+						"type":  "value",
+						"title": "metric title",
+						"metric": map[string]interface{}{
+							"type":        "service",
+							"serviceName": "service-foobar",
+							"name":        "service-metric",
+						},
+					},
+				},
+			},
+		},
+		{
+			in: &Dashboard{
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetValue{
+						// the type field will be autocomplete from the Golang's type.
+						// Type:  WidgetTypeValue,
+						Title: "metric title",
+						Metric: &MetricExpression{
+							// the type field will be autocomplete from the Golang's type.
+							// Type:   GraphTypeExptression,
+							Expression: "host(22CXRB3pZmu, memory.*)",
+						},
+					},
+				},
+			},
+			want: map[string]interface{}{
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []interface{}{
+					map[string]interface{}{
+						"type":  "value",
+						"title": "metric title",
+						"metric": map[string]interface{}{
+							"type":       "expression",
+							"expression": "host(22CXRB3pZmu, memory.*)",
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for i, tc := range tests {
@@ -458,8 +709,8 @@ func TestCreateDashboard(t *testing.T) {
 					t.Error(err)
 					return
 				}
-				if !reflect.DeepEqual(data, tc.want) {
-					t.Errorf("unexpected body: %#v, got %#v", tc.want, data)
+				if diff := cmp.Diff(data, tc.want); diff != "" {
+					t.Errorf("DeleteDashboard differs: (-got +want)\n%s", diff)
 				}
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusOK)
