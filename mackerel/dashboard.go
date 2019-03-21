@@ -8,6 +8,7 @@ import (
 )
 
 // Dashboard is a dashborad.
+// https://mackerel.io/api-docs/entry/dashboards#create
 type Dashboard struct {
 	ID        string   `json:"id,omitempty"`
 	Title     string   `json:"title,omitempty"`
@@ -71,6 +72,7 @@ func (t WidgetType) String() string {
 }
 
 // Widget is a widget.
+// https://mackerel.io/api-docs/entry/dashboards#widget
 type Widget interface {
 	json.Marshaler
 	json.Unmarshaler
@@ -80,6 +82,7 @@ type Widget interface {
 }
 
 // Layout describes the layout of the widget.
+// https://mackerel.io/api-docs/entry/dashboards#layout
 type Layout struct {
 	X      uint64 `json:"x"`
 	Y      uint64 `json:"y"`
@@ -265,6 +268,7 @@ const (
 )
 
 // Graph is a graph definition of a graph widget.
+// https://mackerel.io/api-docs/entry/dashboards#graph
 type Graph interface {
 	GraphType() GraphType
 }
@@ -415,6 +419,7 @@ func (t MetricType) String() string {
 }
 
 // Metric is a metric of metric widget.
+// https://mackerel.io/api-docs/entry/dashboards#metric
 type Metric interface {
 	MetricType() MetricType
 }
@@ -521,6 +526,7 @@ func (m *MetricUnknown) MarshalJSON() ([]byte, error) {
 }
 
 // FindDashboards finds dashboards.
+// https://mackerel.io/api-docs/entry/dashboards#list
 func (c *Client) FindDashboards(ctx context.Context) ([]*Dashboard, error) {
 	ret := []*Dashboard{}
 	err := c.do(ctx, http.MethodGet, "/api/v0/dashboards", nil, &ret)
@@ -531,6 +537,7 @@ func (c *Client) FindDashboards(ctx context.Context) ([]*Dashboard, error) {
 }
 
 // FindDashboard find the dashboard.
+// https://mackerel.io/api-docs/entry/dashboards#get
 func (c *Client) FindDashboard(ctx context.Context, dashboardID string) (*Dashboard, error) {
 	ret := &Dashboard{}
 	err := c.do(ctx, http.MethodGet, fmt.Sprintf("/api/v0/dashboards/%s", dashboardID), nil, ret)
@@ -541,6 +548,7 @@ func (c *Client) FindDashboard(ctx context.Context, dashboardID string) (*Dashbo
 }
 
 // CreateDashboard creates a new dashboard.
+// https://mackerel.io/api-docs/entry/dashboards#create
 func (c *Client) CreateDashboard(ctx context.Context, param *Dashboard) (*Dashboard, error) {
 	ret := &Dashboard{}
 	err := c.do(ctx, http.MethodPost, "/api/v0/dashboards", param, ret)
@@ -551,6 +559,7 @@ func (c *Client) CreateDashboard(ctx context.Context, param *Dashboard) (*Dashbo
 }
 
 // UpdateDashboard deletes a service
+// https://mackerel.io/api-docs/entry/dashboards#update
 func (c *Client) UpdateDashboard(ctx context.Context, dashboardID string, param *Dashboard) (*Dashboard, error) {
 	ret := &Dashboard{}
 	err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/dashboards/%s", dashboardID), param, ret)
@@ -561,6 +570,7 @@ func (c *Client) UpdateDashboard(ctx context.Context, dashboardID string, param 
 }
 
 // DeleteDashboard deletes a service
+// https://mackerel.io/api-docs/entry/dashboards#delete
 func (c *Client) DeleteDashboard(ctx context.Context, dashboardID string) (*Dashboard, error) {
 	dashboard := &Dashboard{}
 	err := c.do(ctx, http.MethodDelete, fmt.Sprintf("/api/v0/dashboards/%s", dashboardID), nil, dashboard)
