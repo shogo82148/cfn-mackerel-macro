@@ -352,6 +352,36 @@ func TestFindDashboard(t *testing.T) {
 				UpdatedAt: 1234567890,
 			},
 		},
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":     "markdown",
+						"title":    "markdown title",
+						"markdown": "*FOOBAR*",
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetMarkdown{
+						Type:     WidgetTypeMarkdown,
+						Title:    "markdown title",
+						Markdown: "*FOOBAR*",
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
 	}
 
 	for i, tc := range tests {
@@ -694,6 +724,31 @@ func TestCreateDashboard(t *testing.T) {
 							"type":       "expression",
 							"expression": "host(22CXRB3pZmu, memory.*)",
 						},
+					},
+				},
+			},
+		},
+		{
+			in: &Dashboard{
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetMarkdown{
+						// the type field will be autocomplete from the Golang's type.
+						// Type:  WidgetTypeMarkdown,
+						Title:    "markdown title",
+						Markdown: "*FOOBAR*",
+					},
+				},
+			},
+			want: map[string]interface{}{
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []interface{}{
+					map[string]interface{}{
+						"type":     "markdown",
+						"title":    "markdown title",
+						"markdown": "*FOOBAR*",
 					},
 				},
 			},

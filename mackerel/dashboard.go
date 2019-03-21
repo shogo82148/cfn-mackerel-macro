@@ -103,6 +103,8 @@ func (w *widget) UnmarshalJSON(b []byte) error {
 		w.Widget = &WidgetGraph{}
 	case WidgetTypeValue:
 		w.Widget = &WidgetValue{}
+	case WidgetTypeMarkdown:
+		w.Widget = &WidgetMarkdown{}
 	default:
 		return fmt.Errorf("unknown widget type: %s", data.Type)
 	}
@@ -194,6 +196,47 @@ func (w *WidgetValue) UnmarshalJSON(b []byte) error {
 
 	w.Type = WidgetTypeValue
 	w.Metric = m.Metric // unwrap metric
+	return nil
+}
+
+// WidgetMarkdown is a markdown widget for dashboards.
+type WidgetMarkdown struct {
+	Type     WidgetType `json:"type"`
+	Title    string     `json:"title"`
+	Markdown string     `json:"markdown,omitempty"`
+	Layout   *Layout    `json:"layout,omitempty"`
+}
+
+var _ Widget = (*WidgetMarkdown)(nil)
+
+// WidgetType returns WidgetTypeMarkdown.
+func (w *WidgetMarkdown) WidgetType() WidgetType { return WidgetTypeMarkdown }
+
+// WidgetTitle returns the title of the widget.
+func (w *WidgetMarkdown) WidgetTitle() string { return w.Title }
+
+// WidgetLayout returns the layout of the widget.
+func (w *WidgetMarkdown) WidgetLayout() *Layout { return w.Layout }
+
+// MarshalJSON implements the json.Marshaler.
+func (w *WidgetMarkdown) MarshalJSON() ([]byte, error) {
+	type widgetMarkdown WidgetMarkdown
+	data := *(*widgetMarkdown)(w)
+	data.Type = WidgetTypeMarkdown
+	return json.Marshal(data)
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (w *WidgetMarkdown) UnmarshalJSON(b []byte) error {
+	// wrap Metric with metric type to use custom UnmarshalJSON func
+	type widgetMarkdown WidgetMarkdown
+	data := (*widgetMarkdown)(w)
+
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+
+	w.Type = WidgetTypeMarkdown
 	return nil
 }
 

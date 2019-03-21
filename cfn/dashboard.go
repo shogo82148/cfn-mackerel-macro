@@ -90,6 +90,12 @@ func (d *dashboard) convertWidget(ctx context.Context, dp *dproxy.Drain, propert
 			Metric: d.convertMetric(ctx, dp, properties.M("Metric")),
 			Layout: d.convertLayout(dp, properties.M("Layout")),
 		}
+	case mackerel.WidgetTypeMarkdown.String():
+		return &mackerel.WidgetMarkdown{
+			Title:    dp.String(dproxy.Default(properties.M("Title"), "")),
+			Markdown: dp.String(dproxy.Default(properties.M("Markdown"), "")),
+			Layout:   d.convertLayout(dp, properties.M("Layout")),
+		}
 	}
 	dp.Put(fmt.Errorf("unknown widget type: %s", typ))
 	return nil
