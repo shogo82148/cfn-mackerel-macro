@@ -15,7 +15,7 @@ resource:
 	mkdir -p resource
 
 test:
-	go test ./...
+	go test -v -race ./...
 
 clean:
 	@rm -f packaged.yaml
