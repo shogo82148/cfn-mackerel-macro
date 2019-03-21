@@ -119,6 +119,7 @@ type WidgetGraph struct {
 	Type   WidgetType `json:"type"`
 	Title  string     `json:"title"`
 	Graph  Graph      `json:"graph,omitempty"`
+	Range  GraphRange `json:"range,omitempty"`
 	Layout *Layout    `json:"layout,omitempty"`
 }
 
@@ -148,13 +149,16 @@ func (w *WidgetGraph) UnmarshalJSON(b []byte) error {
 	data := (*widgetGraph)(w)
 	g := &graph{}
 	data.Graph = g
+	r := &graphRange{}
+	data.Range = r
 
 	if err := json.Unmarshal(b, data); err != nil {
 		return err
 	}
 
 	w.Type = WidgetTypeGraph
-	w.Graph = g.Graph // unwrap Graph
+	w.Graph = g.Graph      // unwrap Graph
+	w.Range = r.GraphRange // unwrap GraphRange
 	return nil
 }
 
@@ -523,6 +527,109 @@ func (m *MetricUnknown) MarshalJSON() ([]byte, error) {
 	data := *(*metric)(m)
 	data.Type = m.MetricType()
 	return json.Marshal(data)
+}
+
+// GraphRangeType is a type of GraphRange.
+type GraphRangeType string
+
+const (
+	// GraphRangeTypeRelative is a relative range.
+	GraphRangeTypeRelative GraphRangeType = "relative"
+
+	// GraphRangeTypeAbsolute is an absolute range.
+	GraphRangeTypeAbsolute GraphRangeType = "absolute"
+)
+
+func (t GraphRangeType) String() string {
+	return string(t)
+}
+
+// GraphRange is a range for graph widgets.
+// https://mackerel.io/api-docs/entry/dashboards#graph-range
+type GraphRange interface {
+	GraphRangeType() GraphRangeType
+}
+
+type graphRange struct {
+	GraphRange
+}
+
+func (r *graphRange) UnmarshalJSON(b []byte) error {
+	var data struct {
+		Type GraphRangeType `json:"type"`
+	}
+	if err := json.Unmarshal(b, &data); err != nil {
+		return err
+	}
+	switch data.Type {
+	case GraphRangeTypeRelative:
+		r.GraphRange = &GraphRangeRelative{}
+	case GraphRangeTypeAbsolute:
+		r.GraphRange = &GraphRangeAbsolute{}
+	default:
+		return fmt.Errorf("unknown graph range type: %s", data.Type)
+	}
+	return json.Unmarshal(b, &r.GraphRange)
+}
+
+// GraphRangeRelative is a relative range.
+type GraphRangeRelative struct {
+	Type   GraphRangeType `json:"type"`
+	Period int64          `json:"period"`
+	Offset int64          `json:"offset"`
+}
+
+// GraphRangeType returns GraphRangeTypeRelative.
+func (r *GraphRangeRelative) GraphRangeType() GraphRangeType { return GraphRangeTypeRelative }
+
+// MarshalJSON implements the json.Marshaler.
+func (r *GraphRangeRelative) MarshalJSON() ([]byte, error) {
+	type graphRange GraphRangeRelative
+	data := *(*graphRange)(r)
+	data.Type = GraphRangeTypeRelative
+	return json.Marshal(data)
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (r *GraphRangeRelative) UnmarshalJSON(b []byte) error {
+	// wrap Graph with graph type to use custom UnmarshalJSON func
+	type graphRange GraphRangeRelative
+	data := (*graphRange)(r)
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+	r.Type = GraphRangeTypeRelative
+	return nil
+}
+
+// GraphRangeAbsolute is an absolute range.
+type GraphRangeAbsolute struct {
+	Type  GraphRangeType `json:"type"`
+	Start int64          `json:"start"`
+	End   int64          `json:"end"`
+}
+
+// GraphRangeType returns GraphRangeTypeAbsolute.
+func (r *GraphRangeAbsolute) GraphRangeType() GraphRangeType { return GraphRangeTypeAbsolute }
+
+// MarshalJSON implements the json.Marshaler.
+func (r *GraphRangeAbsolute) MarshalJSON() ([]byte, error) {
+	type graphRange GraphRangeAbsolute
+	data := *(*graphRange)(r)
+	data.Type = GraphRangeTypeAbsolute
+	return json.Marshal(data)
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (r *GraphRangeAbsolute) UnmarshalJSON(b []byte) error {
+	// wrap Graph with graph type to use custom UnmarshalJSON func
+	type graphRange GraphRangeAbsolute
+	data := (*graphRange)(r)
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+	r.Type = GraphRangeTypeAbsolute
+	return nil
 }
 
 // FindDashboards finds dashboards.

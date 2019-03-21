@@ -82,6 +82,7 @@ func (d *dashboard) convertWidget(ctx context.Context, dp *dproxy.Drain, propert
 		return &mackerel.WidgetGraph{
 			Title:  dp.String(dproxy.Default(properties.M("Title"), "")),
 			Graph:  d.convertGraph(ctx, dp, properties.M("Graph")),
+			Range:  d.convertRange(ctx, dp, properties.M("Range")),
 			Layout: d.convertLayout(dp, properties.M("Layout")),
 		}
 	case mackerel.WidgetTypeValue.String():
@@ -141,6 +142,7 @@ func (d *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properti
 			Expression: dp.String(properties.M("Expression")),
 		}
 	}
+	dp.Put(fmt.Errorf("unknown graph type: %s", typ))
 	return nil
 }
 
@@ -174,6 +176,32 @@ func (d *dashboard) convertMetric(ctx context.Context, dp *dproxy.Drain, propert
 			Expression: dp.String(properties.M("Expression")),
 		}
 	}
+	dp.Put(fmt.Errorf("unknown metric type: %s", typ))
+	return nil
+}
+
+func (d *dashboard) convertRange(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.GraphRange {
+	if err, ok := properties.(dproxy.Error); ok && err.ErrorType() == dproxy.Enotfound {
+		return nil
+	}
+	typ, err := properties.M("Type").String()
+	if err != nil {
+		dp.Put(err)
+		return nil
+	}
+	switch typ {
+	case mackerel.GraphRangeTypeRelative.String():
+		return &mackerel.GraphRangeRelative{
+			Period: dp.Int64(properties.M("Period")),
+			Offset: dp.Int64(properties.M("Offset")),
+		}
+	case mackerel.GraphRangeTypeAbsolute.String():
+		return &mackerel.GraphRangeAbsolute{
+			Start: dp.Int64(properties.M("Start")),
+			End:   dp.Int64(properties.M("End")),
+		}
+	}
+	dp.Put(fmt.Errorf("unknown graph range type: %s", typ))
 	return nil
 }
 

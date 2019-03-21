@@ -382,6 +382,104 @@ func TestFindDashboard(t *testing.T) {
 				UpdatedAt: 1234567890,
 			},
 		},
+
+		////////// Graph ranges
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":  "graph",
+						"title": "graph title",
+						"range": map[string]interface{}{
+							"type":   "relative",
+							"period": 3600,
+							"offset": -3600,
+						},
+						"graph": map[string]string{
+							"type":   "host",
+							"hostId": "host-foobar",
+							"name":   "host-graph",
+						},
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Range: &GraphRangeRelative{
+							Type:   GraphRangeTypeRelative,
+							Period: 3600,
+							Offset: -3600,
+						},
+						Graph: &GraphHost{
+							Type:   GraphTypeHost,
+							HostID: "host-foobar",
+							Name:   "host-graph",
+						},
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":  "graph",
+						"title": "graph title",
+						"range": map[string]interface{}{
+							"type":  "absolute",
+							"start": -1234567890,
+							"end":   1234567890,
+						},
+						"graph": map[string]string{
+							"type":   "host",
+							"hostId": "host-foobar",
+							"name":   "host-graph",
+						},
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Range: &GraphRangeAbsolute{
+							Type:  GraphRangeTypeAbsolute,
+							Start: -1234567890,
+							End:   1234567890,
+						},
+						Graph: &GraphHost{
+							Type:   GraphTypeHost,
+							HostID: "host-foobar",
+							Name:   "host-graph",
+						},
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
 	}
 
 	for i, tc := range tests {
@@ -749,6 +847,98 @@ func TestCreateDashboard(t *testing.T) {
 						"type":     "markdown",
 						"title":    "markdown title",
 						"markdown": "*FOOBAR*",
+					},
+				},
+			},
+		},
+
+		////////// Graph ranges
+		{
+			in: &Dashboard{
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						// the type field will be autocomplete from the Golang's type.
+						// Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Range: &GraphRangeRelative{
+							// the type field will be autocomplete from the Golang's type.
+							// Type:   GraphRangeTypeRelative,
+							Period: 3600,
+							Offset: -3600,
+						},
+						Graph: &GraphHost{
+							// the type field will be autocomplete from the Golang's type.
+							// Type:   GraphTypeHost,
+							HostID: "host-foobar",
+							Name:   "host-graph",
+						},
+					},
+				},
+			},
+			want: map[string]interface{}{
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []interface{}{
+					map[string]interface{}{
+						"type":  "graph",
+						"title": "graph title",
+						"range": map[string]interface{}{
+							"type":   "relative",
+							"period": 3600.0,
+							"offset": -3600.0,
+						},
+						"graph": map[string]interface{}{
+							"type":   "host",
+							"hostId": "host-foobar",
+							"name":   "host-graph",
+						},
+					},
+				},
+			},
+		},
+		{
+			in: &Dashboard{
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetGraph{
+						// the type field will be autocomplete from the Golang's type.
+						// Type:  WidgetTypeGraph,
+						Title: "graph title",
+						Range: &GraphRangeAbsolute{
+							// the type field will be autocomplete from the Golang's type.
+							// Type:   GraphRangeTypeAbsolute,
+							Start: -1234567890,
+							End:   1234567890,
+						},
+						Graph: &GraphHost{
+							// the type field will be autocomplete from the Golang's type.
+							// Type:   GraphTypeHost,
+							HostID: "host-foobar",
+							Name:   "host-graph",
+						},
+					},
+				},
+			},
+			want: map[string]interface{}{
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []interface{}{
+					map[string]interface{}{
+						"type":  "graph",
+						"title": "graph title",
+						"range": map[string]interface{}{
+							"type":  "absolute",
+							"start": -1234567890.0,
+							"end":   1234567890.0,
+						},
+						"graph": map[string]interface{}{
+							"type":   "host",
+							"hostId": "host-foobar",
+							"name":   "host-graph",
+						},
 					},
 				},
 			},
