@@ -205,7 +205,7 @@ func (m *MonitorExpression) MonitorID() string { return m.ID }
 // CreateMonitor creates a new monitoring.
 func (c *Client) CreateMonitor(ctx context.Context, param Monitor) (Monitor, error) {
 	var resp json.RawMessage
-	err := c.do(ctx, http.MethodPost, "/api/v0/monitors", param, &resp)
+	_, err := c.do(ctx, http.MethodPost, "/api/v0/monitors", param, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -215,7 +215,7 @@ func (c *Client) CreateMonitor(ctx context.Context, param Monitor) (Monitor, err
 // UpdateMonitor updates a monitoring.
 func (c *Client) UpdateMonitor(ctx context.Context, monitorID string, param Monitor) (Monitor, error) {
 	var resp json.RawMessage
-	err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/monitors/%s", monitorID), param, &resp)
+	_, err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/monitors/%s", monitorID), param, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +225,7 @@ func (c *Client) UpdateMonitor(ctx context.Context, monitorID string, param Moni
 // DeleteMonitor deletes a monitoring.
 func (c *Client) DeleteMonitor(ctx context.Context, monitorID string) (Monitor, error) {
 	var resp json.RawMessage
-	err := c.do(ctx, http.MethodDelete, fmt.Sprintf("/api/v0/monitors/%s", monitorID), nil, &resp)
+	_, err := c.do(ctx, http.MethodDelete, fmt.Sprintf("/api/v0/monitors/%s", monitorID), nil, &resp)
 	if err != nil {
 		return nil, err
 	}

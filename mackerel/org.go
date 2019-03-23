@@ -13,7 +13,7 @@ type Org struct {
 // GetOrg get the org
 func (c *Client) GetOrg(ctx context.Context) (*Org, error) {
 	org := &Org{}
-	err := c.do(ctx, http.MethodGet, "/api/v0/org", nil, org)
+	_, err := c.do(ctx, http.MethodGet, "/api/v0/org", nil, org)
 	if err != nil {
 		return nil, err
 	}

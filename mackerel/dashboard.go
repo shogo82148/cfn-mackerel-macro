@@ -636,7 +636,7 @@ func (r *GraphRangeAbsolute) UnmarshalJSON(b []byte) error {
 // https://mackerel.io/api-docs/entry/dashboards#list
 func (c *Client) FindDashboards(ctx context.Context) ([]*Dashboard, error) {
 	ret := []*Dashboard{}
-	err := c.do(ctx, http.MethodGet, "/api/v0/dashboards", nil, &ret)
+	_, err := c.do(ctx, http.MethodGet, "/api/v0/dashboards", nil, &ret)
 	if err != nil {
 		return nil, err
 	}
@@ -647,7 +647,7 @@ func (c *Client) FindDashboards(ctx context.Context) ([]*Dashboard, error) {
 // https://mackerel.io/api-docs/entry/dashboards#get
 func (c *Client) FindDashboard(ctx context.Context, dashboardID string) (*Dashboard, error) {
 	ret := &Dashboard{}
-	err := c.do(ctx, http.MethodGet, fmt.Sprintf("/api/v0/dashboards/%s", dashboardID), nil, ret)
+	_, err := c.do(ctx, http.MethodGet, fmt.Sprintf("/api/v0/dashboards/%s", dashboardID), nil, ret)
 	if err != nil {
 		return nil, err
 	}
@@ -658,7 +658,7 @@ func (c *Client) FindDashboard(ctx context.Context, dashboardID string) (*Dashbo
 // https://mackerel.io/api-docs/entry/dashboards#create
 func (c *Client) CreateDashboard(ctx context.Context, param *Dashboard) (*Dashboard, error) {
 	ret := &Dashboard{}
-	err := c.do(ctx, http.MethodPost, "/api/v0/dashboards", param, ret)
+	_, err := c.do(ctx, http.MethodPost, "/api/v0/dashboards", param, ret)
 	if err != nil {
 		return nil, err
 	}
@@ -669,7 +669,7 @@ func (c *Client) CreateDashboard(ctx context.Context, param *Dashboard) (*Dashbo
 // https://mackerel.io/api-docs/entry/dashboards#update
 func (c *Client) UpdateDashboard(ctx context.Context, dashboardID string, param *Dashboard) (*Dashboard, error) {
 	ret := &Dashboard{}
-	err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/dashboards/%s", dashboardID), param, ret)
+	_, err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/dashboards/%s", dashboardID), param, ret)
 	if err != nil {
 		return nil, err
 	}
@@ -680,7 +680,7 @@ func (c *Client) UpdateDashboard(ctx context.Context, dashboardID string, param 
 // https://mackerel.io/api-docs/entry/dashboards#delete
 func (c *Client) DeleteDashboard(ctx context.Context, dashboardID string) (*Dashboard, error) {
 	dashboard := &Dashboard{}
-	err := c.do(ctx, http.MethodDelete, fmt.Sprintf("/api/v0/dashboards/%s", dashboardID), nil, dashboard)
+	_, err := c.do(ctx, http.MethodDelete, fmt.Sprintf("/api/v0/dashboards/%s", dashboardID), nil, dashboard)
 	if err != nil {
 		return nil, err
 	}
