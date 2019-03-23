@@ -24,6 +24,11 @@ func (h *host) create(ctx context.Context) (physicalResourceID string, data map[
 		return "", nil, err
 	}
 
+	meta := getmetadata(h.Event)
+	if err := c.PutHostMetaData(ctx, hostID, "cloudformation", meta); err != nil {
+		return hostID, nil, err
+	}
+
 	id, err := h.Function.buildHostID(ctx, hostID)
 	if err != nil {
 		return "", nil, err

@@ -7,22 +7,26 @@ import (
 )
 
 type fakeMackerelClient struct {
-	getOrg          func(ctx context.Context) (*mackerel.Org, error)
-	createHost      func(ctx context.Context, param *mackerel.CreateHostParam) (string, error)
-	updateHost      func(ctx context.Context, hostID string, param *mackerel.UpdateHostParam) (string, error)
-	retireHost      func(ctx context.Context, id string) error
-	createMonitor   func(ctx context.Context, param mackerel.Monitor) (mackerel.Monitor, error)
-	updateMonitor   func(ctx context.Context, monitorID string, param mackerel.Monitor) (mackerel.Monitor, error)
-	deleteMonitor   func(ctx context.Context, monitorID string) (mackerel.Monitor, error)
-	findDashboards  func(ctx context.Context) ([]*mackerel.Dashboard, error)
-	findDashboard   func(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error)
-	createDashboard func(ctx context.Context, param *mackerel.Dashboard) (*mackerel.Dashboard, error)
-	updateDashboard func(ctx context.Context, dashboardID string, param *mackerel.Dashboard) (*mackerel.Dashboard, error)
-	deleteDashboard func(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error)
-	createRole      func(ctx context.Context, serviceName string, param *mackerel.CreateRoleParam) (*mackerel.Role, error)
-	deleteRole      func(ctx context.Context, serviceName, roleName string) (*mackerel.Role, error)
-	createService   func(ctx context.Context, param *mackerel.CreateServiceParam) (*mackerel.Service, error)
-	deleteService   func(ctx context.Context, serviceName string) (*mackerel.Service, error)
+	getOrg                    func(ctx context.Context) (*mackerel.Org, error)
+	createHost                func(ctx context.Context, param *mackerel.CreateHostParam) (string, error)
+	updateHost                func(ctx context.Context, hostID string, param *mackerel.UpdateHostParam) (string, error)
+	retireHost                func(ctx context.Context, id string) error
+	getHostMetaData           func(ctx context.Context, hostID, namespace string, v interface{}) (*mackerel.HostMetaMetaData, error)
+	getHostMetaDataNameSpaces func(ctx context.Context, hostID string) ([]string, error)
+	putHostMetaData           func(ctx context.Context, hostID, namespace string, v interface{}) error
+	deleteHostMetaData        func(ctx context.Context, hostID, namespace string) error
+	createMonitor             func(ctx context.Context, param mackerel.Monitor) (mackerel.Monitor, error)
+	updateMonitor             func(ctx context.Context, monitorID string, param mackerel.Monitor) (mackerel.Monitor, error)
+	deleteMonitor             func(ctx context.Context, monitorID string) (mackerel.Monitor, error)
+	findDashboards            func(ctx context.Context) ([]*mackerel.Dashboard, error)
+	findDashboard             func(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error)
+	createDashboard           func(ctx context.Context, param *mackerel.Dashboard) (*mackerel.Dashboard, error)
+	updateDashboard           func(ctx context.Context, dashboardID string, param *mackerel.Dashboard) (*mackerel.Dashboard, error)
+	deleteDashboard           func(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error)
+	createRole                func(ctx context.Context, serviceName string, param *mackerel.CreateRoleParam) (*mackerel.Role, error)
+	deleteRole                func(ctx context.Context, serviceName, roleName string) (*mackerel.Role, error)
+	createService             func(ctx context.Context, param *mackerel.CreateServiceParam) (*mackerel.Service, error)
+	deleteService             func(ctx context.Context, serviceName string) (*mackerel.Service, error)
 }
 
 var _ makerelInterface = (*fakeMackerelClient)(nil)
@@ -41,6 +45,22 @@ func (c *fakeMackerelClient) UpdateHost(ctx context.Context, hostID string, para
 
 func (c *fakeMackerelClient) RetireHost(ctx context.Context, id string) error {
 	return c.retireHost(ctx, id)
+}
+
+func (c *fakeMackerelClient) GetHostMetaData(ctx context.Context, hostID, namespace string, v interface{}) (*mackerel.HostMetaMetaData, error) {
+	return c.getHostMetaData(ctx, hostID, namespace, v)
+}
+
+func (c *fakeMackerelClient) GetHostMetaDataNameSpaces(ctx context.Context, hostID string) ([]string, error) {
+	return c.getHostMetaDataNameSpaces(ctx, hostID)
+}
+
+func (c *fakeMackerelClient) PutHostMetaData(ctx context.Context, hostID, namespace string, v interface{}) error {
+	return c.putHostMetaData(ctx, hostID, namespace, v)
+}
+
+func (c *fakeMackerelClient) DeleteHostMetaData(ctx context.Context, hostID, namespace string) error {
+	return c.deleteHostMetaData(ctx, hostID, namespace)
 }
 
 func (c *fakeMackerelClient) CreateMonitor(ctx context.Context, param mackerel.Monitor) (mackerel.Monitor, error) {
