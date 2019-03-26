@@ -72,7 +72,7 @@ func (c *Client) newRequest(ctx context.Context, method, path string, body io.Re
 	return req, nil
 }
 
-func (c *Client) do(ctx context.Context, method, path string, in, out interface{}) error {
+func (c *Client) do(ctx context.Context, method, path string, in, out interface{}) (http.Header, error) {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
@@ -80,25 +80,25 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 	if in != nil {
 		data, err := json.Marshal(in)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		body = bytes.NewReader(data)
 	}
 
 	req, err := c.newRequest(ctx, method, path, body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := c.httpClient().Do(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return handleError(resp)
+		return resp.Header, handleError(resp)
 	}
 
 	if out == nil {
@@ -107,11 +107,11 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 	} else {
 		dec := json.NewDecoder(resp.Body)
 		if err := dec.Decode(out); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return nil
+	return resp.Header, nil
 }
 
 // Error is an error from the Mackerel.

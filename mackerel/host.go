@@ -51,7 +51,7 @@ func (c *Client) CreateHost(ctx context.Context, param *CreateHostParam) (string
 	var data struct {
 		ID string `json:"id"`
 	}
-	err := c.do(ctx, http.MethodPost, "/api/v0/hosts", param, &data)
+	_, err := c.do(ctx, http.MethodPost, "/api/v0/hosts", param, &data)
 	if err != nil {
 		return "", err
 	}
@@ -66,7 +66,7 @@ func (c *Client) UpdateHost(ctx context.Context, hostID string, param *UpdateHos
 	var data struct {
 		ID string `json:"id"`
 	}
-	err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/hosts/%s", hostID), param, &data)
+	_, err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/hosts/%s", hostID), param, &data)
 	if err != nil {
 		return "", err
 	}
@@ -76,5 +76,6 @@ func (c *Client) UpdateHost(ctx context.Context, hostID string, param *UpdateHos
 // RetireHost make the host retuired.
 func (c *Client) RetireHost(ctx context.Context, id string) error {
 	param := map[string]string{}
-	return c.do(ctx, http.MethodPost, fmt.Sprintf("/api/v0/hosts/%s/retire", id), param, nil)
+	_, err := c.do(ctx, http.MethodPost, fmt.Sprintf("/api/v0/hosts/%s/retire", id), param, nil)
+	return err
 }

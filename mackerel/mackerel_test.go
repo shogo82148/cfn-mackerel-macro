@@ -30,7 +30,7 @@ func TestError(t *testing.T) {
 		HTTPClient: ts.Client(),
 	}
 
-	err = c.do(context.Background(), http.MethodGet, "/foo/bar", nil, nil)
+	_, err = c.do(context.Background(), http.MethodGet, "/foo/bar", nil, nil)
 	merr, ok := err.(Error)
 	if !ok {
 		t.Errorf("want mackerel.Error, got %t", err)

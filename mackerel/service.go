@@ -22,7 +22,7 @@ type CreateServiceParam struct {
 // CreateService creates a new service
 func (c *Client) CreateService(ctx context.Context, param *CreateServiceParam) (*Service, error) {
 	service := &Service{}
-	err := c.do(ctx, http.MethodPost, "/api/v0/services", param, service)
+	_, err := c.do(ctx, http.MethodPost, "/api/v0/services", param, service)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func (c *Client) CreateService(ctx context.Context, param *CreateServiceParam) (
 // DeleteService deletes a service
 func (c *Client) DeleteService(ctx context.Context, serviceName string) (*Service, error) {
 	service := &Service{}
-	err := c.do(ctx, http.MethodDelete, fmt.Sprintf("/api/v0/services/%s", serviceName), nil, service)
+	_, err := c.do(ctx, http.MethodDelete, fmt.Sprintf("/api/v0/services/%s", serviceName), nil, service)
 	if err != nil {
 		return nil, err
 	}

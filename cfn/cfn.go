@@ -15,8 +15,44 @@ type Function struct {
 	APIKey string
 
 	mu     sync.Mutex
-	client *mackerel.Client
+	client makerelInterface
 	org    *mackerel.Org
+}
+
+type makerelInterface interface {
+	// org
+	GetOrg(ctx context.Context) (*mackerel.Org, error)
+
+	// host
+	CreateHost(ctx context.Context, param *mackerel.CreateHostParam) (string, error)
+	UpdateHost(ctx context.Context, hostID string, param *mackerel.UpdateHostParam) (string, error)
+	RetireHost(ctx context.Context, id string) error
+
+	// host metadata
+	GetHostMetaData(ctx context.Context, hostID, namespace string, v interface{}) (*mackerel.HostMetaMetaData, error)
+	GetHostMetaDataNameSpaces(ctx context.Context, hostID string) ([]string, error)
+	PutHostMetaData(ctx context.Context, hostID, namespace string, v interface{}) error
+	DeleteHostMetaData(ctx context.Context, hostID, namespace string) error
+
+	// monitor
+	CreateMonitor(ctx context.Context, param mackerel.Monitor) (mackerel.Monitor, error)
+	UpdateMonitor(ctx context.Context, monitorID string, param mackerel.Monitor) (mackerel.Monitor, error)
+	DeleteMonitor(ctx context.Context, monitorID string) (mackerel.Monitor, error)
+
+	// dashboard
+	FindDashboards(ctx context.Context) ([]*mackerel.Dashboard, error)
+	FindDashboard(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error)
+	CreateDashboard(ctx context.Context, param *mackerel.Dashboard) (*mackerel.Dashboard, error)
+	UpdateDashboard(ctx context.Context, dashboardID string, param *mackerel.Dashboard) (*mackerel.Dashboard, error)
+	DeleteDashboard(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error)
+
+	// role
+	CreateRole(ctx context.Context, serviceName string, param *mackerel.CreateRoleParam) (*mackerel.Role, error)
+	DeleteRole(ctx context.Context, serviceName, roleName string) (*mackerel.Role, error)
+
+	// service
+	CreateService(ctx context.Context, param *mackerel.CreateServiceParam) (*mackerel.Service, error)
+	DeleteService(ctx context.Context, serviceName string) (*mackerel.Service, error)
 }
 
 type resource interface {
@@ -87,7 +123,7 @@ func (f *Function) LambdaWrap() cfn.CustomResourceLambdaFunction {
 	return cfn.LambdaWrap(f.Handle)
 }
 
-func (f *Function) getclient() *mackerel.Client {
+func (f *Function) getclient() makerelInterface {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	if f.client == nil {
@@ -215,4 +251,26 @@ func (f *Function) parseDashboardID(ctx context.Context, id string) (string, err
 		return "", fmt.Errorf("invalid type %s, expected monitor type", typ)
 	}
 	return parts[0], nil
+}
+
+type metadata struct {
+	StackName string `json:"stack_name"`
+	StackID   string `json:"stack_id"`
+	LogicalID string `json:"logical_id"`
+}
+
+func getmetadata(e cfn.Event) metadata {
+	// arn format: arn:aws:cloudformation:${AWS_REGION}:${AWS::ACCOUNT}:stack/${STACK_NAME}/${UUID}
+	name := e.StackID
+	if idx := strings.LastIndexByte(name, ':'); idx >= 0 {
+		name = strings.TrimPrefix(name[idx:], ":stack/")
+	}
+	if idx := strings.LastIndexByte(name, '/'); idx >= 0 {
+		name = name[:idx]
+	}
+	return metadata{
+		StackName: name,
+		StackID:   e.StackID,
+		LogicalID: e.LogicalResourceID,
+	}
 }
