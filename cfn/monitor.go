@@ -149,7 +149,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			Warning:                 d.OptionalFloat64(in.M("Warning")),
 			Critical:                d.OptionalFloat64(in.M("Critical")),
 			MaxCheckAttempts:        d.Uint64(dproxy.Default(in.M("MaxCheckAttempts"), 1)),
-			NotificationInterval:    d.Uint64(dproxy.Default(in.M("notificationInterval"), 0)),
+			NotificationInterval:    d.Uint64(dproxy.Default(in.M("NotificationInterval"), 0)),
 			MissingDurationWarning:  d.OptionalUint64(in.M("MissingDurationWarning")),
 			MissingDurationCritical: d.OptionalUint64(in.M("MissingDurationCritical")),
 		}
