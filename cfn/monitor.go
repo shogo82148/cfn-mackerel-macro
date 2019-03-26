@@ -95,7 +95,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			Memo:                 d.String(dproxy.Default(in.M("Memo"), "")),
 			Scopes:               scopes,
 			ExcludeScopes:        excludeScopes,
-			NotificationInterval: uint64(d.Int64(dproxy.Default(in.M("notificationInterval"), 0))),
+			NotificationInterval: uint64(d.Int64(dproxy.Default(in.M("NotificationInterval"), 0))),
 		}
 	case mackerel.MonitorTypeHostMeric.String():
 		var scopes, excludeScopes []string
@@ -131,7 +131,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			MaxCheckAttempts:     uint64(d.Int64(dproxy.Default(in.M("MaxCheckAttempts"), 1))),
 			Scopes:               scopes,
 			ExcludeScopes:        excludeScopes,
-			NotificationInterval: uint64(d.Int64(dproxy.Default(in.M("notificationInterval"), 0))),
+			NotificationInterval: uint64(d.Int64(dproxy.Default(in.M("NotificationInterval"), 0))),
 		}
 	case mackerel.MonitorTypeServiceMetric.String():
 		serviceName, err := m.Function.parseServiceID(ctx, d.String(in.M("Service")))
