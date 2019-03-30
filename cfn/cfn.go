@@ -53,6 +53,12 @@ type makerelInterface interface {
 	// service
 	CreateService(ctx context.Context, param *mackerel.CreateServiceParam) (*mackerel.Service, error)
 	DeleteService(ctx context.Context, serviceName string) (*mackerel.Service, error)
+
+	// service metadata
+	GetServiceMetaData(ctx context.Context, serviceName, namespace string, v interface{}) (*mackerel.ServiceMetaMetaData, error)
+	GetServiceMetaDataNameSpaces(ctx context.Context, serviceName string) ([]string, error)
+	PutServiceMetaData(ctx context.Context, serviceName, namespace string, v interface{}) error
+	DeleteServiceMetaData(ctx context.Context, serviceName, namespace string) error
 }
 
 type resource interface {
