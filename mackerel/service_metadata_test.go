@@ -14,10 +14,10 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestGetHostMetaData(t *testing.T) {
+func TestGetServiceMetaData(t *testing.T) {
 	const (
-		hostID    = "9rxGOHfVF8F"
-		namespace = "testing"
+		serviceName = "awesome-service"
+		namespace   = "testing"
 	)
 	lastModified := time.Date(2018, 3, 6, 3, 0, 0, 0, time.UTC)
 
@@ -45,7 +45,7 @@ func TestGetHostMetaData(t *testing.T) {
 		InstanceType string `json:"instance_type"`
 	}
 	var got metadata
-	metametadata, err := c.GetHostMetaData(context.Background(), hostID, namespace, &got)
+	metametadata, err := c.GetServiceMetaData(context.Background(), serviceName, namespace, &got)
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,7 +64,7 @@ func TestGetHostMetaData(t *testing.T) {
 	}
 }
 
-func TestGetHostMetaDataNameSpaces(t *testing.T) {
+func TestGetServiceMetaDataNameSpaces(t *testing.T) {
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
@@ -81,7 +81,7 @@ func TestGetHostMetaDataNameSpaces(t *testing.T) {
 		HTTPClient: ts.Client(),
 	}
 
-	ns, err := c.GetHostMetaDataNameSpaces(context.Background(), "9rxGOHfVF8F")
+	ns, err := c.GetServiceMetaDataNameSpaces(context.Background(), "awesome-service")
 	if err != nil {
 		t.Error(err)
 	}
@@ -90,10 +90,10 @@ func TestGetHostMetaDataNameSpaces(t *testing.T) {
 	}
 }
 
-func TestPutHostMetaData(t *testing.T) {
+func TestPutServiceMetaData(t *testing.T) {
 	const (
-		hostID    = "9rxGOHfVF8F"
-		namespace = "testing"
+		serviceName = "awesome-service"
+		namespace   = "testing"
 	)
 
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -141,13 +141,13 @@ func TestPutHostMetaData(t *testing.T) {
 		Env:          "staging",
 		InstanceType: "c4.xlarge",
 	}
-	err = c.PutHostMetaData(context.Background(), hostID, namespace, metadata)
+	err = c.PutServiceMetaData(context.Background(), serviceName, namespace, metadata)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
-func TestDeleteHostMetaData(t *testing.T) {
+func TestDeleteServiceMetaData(t *testing.T) {
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodDelete {
 			t.Errorf("unexpected method: got %s, want %s", http.MethodDelete, r.Method)
@@ -167,7 +167,7 @@ func TestDeleteHostMetaData(t *testing.T) {
 		HTTPClient: ts.Client(),
 	}
 
-	err = c.DeleteHostMetaData(context.Background(), "9rxGOHfVF8F", "test")
+	err = c.DeleteServiceMetaData(context.Background(), "awesome-service", "test")
 	if err != nil {
 		t.Error(err)
 	}
