@@ -50,6 +50,12 @@ type makerelInterface interface {
 	CreateRole(ctx context.Context, serviceName string, param *mackerel.CreateRoleParam) (*mackerel.Role, error)
 	DeleteRole(ctx context.Context, serviceName, roleName string) (*mackerel.Role, error)
 
+	// role metadata
+	GetRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v interface{}) (*mackerel.RoleMetaMetaData, error)
+	GetRoleMetaDataNameSpaces(ctx context.Context, serviceName, roleName string) ([]string, error)
+	PutRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v interface{}) error
+	DeleteRoleMetaData(ctx context.Context, serviceName, roleName, namespace string) error
+
 	// service
 	CreateService(ctx context.Context, param *mackerel.CreateServiceParam) (*mackerel.Service, error)
 	DeleteService(ctx context.Context, serviceName string) (*mackerel.Service, error)

@@ -25,6 +25,10 @@ type fakeMackerelClient struct {
 	deleteDashboard              func(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error)
 	createRole                   func(ctx context.Context, serviceName string, param *mackerel.CreateRoleParam) (*mackerel.Role, error)
 	deleteRole                   func(ctx context.Context, serviceName, roleName string) (*mackerel.Role, error)
+	getRoleMetaData              func(ctx context.Context, serviceName, roleName, namespace string, v interface{}) (*mackerel.RoleMetaMetaData, error)
+	getRoleMetaDataNameSpaces    func(ctx context.Context, serviceName, roleName string) ([]string, error)
+	putRoleMetaData              func(ctx context.Context, serviceName, roleName, namespace string, v interface{}) error
+	deleteRoleMetaData           func(ctx context.Context, serviceName, roleName, namespace string) error
 	createService                func(ctx context.Context, param *mackerel.CreateServiceParam) (*mackerel.Service, error)
 	deleteService                func(ctx context.Context, serviceName string) (*mackerel.Service, error)
 	getServiceMetaData           func(ctx context.Context, serviceName, namespace string, v interface{}) (*mackerel.ServiceMetaMetaData, error)
@@ -104,6 +108,22 @@ func (c *fakeMackerelClient) CreateRole(ctx context.Context, serviceName string,
 
 func (c *fakeMackerelClient) DeleteRole(ctx context.Context, serviceName, roleName string) (*mackerel.Role, error) {
 	return c.deleteRole(ctx, serviceName, roleName)
+}
+
+func (c *fakeMackerelClient) GetRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v interface{}) (*mackerel.RoleMetaMetaData, error) {
+	return c.getRoleMetaData(ctx, serviceName, roleName, namespace, v)
+}
+
+func (c *fakeMackerelClient) GetRoleMetaDataNameSpaces(ctx context.Context, serviceName, roleName string) ([]string, error) {
+	return c.getRoleMetaDataNameSpaces(ctx, serviceName, roleName)
+}
+
+func (c *fakeMackerelClient) PutRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v interface{}) error {
+	return c.putRoleMetaData(ctx, serviceName, roleName, namespace, v)
+}
+
+func (c *fakeMackerelClient) DeleteRoleMetaData(ctx context.Context, serviceName, roleName, namespace string) error {
+	return c.deleteRoleMetaData(ctx, serviceName, roleName, namespace)
 }
 
 func (c *fakeMackerelClient) CreateService(ctx context.Context, param *mackerel.CreateServiceParam) (*mackerel.Service, error) {
