@@ -123,7 +123,7 @@ func (c *fakeMackerelClient) GetServiceMetaDataNameSpaces(ctx context.Context, s
 }
 
 func (c *fakeMackerelClient) PutServiceMetaData(ctx context.Context, serviceName, namespace string, v interface{}) error {
-	return c.putHostMetaData(ctx, serviceName, namespace, v)
+	return c.putServiceMetaData(ctx, serviceName, namespace, v)
 }
 
 func (c *fakeMackerelClient) DeleteServiceMetaData(ctx context.Context, serviceName, namespace string) error {
