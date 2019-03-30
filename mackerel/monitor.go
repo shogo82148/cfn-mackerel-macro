@@ -124,6 +124,9 @@ type MonitorServiceMetric struct {
 	Critical         *float64 `json:"critical"`
 	Duration         uint64   `json:"duration,omitempty"`
 	MaxCheckAttempts uint64   `json:"maxCheckAttempts,omitempty"`
+
+	MissingDurationWarning  *uint64 `json:"missingDurationWarning"`
+	MissingDurationCritical *uint64 `json:"missingDurationCritical"`
 }
 
 // MonitorType returns monitor type.

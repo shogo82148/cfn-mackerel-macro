@@ -95,7 +95,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			Memo:                 d.String(dproxy.Default(in.M("Memo"), "")),
 			Scopes:               scopes,
 			ExcludeScopes:        excludeScopes,
-			NotificationInterval: uint64(d.Int64(dproxy.Default(in.M("notificationInterval"), 0))),
+			NotificationInterval: uint64(d.Int64(dproxy.Default(in.M("NotificationInterval"), 0))),
 		}
 	case mackerel.MonitorTypeHostMeric.String():
 		var scopes, excludeScopes []string
@@ -131,7 +131,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			MaxCheckAttempts:     uint64(d.Int64(dproxy.Default(in.M("MaxCheckAttempts"), 1))),
 			Scopes:               scopes,
 			ExcludeScopes:        excludeScopes,
-			NotificationInterval: uint64(d.Int64(dproxy.Default(in.M("notificationInterval"), 0))),
+			NotificationInterval: uint64(d.Int64(dproxy.Default(in.M("NotificationInterval"), 0))),
 		}
 	case mackerel.MonitorTypeServiceMetric.String():
 		serviceName, err := m.Function.parseServiceID(ctx, d.String(in.M("Service")))
@@ -139,17 +139,19 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			return nil, err
 		}
 		mm = &mackerel.MonitorServiceMetric{
-			Type:                 mackerel.MonitorTypeHostMeric,
-			Name:                 d.String(in.M("Name")),
-			Memo:                 d.String(dproxy.Default(in.M("Memo"), "")),
-			Duration:             d.Uint64(dproxy.Default(in.M("Duration"), 1)),
-			Service:              serviceName,
-			Metric:               d.String(in.M("Metric")),
-			Operator:             d.String(in.M("Operator")),
-			Warning:              d.OptionalFloat64(in.M("Warning")),
-			Critical:             d.OptionalFloat64(in.M("Critical")),
-			MaxCheckAttempts:     d.Uint64(dproxy.Default(in.M("MaxCheckAttempts"), 1)),
-			NotificationInterval: d.Uint64(dproxy.Default(in.M("notificationInterval"), 0)),
+			Type:                    mackerel.MonitorTypeHostMeric,
+			Name:                    d.String(in.M("Name")),
+			Memo:                    d.String(dproxy.Default(in.M("Memo"), "")),
+			Duration:                d.Uint64(dproxy.Default(in.M("Duration"), 1)),
+			Service:                 serviceName,
+			Metric:                  d.String(in.M("Metric")),
+			Operator:                d.String(in.M("Operator")),
+			Warning:                 d.OptionalFloat64(in.M("Warning")),
+			Critical:                d.OptionalFloat64(in.M("Critical")),
+			MaxCheckAttempts:        d.Uint64(dproxy.Default(in.M("MaxCheckAttempts"), 1)),
+			NotificationInterval:    d.Uint64(dproxy.Default(in.M("NotificationInterval"), 0)),
+			MissingDurationWarning:  d.OptionalUint64(in.M("MissingDurationWarning")),
+			MissingDurationCritical: d.OptionalUint64(in.M("MissingDurationCritical")),
 		}
 	case mackerel.MonitorTypeExternalHTTP.String():
 		var serviceName string
