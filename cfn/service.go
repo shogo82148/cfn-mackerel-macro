@@ -33,6 +33,12 @@ func (s *service) create(ctx context.Context) (physicalResourceID string, data m
 	if err != nil {
 		return "", nil, err
 	}
+
+	meta := getmetadata(s.Event)
+	if err := c.PutServiceMetaData(ctx, ss.Name, "cloudformation", meta); err != nil {
+		return id, nil, err
+	}
+
 	return id, map[string]interface{}{
 		"Name": ss.Name,
 	}, nil
