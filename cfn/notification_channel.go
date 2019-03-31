@@ -49,7 +49,7 @@ func (ch *notificationChannel) convertToParam(ctx context.Context, properties ma
 			Name:    d.String(in.M("Name")),
 			Emails:  d.StringArray(in.M("Emails").ProxySet()),
 			UserIDs: []string{}, // TODO: support user ids
-			Events:  ch.convertEvents(d, in.M("Events")),
+			Events:  ch.convertEvents(&d, in.M("Events")),
 		}
 	case mackerel.NotificationChannelTypeSlack.String():
 		ret = &mackerel.NotificationChannelSlack{
@@ -61,13 +61,13 @@ func (ch *notificationChannel) convertToParam(ctx context.Context, properties ma
 				Critical: d.String(dproxy.Default(in.M("Mentions").M("Critical"), "")),
 			},
 			EnabledGraphImage: d.Bool(dproxy.Default(in.M("EnabledGraphImage"), false)),
-			Events:            ch.convertEvents(d, in.M("Events")),
+			Events:            ch.convertEvents(&d, in.M("Events")),
 		}
 	case mackerel.NotificationChannelTypeWebHook.String():
 		ret = &mackerel.NotificationChannelWebHook{
 			Name:   d.String(in.M("Name")),
 			URL:    d.String(in.M("Url")),
-			Events: ch.convertEvents(d, in.M("Events")),
+			Events: ch.convertEvents(&d, in.M("Events")),
 		}
 	default:
 		return nil, fmt.Errorf("unknown type: %s", typ)
@@ -78,7 +78,7 @@ func (ch *notificationChannel) convertToParam(ctx context.Context, properties ma
 	return ret, nil
 }
 
-func (ch *notificationChannel) convertEvents(d dproxy.Drain, in dproxy.Proxy) []mackerel.NotificationEvent {
+func (ch *notificationChannel) convertEvents(d *dproxy.Drain, in dproxy.Proxy) []mackerel.NotificationEvent {
 	events := d.StringArray(in.ProxySet())
 	ret := make([]mackerel.NotificationEvent, 0, len(events))
 	for _, e := range events {
