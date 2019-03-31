@@ -65,6 +65,11 @@ type makerelInterface interface {
 	GetServiceMetaDataNameSpaces(ctx context.Context, serviceName string) ([]string, error)
 	PutServiceMetaData(ctx context.Context, serviceName, namespace string, v interface{}) error
 	DeleteServiceMetaData(ctx context.Context, serviceName, namespace string) error
+
+	// notification channels
+	FindNotificationChannels(ctx context.Context) ([]mackerel.NotificationChannel, error)
+	CreateNotificationChannel(ctx context.Context, ch mackerel.NotificationChannel) (mackerel.NotificationChannel, error)
+	DeleteNotificationChannel(ctx context.Context, channelID string) (mackerel.NotificationChannel, error)
 }
 
 type resource interface {
@@ -105,6 +110,11 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 		}
 	case "Dashboard":
 		r = &dashboard{
+			Function: f,
+			Event:    event,
+		}
+	case "NotificationChannel":
+		r = &notificationChannel{
 			Function: f,
 			Event:    event,
 		}
@@ -190,6 +200,10 @@ func (f *Function) buildDashboardID(ctx context.Context, dashboardID string) (st
 	return f.buildID(ctx, "dashboard", dashboardID)
 }
 
+func (f *Function) buildNotificationChannelID(ctx context.Context, channelID string) (string, error) {
+	return f.buildID(ctx, "notification-channel", channelID)
+}
+
 // parseID parses ID of Mackerel resources.
 func (f *Function) parseID(ctx context.Context, id string, n int) (string, []string, error) {
 	org, err := f.getorg(ctx)
@@ -261,6 +275,17 @@ func (f *Function) parseDashboardID(ctx context.Context, id string) (string, err
 	}
 	if typ != "dashboard" {
 		return "", fmt.Errorf("invalid type %s, expected monitor type", typ)
+	}
+	return parts[0], nil
+}
+
+func (f *Function) parseNotificationChannelID(ctx context.Context, id string) (string, error) {
+	typ, parts, err := f.parseID(ctx, id, 1)
+	if err != nil {
+		return "", err
+	}
+	if typ != "notification-channel" {
+		return "", fmt.Errorf("invalid type %s, expected notification channel", typ)
 	}
 	return parts[0], nil
 }

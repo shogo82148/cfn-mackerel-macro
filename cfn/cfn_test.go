@@ -35,6 +35,9 @@ type fakeMackerelClient struct {
 	getServiceMetaDataNameSpaces func(ctx context.Context, serviceName string) ([]string, error)
 	putServiceMetaData           func(ctx context.Context, serviceName, namespace string, v interface{}) error
 	deleteServiceMetaData        func(ctx context.Context, serviceName, namespace string) error
+	findNotificationChannels     func(ctx context.Context) ([]mackerel.NotificationChannel, error)
+	createNotificationChannel    func(ctx context.Context, ch mackerel.NotificationChannel) (mackerel.NotificationChannel, error)
+	deleteNotificationChannel    func(ctx context.Context, channelID string) (mackerel.NotificationChannel, error)
 }
 
 var _ makerelInterface = (*fakeMackerelClient)(nil)
@@ -148,4 +151,16 @@ func (c *fakeMackerelClient) PutServiceMetaData(ctx context.Context, serviceName
 
 func (c *fakeMackerelClient) DeleteServiceMetaData(ctx context.Context, serviceName, namespace string) error {
 	return c.deleteServiceMetaData(ctx, serviceName, namespace)
+}
+
+func (c *fakeMackerelClient) FindNotificationChannels(ctx context.Context) ([]mackerel.NotificationChannel, error) {
+	return c.findNotificationChannels(ctx)
+}
+
+func (c *fakeMackerelClient) CreateNotificationChannel(ctx context.Context, ch mackerel.NotificationChannel) (mackerel.NotificationChannel, error) {
+	return c.createNotificationChannel(ctx, ch)
+}
+
+func (c *fakeMackerelClient) DeleteNotificationChannel(ctx context.Context, channelID string) (mackerel.NotificationChannel, error) {
+	return c.deleteNotificationChannel(ctx, channelID)
 }
