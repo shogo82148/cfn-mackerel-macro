@@ -153,3 +153,108 @@ func TestFindNotificationChannels(t *testing.T) {
 		})
 	}
 }
+
+func TestCreateNotificationChannel(t *testing.T) {
+	tests := []struct {
+		in   NotificationChannel
+		want map[string]interface{}
+	}{
+		{
+			in: &NotificationChannelEmail{
+				Name:    "notification-test",
+				Emails:  []string{"myaddress@example.com"},
+				UserIDs: []string{"userId"},
+				Events:  []NotificationEvent{NotificationEventAlert},
+			},
+			want: map[string]interface{}{
+				"name":    "notification-test",
+				"type":    "email",
+				"emails":  []interface{}{"myaddress@example.com"},
+				"userIds": []interface{}{"userId"},
+				"events":  []interface{}{"alert"},
+			},
+		},
+		{
+			in: &NotificationChannelSlack{
+				Name: "notification-test",
+				URL:  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
+				Mentions: NotificationChannelSlackMentions{
+					OK:      "ok message",
+					Warning: "warning message",
+				},
+				EnabledGraphImage: true,
+				Events:            []NotificationEvent{NotificationEventAlert},
+			},
+			want: map[string]interface{}{
+				"name": "notification-test",
+				"type": "slack",
+				"url":  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
+				"mentions": map[string]interface{}{
+					"ok":      "ok message",
+					"warning": "warning message",
+				},
+				"enabledGraphImage": true,
+				"events":            []interface{}{"alert"},
+			},
+		},
+		{
+			in: &NotificationChannelWebHook{
+				Name:   "notification-test",
+				URL:    "https://example.com/webhook",
+				Events: []NotificationEvent{NotificationEventAlert},
+			},
+			want: map[string]interface{}{
+				"name":   "notification-test",
+				"type":   "webhook",
+				"url":    "https://example.com/webhook",
+				"events": []interface{}{"alert"},
+			},
+		},
+	}
+
+	for i, tc := range tests {
+		t.Run(fmt.Sprintf("CreateNotificationChannel-%d", i), func(t *testing.T) {
+			ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.Method != http.MethodPost {
+					t.Errorf("unexpected method, want %s, got %s", http.MethodPost, r.Method)
+				}
+				var data map[string]interface{}
+				dec := json.NewDecoder(r.Body)
+				if err := dec.Decode(&data); err != nil {
+					t.Error(err)
+					return
+				}
+				if diff := cmp.Diff(data, tc.want); diff != "" {
+					t.Errorf("CreateNotification differs: (-got +want)\n%s", diff)
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
+
+				data["id"] = "channelId"
+				enc := json.NewEncoder(w)
+				if err := enc.Encode(data); err != nil {
+					t.Error(err)
+				}
+			}))
+			defer ts.Close()
+
+			u, err := url.Parse(ts.URL)
+			if err != nil {
+				t.Fatal(err)
+			}
+			c := &Client{
+				BaseURL:    u,
+				HTTPClient: ts.Client(),
+			}
+
+			ch, err := c.CreateNotificationChannel(context.Background(), tc.in)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			if ch.NotificationChannelID() != "channelId" {
+				t.Errorf("unexpected channel id: want %s, got %s", "channelId", ch.NotificationChannelID())
+			}
+		})
+	}
+}

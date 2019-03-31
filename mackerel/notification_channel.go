@@ -3,6 +3,7 @@ package mackerel
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -63,7 +64,7 @@ func (e NotificationEvent) String() string {
 // NotificationChannelBase is base type of notifiction channel.
 type NotificationChannelBase struct {
 	Type NotificationChannelType `json:"type"`
-	ID   string                  `json:"id"`
+	ID   string                  `json:"id,omitempty"`
 	Name string                  `json:"name"`
 }
 
@@ -103,7 +104,7 @@ func (c *NotificationChannelBase) MarshalJSON() ([]byte, error) {
 // NotificationChannelEmail is an email notification chennel.
 type NotificationChannelEmail struct {
 	Type    NotificationChannelType `json:"type"`
-	ID      string                  `json:"id"`
+	ID      string                  `json:"id,omitempty"`
 	Name    string                  `json:"name"`
 	Emails  []string                `json:"emails"`
 	UserIDs []string                `json:"userIds"`
@@ -147,17 +148,20 @@ func (c *NotificationChannelEmail) MarshalJSON() ([]byte, error) {
 
 // NotificationChannelSlack is a slack notification chennel.
 type NotificationChannelSlack struct {
-	Type              NotificationChannelType `json:"type"`
-	ID                string                  `json:"id"`
-	Name              string                  `json:"name"`
-	URL               string                  `json:"url"`
-	EnabledGraphImage bool                    `json:"enabledGraphImage"`
-	Mentions          struct {
-		OK       string `json:"ok"`
-		Warning  string `json:"warning"`
-		Critical string `json:"critical"`
-	} `json:"mentions"`
-	Events []NotificationEvent `json:"events"`
+	Type              NotificationChannelType          `json:"type"`
+	ID                string                           `json:"id,omitempty"`
+	Name              string                           `json:"name"`
+	URL               string                           `json:"url"`
+	EnabledGraphImage bool                             `json:"enabledGraphImage"`
+	Mentions          NotificationChannelSlackMentions `json:"mentions"`
+	Events            []NotificationEvent              `json:"events"`
+}
+
+// NotificationChannelSlackMentions is mentions in slack notification.
+type NotificationChannelSlackMentions struct {
+	OK       string `json:"ok,omitempty"`
+	Warning  string `json:"warning,omitempty"`
+	Critical string `json:"critical,omitempty"`
 }
 
 // NotificationChannelType returns NotificationChannelTypeSlack
@@ -198,7 +202,7 @@ func (c *NotificationChannelSlack) MarshalJSON() ([]byte, error) {
 // NotificationChannelWebHook is a web hook notification chennel.
 type NotificationChannelWebHook struct {
 	Type   NotificationChannelType `json:"type"`
-	ID     string                  `json:"id"`
+	ID     string                  `json:"id,omitempty"`
 	Name   string                  `json:"name"`
 	URL    string                  `json:"url"`
 	Events []NotificationEvent     `json:"events"`
@@ -279,4 +283,24 @@ func (c *Client) FindNotificationChannels(ctx context.Context) ([]NotificationCh
 		ret = append(ret, c.NotificationChannel)
 	}
 	return ret, nil
+}
+
+// CreateNotificationChannel creates a new notificaition channel.
+func (c *Client) CreateNotificationChannel(ctx context.Context, ch NotificationChannel) (NotificationChannel, error) {
+	var ret notificationChannel
+	_, err := c.do(ctx, http.MethodPost, "/api/v0/channels", ch, &ret)
+	if err != nil {
+		return nil, err
+	}
+	return ret.NotificationChannel, nil
+}
+
+// DeleteNotificationChannel deletes a notificaition channel.
+func (c *Client) DeleteNotificationChannel(ctx context.Context, channelID string) (NotificationChannel, error) {
+	var ret notificationChannel
+	_, err := c.do(ctx, http.MethodPost, fmt.Sprintf("/api/v0/channels/%s", channelID), nil, &ret)
+	if err != nil {
+		return nil, err
+	}
+	return ret.NotificationChannel, nil
 }
