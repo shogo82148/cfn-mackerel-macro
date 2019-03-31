@@ -21,42 +21,45 @@ func (u *user) create(ctx context.Context) (physicalResourceID string, data map[
 
 	email := d.String(in.M("Email"))
 	authority := d.String(dproxy.Default(in.M("Authority"), "viewer"))
-	if err := d.CombineErrors(); err != nil {
-		return "", nil, err
+	err = d.CombineErrors()
+	if err != nil {
+		return
 	}
 
-	id, err := u.Function.buildUserID(ctx, email)
+	physicalResourceID, err = u.Function.buildUserID(ctx, email)
 	if err != nil {
-		return "", nil, err
+		return
+	}
+	data = map[string]interface{}{
+		"Email": email,
 	}
 
 	// try to invite the user.
 	c := u.Function.getclient()
 	_, err = c.CreateInvitation(ctx, email, mackerel.UserAuthority(authority))
-	if merr, ok := err.(mackerel.Error); ok {
-		if merr.StatusCode() != http.StatusBadRequest {
-			return "", nil, err
-		}
-		// already invited?
-		invited, err := u.alreadyInvited(ctx, email)
-		if err != nil {
-			return "", nil, err
-		}
-		if !invited {
-			// already in the org?
-			uid, err := u.getUserID(ctx, email)
-			if err != nil {
-				return "", nil, err
-			}
-			if uid == "" {
-				return "", nil, fmt.Errorf("fail to invite %s", email)
-			}
-		}
+	if err == nil {
+		return
 	}
 
-	return id, map[string]interface{}{
-		"Email": email,
-	}, nil
+	// failed to invite.
+	// already invited, already in the org, or the request is bad.
+	merr, ok := err.(mackerel.Error)
+	if !ok || merr.StatusCode() != http.StatusBadRequest {
+		return
+	}
+
+	// already invited?
+	invited, err := u.alreadyInvited(ctx, email)
+	if err != nil || invited {
+		return
+	}
+
+	// already in the org?
+	uid, err := u.getUserID(ctx, email)
+	if err == nil && uid == "" {
+		err = fmt.Errorf("fail to invite %s", email)
+	}
+	return
 }
 
 func (u *user) alreadyInvited(ctx context.Context, email string) (bool, error) {
