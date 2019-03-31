@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-// Dashboard is a dashborad.
+// Dashboard is a dashboard.
 // https://mackerel.io/api-docs/entry/dashboards#create
 type Dashboard struct {
 	ID        string   `json:"id,omitempty"`
@@ -35,7 +35,7 @@ func (d *Dashboard) MarshalJSON() ([]byte, error) {
 	return json.Marshal(data)
 }
 
-// UnmarshalJSON unmashals JSON.
+// UnmarshalJSON implements json.Unmarshal
 func (d *Dashboard) UnmarshalJSON(b []byte) error {
 	type dashboard Dashboard
 	var data struct {

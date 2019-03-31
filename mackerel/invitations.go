@@ -42,7 +42,7 @@ func (c *Client) CreateInvitation(ctx context.Context, email string, authority U
 	return &ret, nil
 }
 
-// RevokeInvitation rovokes a user invitation.
+// RevokeInvitation revokes a user invitation.
 func (c *Client) RevokeInvitation(ctx context.Context, email string) error {
 	param := struct {
 		Email string `json:"email"`

@@ -97,7 +97,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			ExcludeScopes:        excludeScopes,
 			NotificationInterval: uint64(d.Int64(dproxy.Default(in.M("NotificationInterval"), 0))),
 		}
-	case mackerel.MonitorTypeHostMeric.String():
+	case mackerel.MonitorTypeHostMetric.String():
 		var scopes, excludeScopes []string
 		for _, item := range d.Array(dproxy.Default(in.M("Scopes"), []interface{}{})) {
 			s := d.String(dproxy.New(item))
@@ -120,7 +120,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			}
 		}
 		mm = &mackerel.MonitorHostMetric{
-			Type:                 mackerel.MonitorTypeHostMeric,
+			Type:                 mackerel.MonitorTypeHostMetric,
 			Name:                 d.String(in.M("Name")),
 			Memo:                 d.String(dproxy.Default(in.M("Memo"), "")),
 			Duration:             d.Uint64(dproxy.Default(in.M("Duration"), 1)),
@@ -139,7 +139,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			return nil, err
 		}
 		mm = &mackerel.MonitorServiceMetric{
-			Type:                    mackerel.MonitorTypeHostMeric,
+			Type:                    mackerel.MonitorTypeHostMetric,
 			Name:                    d.String(in.M("Name")),
 			Memo:                    d.String(dproxy.Default(in.M("Memo"), "")),
 			Duration:                d.Uint64(dproxy.Default(in.M("Duration"), 1)),

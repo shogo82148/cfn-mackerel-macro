@@ -162,14 +162,14 @@ func TestCreateNotificationChannel(t *testing.T) {
 		{
 			in: &NotificationChannelEmail{
 				Name:    "notification-test",
-				Emails:  []string{"myaddress@example.com"},
+				Emails:  []string{"my.address@example.com"},
 				UserIDs: []string{"userId"},
 				Events:  []NotificationEvent{NotificationEventAlert},
 			},
 			want: map[string]interface{}{
 				"name":    "notification-test",
 				"type":    "email",
-				"emails":  []interface{}{"myaddress@example.com"},
+				"emails":  []interface{}{"my.address@example.com"},
 				"userIds": []interface{}{"userId"},
 				"events":  []interface{}{"alert"},
 			},

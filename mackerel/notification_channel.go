@@ -34,7 +34,7 @@ func (t NotificationChannelType) String() string {
 	return string(t)
 }
 
-// NotificationEvent is an event type to notity.
+// NotificationEvent is an event type to notify.
 type NotificationEvent string
 
 const (
@@ -61,7 +61,7 @@ func (e NotificationEvent) String() string {
 	return string(e)
 }
 
-// NotificationChannelBase is base type of notifiction channel.
+// NotificationChannelBase is base type of notification channel.
 type NotificationChannelBase struct {
 	Type NotificationChannelType `json:"type"`
 	ID   string                  `json:"id,omitempty"`
@@ -101,7 +101,7 @@ func (c *NotificationChannelBase) MarshalJSON() ([]byte, error) {
 	return json.Marshal(data)
 }
 
-// NotificationChannelEmail is an email notification chennel.
+// NotificationChannelEmail is an email notification channel.
 type NotificationChannelEmail struct {
 	Type    NotificationChannelType `json:"type"`
 	ID      string                  `json:"id,omitempty"`
@@ -146,7 +146,7 @@ func (c *NotificationChannelEmail) MarshalJSON() ([]byte, error) {
 	return json.Marshal(data)
 }
 
-// NotificationChannelSlack is a slack notification chennel.
+// NotificationChannelSlack is a slack notification channel.
 type NotificationChannelSlack struct {
 	Type              NotificationChannelType          `json:"type"`
 	ID                string                           `json:"id,omitempty"`
@@ -199,7 +199,7 @@ func (c *NotificationChannelSlack) MarshalJSON() ([]byte, error) {
 	return json.Marshal(data)
 }
 
-// NotificationChannelWebHook is a web hook notification chennel.
+// NotificationChannelWebHook is a web hook notification channel.
 type NotificationChannelWebHook struct {
 	Type   NotificationChannelType `json:"type"`
 	ID     string                  `json:"id,omitempty"`
@@ -285,7 +285,7 @@ func (c *Client) FindNotificationChannels(ctx context.Context) ([]NotificationCh
 	return ret, nil
 }
 
-// CreateNotificationChannel creates a new notificaition channel.
+// CreateNotificationChannel creates a new notification channel.
 func (c *Client) CreateNotificationChannel(ctx context.Context, ch NotificationChannel) (NotificationChannel, error) {
 	var ret notificationChannel
 	_, err := c.do(ctx, http.MethodPost, "/api/v0/channels", ch, &ret)
@@ -295,7 +295,7 @@ func (c *Client) CreateNotificationChannel(ctx context.Context, ch NotificationC
 	return ret.NotificationChannel, nil
 }
 
-// DeleteNotificationChannel deletes a notificaition channel.
+// DeleteNotificationChannel deletes a notification channel.
 func (c *Client) DeleteNotificationChannel(ctx context.Context, channelID string) (NotificationChannel, error) {
 	var ret notificationChannel
 	_, err := c.do(ctx, http.MethodPost, fmt.Sprintf("/api/v0/channels/%s", channelID), nil, &ret)

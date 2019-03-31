@@ -57,7 +57,7 @@ type Proxy interface {
 	// ProxySet returns a set which converted from its array value.
 	ProxySet() ProxySet
 
-	// Q returns set of all items which property matchs with k.
+	// Q returns set of all items which property matches with k.
 	Q(k string) ProxySet
 
 	// findJPT returns a match of JSON Pointer's Token t.
@@ -75,22 +75,22 @@ type ProxySet interface {
 	// Len returns count of items in the set.
 	Len() int
 
-	// BoolArray returns []bool which converterd from the set.
+	// BoolArray returns []bool which converted from the set.
 	BoolArray() ([]bool, error)
 
-	// Int64Array returns []int64 which converterd from the set.
+	// Int64Array returns []int64 which converted from the set.
 	Int64Array() ([]int64, error)
 
-	// Float64Array returns []float64 which converterd from the set.
+	// Float64Array returns []float64 which converted from the set.
 	Float64Array() ([]float64, error)
 
-	// StringArray returns []string which converterd from the set.
+	// StringArray returns []string which converted from the set.
 	StringArray() ([]string, error)
 
-	// ArrayArray returns [][]interface{} which converterd from the set.
+	// ArrayArray returns [][]interface{} which converted from the set.
 	ArrayArray() ([][]interface{}, error)
 
-	// MapArray returns []map[string]interface{} which converterd from the set.
+	// MapArray returns []map[string]interface{} which converted from the set.
 	MapArray() ([]map[string]interface{}, error)
 
 	// ProxyArray returns []Proxy which wrap each items.
@@ -99,7 +99,7 @@ type ProxySet interface {
 	// A returns an proxy for index in the set.
 	A(n int) Proxy
 
-	// Q returns set of all items which property matchs with k.
+	// Q returns set of all items which property matches with k.
 	Q(k string) ProxySet
 
 	// Qc returns set of property of all items.

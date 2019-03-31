@@ -133,7 +133,7 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 			Event:    event,
 		}
 	default:
-		return "", nil, nil // fmt.Errorf("unkdnown type: %s", typ)
+		return "", nil, nil // fmt.Errorf("unknown type: %s", typ)
 	}
 	switch event.RequestType {
 	case cfn.RequestCreate:

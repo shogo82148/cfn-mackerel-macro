@@ -23,8 +23,8 @@ const (
 	// MonitorTypeConnectivity is a type for host connectivity monitoring.
 	MonitorTypeConnectivity MonitorType = "connectivity"
 
-	// MonitorTypeHostMeric is a type for Host metric monitoring.
-	MonitorTypeHostMeric MonitorType = "host"
+	// MonitorTypeHostMetric is a type for Host metric monitoring.
+	MonitorTypeHostMetric MonitorType = "host"
 
 	// MonitorTypeServiceMetric is a type for Service metric monitoring.
 	MonitorTypeServiceMetric MonitorType = "service"
@@ -100,7 +100,7 @@ type MonitorHostMetric struct {
 }
 
 // MonitorType returns monitor type.
-func (m *MonitorHostMetric) MonitorType() MonitorType { return MonitorTypeHostMeric }
+func (m *MonitorHostMetric) MonitorType() MonitorType { return MonitorTypeHostMetric }
 
 // MonitorName returns monitor name.
 func (m *MonitorHostMetric) MonitorName() string { return m.Name }
@@ -246,7 +246,7 @@ func decodeMonitor(mes json.RawMessage) (Monitor, error) {
 	switch typeData.Type {
 	case MonitorTypeConnectivity:
 		m = &MonitorConnectivity{}
-	case MonitorTypeHostMeric:
+	case MonitorTypeHostMetric:
 		m = &MonitorHostMetric{}
 	case MonitorTypeServiceMetric:
 		m = &MonitorServiceMetric{}
