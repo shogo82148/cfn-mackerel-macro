@@ -38,6 +38,11 @@ type fakeMackerelClient struct {
 	findNotificationChannels     func(ctx context.Context) ([]mackerel.NotificationChannel, error)
 	createNotificationChannel    func(ctx context.Context, ch mackerel.NotificationChannel) (mackerel.NotificationChannel, error)
 	deleteNotificationChannel    func(ctx context.Context, channelID string) (mackerel.NotificationChannel, error)
+	findUsers                    func(ctx context.Context) ([]*mackerel.User, error)
+	deleteUser                   func(ctx context.Context, userID string) (*mackerel.User, error)
+	findInvitations              func(ctx context.Context) ([]*mackerel.Invitation, error)
+	createInvitation             func(ctx context.Context, email string, authority mackerel.UserAuthority) (*mackerel.Invitation, error)
+	revokeInvitation             func(ctx context.Context, email string) error
 }
 
 var _ makerelInterface = (*fakeMackerelClient)(nil)
@@ -163,4 +168,24 @@ func (c *fakeMackerelClient) CreateNotificationChannel(ctx context.Context, ch m
 
 func (c *fakeMackerelClient) DeleteNotificationChannel(ctx context.Context, channelID string) (mackerel.NotificationChannel, error) {
 	return c.deleteNotificationChannel(ctx, channelID)
+}
+
+func (c *fakeMackerelClient) FindUsers(ctx context.Context) ([]*mackerel.User, error) {
+	return c.findUsers(ctx)
+}
+
+func (c *fakeMackerelClient) DeleteUser(ctx context.Context, userID string) (*mackerel.User, error) {
+	return c.deleteUser(ctx, userID)
+}
+
+func (c *fakeMackerelClient) FindInvitations(ctx context.Context) ([]*mackerel.Invitation, error) {
+	return c.findInvitations(ctx)
+}
+
+func (c *fakeMackerelClient) CreateInvitation(ctx context.Context, email string, authority mackerel.UserAuthority) (*mackerel.Invitation, error) {
+	return c.createInvitation(ctx, email, authority)
+}
+
+func (c *fakeMackerelClient) RevokeInvitation(ctx context.Context, email string) error {
+	return c.revokeInvitation(ctx, email)
 }

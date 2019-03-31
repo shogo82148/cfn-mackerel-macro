@@ -70,6 +70,15 @@ type makerelInterface interface {
 	FindNotificationChannels(ctx context.Context) ([]mackerel.NotificationChannel, error)
 	CreateNotificationChannel(ctx context.Context, ch mackerel.NotificationChannel) (mackerel.NotificationChannel, error)
 	DeleteNotificationChannel(ctx context.Context, channelID string) (mackerel.NotificationChannel, error)
+
+	// user
+	FindUsers(ctx context.Context) ([]*mackerel.User, error)
+	DeleteUser(ctx context.Context, userID string) (*mackerel.User, error)
+
+	// invitation
+	FindInvitations(ctx context.Context) ([]*mackerel.Invitation, error)
+	CreateInvitation(ctx context.Context, email string, authority mackerel.UserAuthority) (*mackerel.Invitation, error)
+	RevokeInvitation(ctx context.Context, email string) error
 }
 
 type resource interface {
@@ -115,6 +124,11 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 		}
 	case "NotificationChannel":
 		r = &notificationChannel{
+			Function: f,
+			Event:    event,
+		}
+	case "User":
+		r = &user{
 			Function: f,
 			Event:    event,
 		}
@@ -204,6 +218,10 @@ func (f *Function) buildNotificationChannelID(ctx context.Context, channelID str
 	return f.buildID(ctx, "notification-channel", channelID)
 }
 
+func (f *Function) buildUserID(ctx context.Context, email string) (string, error) {
+	return f.buildID(ctx, "user", email)
+}
+
 // parseID parses ID of Mackerel resources.
 func (f *Function) parseID(ctx context.Context, id string, n int) (string, []string, error) {
 	org, err := f.getorg(ctx)
@@ -286,6 +304,17 @@ func (f *Function) parseNotificationChannelID(ctx context.Context, id string) (s
 	}
 	if typ != "notification-channel" {
 		return "", fmt.Errorf("invalid type %s, expected notification channel", typ)
+	}
+	return parts[0], nil
+}
+
+func (f *Function) parseUserID(ctx context.Context, id string) (string, error) {
+	typ, parts, err := f.parseID(ctx, id, 1)
+	if err != nil {
+		return "", err
+	}
+	if typ != "user" {
+		return "", fmt.Errorf("invalid type %s, expected user", typ)
 	}
 	return parts[0], nil
 }
