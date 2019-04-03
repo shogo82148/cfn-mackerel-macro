@@ -34,10 +34,12 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 	var d dproxy.Drain
 	in := dproxy.New(properties)
 	param := &mackerel.NotificationGroup{
-		Name:              d.String(in.M("Name")),
-		NotificationLevel: mackerel.NotificationLevel(d.String(in.M("NotificationLevel"))),
+		Name: d.String(in.M("Name")),
+		NotificationLevel: mackerel.NotificationLevel(
+			d.String(dproxy.Default(in.M("NotificationLevel"), mackerel.NotificationLevelAll.String())),
+		),
 	}
-	for _, id := range d.StringArray(in.M("ChildNotificationGroupIds").ProxySet()) {
+	for _, id := range d.StringArray(dproxy.Default(in.M("ChildNotificationGroupIds"), []interface{}{}).ProxySet()) {
 		groupID, err := g.Function.parseNotificationChannelID(ctx, id)
 		if err != nil {
 			d.Put(err)
@@ -45,7 +47,7 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 		}
 		param.ChildNotificationGroupIDs = append(param.ChildNotificationGroupIDs, groupID)
 	}
-	for _, id := range d.StringArray(in.M("ChildChannelIds").ProxySet()) {
+	for _, id := range d.StringArray(dproxy.Default(in.M("ChildChannelIds"), []interface{}{}).ProxySet()) {
 		channelID, err := g.Function.parseNotificationChannelID(ctx, id)
 		if err != nil {
 			d.Put(err)
@@ -53,7 +55,7 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 		}
 		param.ChildChannelIDs = append(param.ChildChannelIDs, channelID)
 	}
-	for _, id := range d.StringArray(in.M("Services").ProxySet()) {
+	for _, id := range d.StringArray(dproxy.Default(in.M("Services"), []interface{}{}).ProxySet()) {
 		serviceName, err := g.Function.parseServiceID(ctx, id)
 		if err != nil {
 			d.Put(err)
@@ -61,7 +63,7 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 		}
 		param.Services = append(param.Services, serviceName)
 	}
-	for _, m := range d.ProxyArray(in.M("Monitors").ProxySet()) {
+	for _, m := range d.ProxyArray(dproxy.Default(in.M("Monitors"), []interface{}{}).ProxySet()) {
 		var monitorID string
 		id, err := m.M("Id").String()
 		if err == nil {
