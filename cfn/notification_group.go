@@ -108,5 +108,12 @@ func (g *notificationGroup) update(ctx context.Context) (physicalResourceID stri
 }
 
 func (g *notificationGroup) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+	physicalResourceID = g.Event.PhysicalResourceID
+	groupID, err := g.Function.parseNotificationGroupID(ctx, physicalResourceID)
+	if err != nil {
+		return
+	}
+	c := g.Function.getclient()
+	_, err = c.DeleteNotificationGroup(ctx, groupID)
 	return
 }
