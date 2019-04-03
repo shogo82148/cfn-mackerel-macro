@@ -41,16 +41,16 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 	}
 	for _, id := range d.StringArray(dproxy.Default(in.M("ChildNotificationGroupIds"), []interface{}{}).ProxySet()) {
 		groupID, err := g.Function.parseNotificationChannelID(ctx, id)
+		d.Put(err)
 		if err != nil {
-			d.Put(err)
 			continue
 		}
 		param.ChildNotificationGroupIDs = append(param.ChildNotificationGroupIDs, groupID)
 	}
 	for _, id := range d.StringArray(dproxy.Default(in.M("ChildChannelIds"), []interface{}{}).ProxySet()) {
 		channelID, err := g.Function.parseNotificationChannelID(ctx, id)
+		d.Put(err)
 		if err != nil {
-			d.Put(err)
 			continue
 		}
 		param.ChildChannelIDs = append(param.ChildChannelIDs, channelID)
@@ -58,8 +58,9 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 	for _, m := range d.ProxyArray(dproxy.Default(in.M("Services"), []interface{}{}).ProxySet()) {
 		var serviceName string
 		id, err := m.M("Id").String()
+		d.Put(err)
 		if err == nil {
-			serviceName, err = g.Function.parseMonitorID(ctx, id)
+			serviceName, err = g.Function.parseServiceID(ctx, id)
 			d.Put(err)
 		}
 		param.Services = append(param.Services, mackerel.NotificationGroupService{
@@ -69,6 +70,7 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 	for _, m := range d.ProxyArray(dproxy.Default(in.M("Monitors"), []interface{}{}).ProxySet()) {
 		var monitorID string
 		id, err := m.M("Id").String()
+		d.Put(err)
 		if err == nil {
 			monitorID, err = g.Function.parseMonitorID(ctx, id)
 			d.Put(err)
