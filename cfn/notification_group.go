@@ -61,7 +61,9 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 			d.Put(err)
 			continue
 		}
-		param.Services = append(param.Services, serviceName)
+		param.Services = append(param.Services, mackerel.NotificationGroupService{
+			Name: serviceName,
+		})
 	}
 	for _, m := range d.ProxyArray(dproxy.Default(in.M("Monitors"), []interface{}{}).ProxySet()) {
 		var monitorID string

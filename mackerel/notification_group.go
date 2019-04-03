@@ -14,7 +14,7 @@ type NotificationGroup struct {
 	ChildNotificationGroupIDs []string                   `json:"childNotificationGroupIds"`
 	ChildChannelIDs           []string                   `json:"childChannelIds"`
 	Monitors                  []NotificationGroupMonitor `json:"monitors,omitempty"`
-	Services                  []string                   `json:"services,omitempty"`
+	Services                  []NotificationGroupService `json:"services,omitempty"`
 }
 
 // NotificationLevel is the notification level.
@@ -36,6 +36,11 @@ func (level NotificationLevel) String() string {
 type NotificationGroupMonitor struct {
 	ID          string `json:"id"`
 	SkipDefault bool   `json:"skipDefault"`
+}
+
+// NotificationGroupService is a service setting for a notification group.
+type NotificationGroupService struct {
+	Name string `json:"name"`
 }
 
 // FindNotificationGroups returns the list of notification groups.
