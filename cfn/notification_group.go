@@ -70,7 +70,7 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 		}
 		param.Monitors = append(param.Monitors, mackerel.NotificationGroupMonitor{
 			ID:          monitorID,
-			SkipDefault: d.Bool(m.M("SkipDefault")),
+			SkipDefault: d.Bool(dproxy.Default(m.M("SkipDefault"), false)),
 		})
 	}
 	if err := d.CombineErrors(); err != nil {
