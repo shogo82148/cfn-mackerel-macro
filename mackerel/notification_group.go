@@ -10,11 +10,11 @@ import (
 type NotificationGroup struct {
 	ID                        string                     `json:"id,omitempty"`
 	Name                      string                     `json:"name"`
-	NotificationLevel         string                     `json:"notificationLevel"`
+	NotificationLevel         NotificationLevel          `json:"notificationLevel"`
 	ChildNotificationGroupIDs []string                   `json:"childNotificationGroupIds"`
 	ChildChannelIDs           []string                   `json:"childChannelIds"`
-	Monitors                  []NotificationGroupMonitor `json:"monitors"`
-	Services                  []string                   `json:"services"`
+	Monitors                  []NotificationGroupMonitor `json:"monitors,omitempty"`
+	Services                  []NotificationGroupService `json:"services,omitempty"`
 }
 
 // NotificationLevel is the notification level.
@@ -28,10 +28,19 @@ const (
 	NotificationLevelCritical NotificationLevel = "critical"
 )
 
+func (level NotificationLevel) String() string {
+	return string(level)
+}
+
 // NotificationGroupMonitor is a monitor setting for a notification group.
 type NotificationGroupMonitor struct {
 	ID          string `json:"id"`
-	SkipDefault bool   `json:"skipDefault,omitempty"`
+	SkipDefault bool   `json:"skipDefault"`
+}
+
+// NotificationGroupService is a service setting for a notification group.
+type NotificationGroupService struct {
+	Name string `json:"name"`
 }
 
 // FindNotificationGroups returns the list of notification groups.
@@ -48,8 +57,17 @@ func (c *Client) FindNotificationGroups(ctx context.Context) ([]*NotificationGro
 
 // CreateNotificationGroup creates a new notification group.
 func (c *Client) CreateNotificationGroup(ctx context.Context, group *NotificationGroup) (*NotificationGroup, error) {
+	// fill required fields
+	in := *group
+	if in.ChildNotificationGroupIDs == nil {
+		in.ChildNotificationGroupIDs = []string{}
+	}
+	if in.ChildChannelIDs == nil {
+		in.ChildChannelIDs = []string{}
+	}
+
 	var data NotificationGroup
-	_, err := c.do(ctx, http.MethodPost, "/api/v0/notification-groups", group, &data)
+	_, err := c.do(ctx, http.MethodPost, "/api/v0/notification-groups", in, &data)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +76,17 @@ func (c *Client) CreateNotificationGroup(ctx context.Context, group *Notificatio
 
 // UpdateNotificationGroup creates a new notification group.
 func (c *Client) UpdateNotificationGroup(ctx context.Context, groupID string, group *NotificationGroup) (*NotificationGroup, error) {
+	// fill required fields
+	in := *group
+	if in.ChildNotificationGroupIDs == nil {
+		in.ChildNotificationGroupIDs = []string{}
+	}
+	if in.ChildChannelIDs == nil {
+		in.ChildChannelIDs = []string{}
+	}
+
 	var data NotificationGroup
-	_, err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/notification-groups/%s", groupID), group, &data)
+	_, err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/notification-groups/%s", groupID), in, &data)
 	if err != nil {
 		return nil, err
 	}
