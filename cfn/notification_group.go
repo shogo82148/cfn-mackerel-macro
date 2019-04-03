@@ -87,6 +87,23 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 }
 
 func (g *notificationGroup) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+	physicalResourceID = g.Event.PhysicalResourceID
+	groupID, err := g.Function.parseNotificationGroupID(ctx, physicalResourceID)
+	if err != nil {
+		return
+	}
+	c := g.Function.getclient()
+	param, err := g.convertToParam(ctx, g.Event.ResourceProperties)
+	if err != nil {
+		return
+	}
+	ret, err := c.UpdateNotificationGroup(ctx, groupID, param)
+	if err != nil {
+		return
+	}
+	data = map[string]interface{}{
+		"Name": ret.Name,
+	}
 	return
 }
 
