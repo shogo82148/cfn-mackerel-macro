@@ -35,7 +35,7 @@ func (level NotificationLevel) String() string {
 // NotificationGroupMonitor is a monitor setting for a notification group.
 type NotificationGroupMonitor struct {
 	ID          string `json:"id"`
-	SkipDefault bool   `json:"skipDefault,omitempty"`
+	SkipDefault bool   `json:"skipDefault"`
 }
 
 // FindNotificationGroups returns the list of notification groups.
