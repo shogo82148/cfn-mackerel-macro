@@ -28,16 +28,34 @@ func (p *valueProxy) Bool() (bool, error) {
 		return v, nil
 	case int:
 		return v != 0, nil
+	case int8:
+		return v != 0, nil
+	case int16:
+		return v != 0, nil
 	case int32:
 		return v != 0, nil
 	case int64:
 		return v != 0, nil
 	case uint:
 		return v != 0, nil
+	case uint8:
+		return v != 0, nil
+	case uint16:
+		return v != 0, nil
 	case uint32:
 		return v != 0, nil
 	case uint64:
 		return v != 0, nil
+	case string:
+		w, err := strconv.ParseBool(v)
+		if err != nil {
+			return false, &errorProxy{
+				errorType: EconvertFailure,
+				parent:    p,
+				infoStr:   err.Error(),
+			}
+		}
+		return w, nil
 	default:
 		return false, typeError(p, Tbool, v)
 	}
