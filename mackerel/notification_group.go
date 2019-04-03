@@ -86,7 +86,7 @@ func (c *Client) UpdateNotificationGroup(ctx context.Context, groupID string, gr
 	}
 
 	var data NotificationGroup
-	_, err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/notification-groups/%s", groupID), group, &data)
+	_, err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/notification-groups/%s", groupID), in, &data)
 	if err != nil {
 		return nil, err
 	}
