@@ -38,6 +38,10 @@ type fakeMackerelClient struct {
 	findNotificationChannels     func(ctx context.Context) ([]mackerel.NotificationChannel, error)
 	createNotificationChannel    func(ctx context.Context, ch mackerel.NotificationChannel) (mackerel.NotificationChannel, error)
 	deleteNotificationChannel    func(ctx context.Context, channelID string) (mackerel.NotificationChannel, error)
+	findNotificationGroups       func(ctx context.Context) ([]*mackerel.NotificationGroup, error)
+	createNotificationGroup      func(ctx context.Context, group *mackerel.NotificationGroup) (*mackerel.NotificationGroup, error)
+	updateNotificationGroup      func(ctx context.Context, groupID string, group *mackerel.NotificationGroup) (*mackerel.NotificationGroup, error)
+	deleteNotificationGroup      func(ctx context.Context, groupID string) (*mackerel.NotificationGroup, error)
 	findUsers                    func(ctx context.Context) ([]*mackerel.User, error)
 	deleteUser                   func(ctx context.Context, userID string) (*mackerel.User, error)
 	findInvitations              func(ctx context.Context) ([]*mackerel.Invitation, error)
@@ -168,6 +172,21 @@ func (c *fakeMackerelClient) CreateNotificationChannel(ctx context.Context, ch m
 
 func (c *fakeMackerelClient) DeleteNotificationChannel(ctx context.Context, channelID string) (mackerel.NotificationChannel, error) {
 	return c.deleteNotificationChannel(ctx, channelID)
+}
+
+func (c *fakeMackerelClient) FindNotificationGroups(ctx context.Context) ([]*mackerel.NotificationGroup, error) {
+	return c.findNotificationGroups(ctx)
+}
+
+func (c *fakeMackerelClient) CreateNotificationGroup(ctx context.Context, group *mackerel.NotificationGroup) (*mackerel.NotificationGroup, error) {
+	return c.createNotificationGroup(ctx, group)
+}
+
+func (c *fakeMackerelClient) UpdateNotificationGroup(ctx context.Context, groupID string, group *mackerel.NotificationGroup) (*mackerel.NotificationGroup, error) {
+	return c.updateNotificationGroup(ctx, groupID, group)
+}
+func (c *fakeMackerelClient) DeleteNotificationGroup(ctx context.Context, groupID string) (*mackerel.NotificationGroup, error) {
+	return c.deleteNotificationGroup(ctx, groupID)
 }
 
 func (c *fakeMackerelClient) FindUsers(ctx context.Context) ([]*mackerel.User, error) {

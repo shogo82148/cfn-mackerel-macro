@@ -71,6 +71,12 @@ type makerelInterface interface {
 	CreateNotificationChannel(ctx context.Context, ch mackerel.NotificationChannel) (mackerel.NotificationChannel, error)
 	DeleteNotificationChannel(ctx context.Context, channelID string) (mackerel.NotificationChannel, error)
 
+	// notification group
+	FindNotificationGroups(ctx context.Context) ([]*mackerel.NotificationGroup, error)
+	CreateNotificationGroup(ctx context.Context, group *mackerel.NotificationGroup) (*mackerel.NotificationGroup, error)
+	UpdateNotificationGroup(ctx context.Context, groupID string, group *mackerel.NotificationGroup) (*mackerel.NotificationGroup, error)
+	DeleteNotificationGroup(ctx context.Context, groupID string) (*mackerel.NotificationGroup, error)
+
 	// user
 	FindUsers(ctx context.Context) ([]*mackerel.User, error)
 	DeleteUser(ctx context.Context, userID string) (*mackerel.User, error)
@@ -124,6 +130,11 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 		}
 	case "NotificationChannel":
 		r = &notificationChannel{
+			Function: f,
+			Event:    event,
+		}
+	case "NotificationGroup":
+		r = &notificationGroup{
 			Function: f,
 			Event:    event,
 		}
@@ -218,6 +229,10 @@ func (f *Function) buildNotificationChannelID(ctx context.Context, channelID str
 	return f.buildID(ctx, "notification-channel", channelID)
 }
 
+func (f *Function) buildNotificationGroupID(ctx context.Context, groupID string) (string, error) {
+	return f.buildID(ctx, "notification-group", groupID)
+}
+
 func (f *Function) buildUserID(ctx context.Context, email string) (string, error) {
 	return f.buildID(ctx, "user", email)
 }
@@ -304,6 +319,17 @@ func (f *Function) parseNotificationChannelID(ctx context.Context, id string) (s
 	}
 	if typ != "notification-channel" {
 		return "", fmt.Errorf("invalid type %s, expected notification channel", typ)
+	}
+	return parts[0], nil
+}
+
+func (f *Function) parseNotificationGroupID(ctx context.Context, id string) (string, error) {
+	typ, parts, err := f.parseID(ctx, id, 1)
+	if err != nil {
+		return "", err
+	}
+	if typ != "notification-group" {
+		return "", fmt.Errorf("invalid type %s, expected notification group", typ)
 	}
 	return parts[0], nil
 }

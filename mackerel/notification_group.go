@@ -10,11 +10,11 @@ import (
 type NotificationGroup struct {
 	ID                        string                     `json:"id,omitempty"`
 	Name                      string                     `json:"name"`
-	NotificationLevel         string                     `json:"notificationLevel"`
-	ChildNotificationGroupIDs []string                   `json:"childNotificationGroupIds"`
-	ChildChannelIDs           []string                   `json:"childChannelIds"`
-	Monitors                  []NotificationGroupMonitor `json:"monitors"`
-	Services                  []string                   `json:"services"`
+	NotificationLevel         NotificationLevel          `json:"notificationLevel"`
+	ChildNotificationGroupIDs []string                   `json:"childNotificationGroupIds,omitempty"`
+	ChildChannelIDs           []string                   `json:"childChannelIds,omitempty"`
+	Monitors                  []NotificationGroupMonitor `json:"monitors,omitempty"`
+	Services                  []string                   `json:"services,omitempty"`
 }
 
 // NotificationLevel is the notification level.
@@ -27,6 +27,10 @@ const (
 	// NotificationLevelCritical receives critical notifications.
 	NotificationLevelCritical NotificationLevel = "critical"
 )
+
+func (level NotificationLevel) String() string {
+	return string(level)
+}
 
 // NotificationGroupMonitor is a monitor setting for a notification group.
 type NotificationGroupMonitor struct {
