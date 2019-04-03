@@ -40,7 +40,7 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 		),
 	}
 	for _, id := range d.StringArray(dproxy.Default(in.M("ChildNotificationGroupIds"), []interface{}{}).ProxySet()) {
-		groupID, err := g.Function.parseNotificationChannelID(ctx, id)
+		groupID, err := g.Function.parseNotificationGroupID(ctx, id)
 		d.Put(err)
 		if err != nil {
 			continue
