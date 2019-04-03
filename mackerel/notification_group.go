@@ -52,8 +52,23 @@ func (c *Client) FindNotificationGroups(ctx context.Context) ([]*NotificationGro
 
 // CreateNotificationGroup creates a new notification group.
 func (c *Client) CreateNotificationGroup(ctx context.Context, group *NotificationGroup) (*NotificationGroup, error) {
+	// fill required fields
+	in := *group
+	if in.ChildNotificationGroupIDs == nil {
+		in.ChildNotificationGroupIDs = []string{}
+	}
+	if in.ChildChannelIDs == nil {
+		in.ChildChannelIDs = []string{}
+	}
+	if in.Monitors == nil {
+		in.Monitors = []NotificationGroupMonitor{}
+	}
+	if in.Services == nil {
+		in.Services = []string{}
+	}
+
 	var data NotificationGroup
-	_, err := c.do(ctx, http.MethodPost, "/api/v0/notification-groups", group, &data)
+	_, err := c.do(ctx, http.MethodPost, "/api/v0/notification-groups", in, &data)
 	if err != nil {
 		return nil, err
 	}
