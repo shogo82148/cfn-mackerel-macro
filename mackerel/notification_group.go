@@ -11,10 +11,10 @@ type NotificationGroup struct {
 	ID                        string                     `json:"id,omitempty"`
 	Name                      string                     `json:"name"`
 	NotificationLevel         NotificationLevel          `json:"notificationLevel"`
-	ChildNotificationGroupIDs []string                   `json:"childNotificationGroupIds,omitempty"`
-	ChildChannelIDs           []string                   `json:"childChannelIds,omitempty"`
-	Monitors                  []NotificationGroupMonitor `json:"monitors,omitempty"`
-	Services                  []string                   `json:"services,omitempty"`
+	ChildNotificationGroupIDs []string                   `json:"childNotificationGroupIds"`
+	ChildChannelIDs           []string                   `json:"childChannelIds"`
+	Monitors                  []NotificationGroupMonitor `json:"monitors"`
+	Services                  []string                   `json:"services"`
 }
 
 // NotificationLevel is the notification level.
