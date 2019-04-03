@@ -13,8 +13,8 @@ type NotificationGroup struct {
 	NotificationLevel         NotificationLevel          `json:"notificationLevel"`
 	ChildNotificationGroupIDs []string                   `json:"childNotificationGroupIds"`
 	ChildChannelIDs           []string                   `json:"childChannelIds"`
-	Monitors                  []NotificationGroupMonitor `json:"monitors"`
-	Services                  []string                   `json:"services"`
+	Monitors                  []NotificationGroupMonitor `json:"monitors,omitempty"`
+	Services                  []string                   `json:"services,omitempty"`
 }
 
 // NotificationLevel is the notification level.
@@ -59,12 +59,6 @@ func (c *Client) CreateNotificationGroup(ctx context.Context, group *Notificatio
 	}
 	if in.ChildChannelIDs == nil {
 		in.ChildChannelIDs = []string{}
-	}
-	if in.Monitors == nil {
-		in.Monitors = []NotificationGroupMonitor{}
-	}
-	if in.Services == nil {
-		in.Services = []string{}
 	}
 
 	var data NotificationGroup
