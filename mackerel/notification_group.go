@@ -76,6 +76,15 @@ func (c *Client) CreateNotificationGroup(ctx context.Context, group *Notificatio
 
 // UpdateNotificationGroup creates a new notification group.
 func (c *Client) UpdateNotificationGroup(ctx context.Context, groupID string, group *NotificationGroup) (*NotificationGroup, error) {
+	// fill required fields
+	in := *group
+	if in.ChildNotificationGroupIDs == nil {
+		in.ChildNotificationGroupIDs = []string{}
+	}
+	if in.ChildChannelIDs == nil {
+		in.ChildChannelIDs = []string{}
+	}
+
 	var data NotificationGroup
 	_, err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/notification-groups/%s", groupID), group, &data)
 	if err != nil {
