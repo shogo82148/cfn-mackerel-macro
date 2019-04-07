@@ -66,6 +66,9 @@ func (p *valueProxy) OptionalBool() (*bool, error) {
 	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
 		return nil, nil
 	}
+	if err != nil {
+		return nil, err
+	}
 	return &v, nil
 }
 
@@ -127,6 +130,9 @@ func (p *valueProxy) OptionalInt64() (*int64, error) {
 	v, err := p.Int64()
 	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
 		return nil, nil
+	}
+	if err != nil {
+		return nil, err
 	}
 	return &v, nil
 }
@@ -218,6 +224,9 @@ func (p *valueProxy) OptionalUint64() (*uint64, error) {
 	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
 		return nil, nil
 	}
+	if err != nil {
+		return nil, err
+	}
 	return &v, nil
 }
 
@@ -290,6 +299,9 @@ func (p *valueProxy) OptionalFloat64() (*float64, error) {
 	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
 		return nil, nil
 	}
+	if err != nil {
+		return nil, err
+	}
 	return &v, nil
 }
 
@@ -306,6 +318,9 @@ func (p *valueProxy) OptionalString() (*string, error) {
 	v, err := p.String()
 	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
 		return nil, nil
+	}
+	if err != nil {
+		return nil, err
 	}
 	return &v, nil
 }
