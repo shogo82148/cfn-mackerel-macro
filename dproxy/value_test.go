@@ -262,3 +262,126 @@ func TestValueProxy_Int64(t *testing.T) {
 		}
 	}
 }
+
+func TestValueProxy_Uint64(t *testing.T) {
+	tests := []struct {
+		in  interface{}
+		out uint64
+		err ErrorType
+	}{
+		// integer types
+		{
+			in:  int(math.MaxInt32),
+			out: math.MaxInt32,
+		},
+		{
+			in:  int8(math.MaxInt8),
+			out: math.MaxInt8,
+		},
+		{
+			in:  int16(math.MaxInt16),
+			out: math.MaxInt16,
+		},
+		{
+			in:  int32(math.MaxInt32),
+			out: math.MaxInt32,
+		},
+		{
+			in:  int64(math.MaxInt64),
+			out: math.MaxInt64,
+		},
+		{
+			in:  uint(math.MaxUint32),
+			out: math.MaxUint32,
+		},
+		{
+			in:  uint8(math.MaxUint8),
+			out: math.MaxUint8,
+		},
+		{
+			in:  uint16(math.MaxUint16),
+			out: math.MaxUint16,
+		},
+		{
+			in:  uint32(math.MaxUint32),
+			out: math.MaxUint32,
+		},
+		{
+			in:  uint64(math.MaxUint64),
+			out: math.MaxUint64,
+		},
+
+		// floats
+		{
+			in:  float64(1 << 53),
+			out: 1 << 53,
+		},
+
+		// strings
+		{
+			in:  "18446744073709551615", // math.MaxUint64
+			out: 18446744073709551615,
+		},
+
+		// errors
+		{
+			in:  struct{}{},
+			err: Etype,
+		},
+		{
+			in:  int(-1),
+			err: EconvertFailure,
+		},
+		{
+			in:  int8(-1),
+			err: EconvertFailure,
+		},
+		{
+			in:  int16(-1),
+			err: EconvertFailure,
+		},
+		{
+			in:  int32(-1),
+			err: EconvertFailure,
+		},
+		{
+			in:  int64(-1),
+			err: EconvertFailure,
+		},
+		{
+			in:  float64(-1),
+			err: EconvertFailure,
+		},
+		{
+			in:  float64(1 << 64),
+			err: EconvertFailure,
+		},
+		{
+			in:  "foobar",
+			err: EconvertFailure,
+		},
+		{
+			in:  "18446744073709551616", // math.MaxUint64 + 1
+			err: EconvertFailure,
+		},
+	}
+
+	for i, tt := range tests {
+		proxy := New(tt.in)
+		v, err := proxy.Uint64()
+		if tt.err == 0 {
+			if v != tt.out {
+				t.Errorf("%d: want %v, got %v", i, tt.out, v)
+			}
+		} else {
+			myErr, ok := err.(Error)
+			if !ok {
+				t.Errorf("%d: want dproxy.Error, but not", i)
+				continue
+			}
+			if myErr.ErrorType() != tt.err {
+				t.Errorf("%d: unexpected error type: want %s, got %s", i, tt.err, myErr.ErrorType())
+			}
+		}
+	}
+}

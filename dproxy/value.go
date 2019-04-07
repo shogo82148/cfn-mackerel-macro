@@ -160,6 +160,24 @@ func (p *valueProxy) Uint64() (uint64, error) {
 			}
 		}
 		return uint64(v), nil
+	case int8:
+		if v < 0 {
+			return 0, &errorProxy{
+				errorType: EconvertFailure,
+				parent:    p,
+				infoStr:   "overflow",
+			}
+		}
+		return uint64(v), nil
+	case int16:
+		if v < 0 {
+			return 0, &errorProxy{
+				errorType: EconvertFailure,
+				parent:    p,
+				infoStr:   "overflow",
+			}
+		}
+		return uint64(v), nil
 	case int32:
 		if v < 0 {
 			return 0, &errorProxy{
@@ -179,7 +197,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 		}
 		return uint64(v), nil
 	case float32:
-		if v < 0 {
+		if v < 0 || v >= 1<<64 {
 			return 0, &errorProxy{
 				errorType: EconvertFailure,
 				parent:    p,
@@ -188,7 +206,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 		}
 		return uint64(v), nil
 	case float64:
-		if v < 0 {
+		if v < 0 || v >= 1<<64 {
 			return 0, &errorProxy{
 				errorType: EconvertFailure,
 				parent:    p,
@@ -197,6 +215,10 @@ func (p *valueProxy) Uint64() (uint64, error) {
 		}
 		return uint64(v), nil
 	case uint:
+		return uint64(v), nil
+	case uint8:
+		return uint64(v), nil
+	case uint16:
 		return uint64(v), nil
 	case uint32:
 		return uint64(v), nil
