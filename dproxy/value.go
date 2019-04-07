@@ -80,6 +80,10 @@ func (p *valueProxy) Int64() (int64, error) {
 	switch v := p.value.(type) {
 	case int:
 		return int64(v), nil
+	case int8:
+		return int64(v), nil
+	case int16:
+		return int64(v), nil
 	case int32:
 		return int64(v), nil
 	case int64:
@@ -89,6 +93,10 @@ func (p *valueProxy) Int64() (int64, error) {
 	case float64:
 		return int64(v), nil
 	case uint:
+		return int64(v), nil
+	case uint8:
+		return int64(v), nil
+	case uint16:
 		return int64(v), nil
 	case uint32:
 		return int64(v), nil
