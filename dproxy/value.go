@@ -89,8 +89,22 @@ func (p *valueProxy) Int64() (int64, error) {
 	case int64:
 		return v, nil
 	case float32:
+		if v < -(1<<63) || v >= 1<<63 {
+			return 0, &errorProxy{
+				errorType: EconvertFailure,
+				parent:    p,
+				infoStr:   "overflow",
+			}
+		}
 		return int64(v), nil
 	case float64:
+		if v < -(1<<63) || v >= 1<<63 {
+			return 0, &errorProxy{
+				errorType: EconvertFailure,
+				parent:    p,
+				infoStr:   "overflow",
+			}
+		}
 		return int64(v), nil
 	case uint:
 		return int64(v), nil

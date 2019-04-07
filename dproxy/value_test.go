@@ -241,6 +241,22 @@ func TestValueProxy_Int64(t *testing.T) {
 			in:  uint64(math.MaxInt64 + 1),
 			err: EconvertFailure,
 		},
+		{
+			in:  float32(1 << 63),
+			err: EconvertFailure,
+		},
+		{
+			in:  math.Float32frombits(math.Float32bits(-(1 << 63)) + 1),
+			err: EconvertFailure,
+		},
+		{
+			in:  float64(1 << 63),
+			err: EconvertFailure,
+		},
+		{
+			in:  math.Float64frombits(math.Float64bits(-(1 << 63)) + 1),
+			err: EconvertFailure,
+		},
 	}
 
 	for i, tt := range tests {
