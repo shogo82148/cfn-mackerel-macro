@@ -66,6 +66,9 @@ func (p *valueProxy) OptionalBool() (*bool, error) {
 	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
 		return nil, nil
 	}
+	if err != nil {
+		return nil, err
+	}
 	return &v, nil
 }
 
@@ -77,15 +80,37 @@ func (p *valueProxy) Int64() (int64, error) {
 	switch v := p.value.(type) {
 	case int:
 		return int64(v), nil
+	case int8:
+		return int64(v), nil
+	case int16:
+		return int64(v), nil
 	case int32:
 		return int64(v), nil
 	case int64:
 		return v, nil
 	case float32:
+		if v < -(1<<63) || v >= 1<<63 {
+			return 0, &errorProxy{
+				errorType: EconvertFailure,
+				parent:    p,
+				infoStr:   "overflow",
+			}
+		}
 		return int64(v), nil
 	case float64:
+		if v < -(1<<63) || v >= 1<<63 {
+			return 0, &errorProxy{
+				errorType: EconvertFailure,
+				parent:    p,
+				infoStr:   "overflow",
+			}
+		}
 		return int64(v), nil
 	case uint:
+		return int64(v), nil
+	case uint8:
+		return int64(v), nil
+	case uint16:
 		return int64(v), nil
 	case uint32:
 		return int64(v), nil
@@ -128,6 +153,9 @@ func (p *valueProxy) OptionalInt64() (*int64, error) {
 	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
 		return nil, nil
 	}
+	if err != nil {
+		return nil, err
+	}
 	return &v, nil
 }
 
@@ -138,6 +166,24 @@ type uint64er interface {
 func (p *valueProxy) Uint64() (uint64, error) {
 	switch v := p.value.(type) {
 	case int:
+		if v < 0 {
+			return 0, &errorProxy{
+				errorType: EconvertFailure,
+				parent:    p,
+				infoStr:   "overflow",
+			}
+		}
+		return uint64(v), nil
+	case int8:
+		if v < 0 {
+			return 0, &errorProxy{
+				errorType: EconvertFailure,
+				parent:    p,
+				infoStr:   "overflow",
+			}
+		}
+		return uint64(v), nil
+	case int16:
 		if v < 0 {
 			return 0, &errorProxy{
 				errorType: EconvertFailure,
@@ -165,7 +211,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 		}
 		return uint64(v), nil
 	case float32:
-		if v < 0 {
+		if v < 0 || v >= 1<<64 {
 			return 0, &errorProxy{
 				errorType: EconvertFailure,
 				parent:    p,
@@ -174,7 +220,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 		}
 		return uint64(v), nil
 	case float64:
-		if v < 0 {
+		if v < 0 || v >= 1<<64 {
 			return 0, &errorProxy{
 				errorType: EconvertFailure,
 				parent:    p,
@@ -183,6 +229,10 @@ func (p *valueProxy) Uint64() (uint64, error) {
 		}
 		return uint64(v), nil
 	case uint:
+		return uint64(v), nil
+	case uint8:
+		return uint64(v), nil
+	case uint16:
 		return uint64(v), nil
 	case uint32:
 		return uint64(v), nil
@@ -217,6 +267,9 @@ func (p *valueProxy) OptionalUint64() (*uint64, error) {
 	v, err := p.Uint64()
 	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
 		return nil, nil
+	}
+	if err != nil {
+		return nil, err
 	}
 	return &v, nil
 }
@@ -290,6 +343,9 @@ func (p *valueProxy) OptionalFloat64() (*float64, error) {
 	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
 		return nil, nil
 	}
+	if err != nil {
+		return nil, err
+	}
 	return &v, nil
 }
 
@@ -306,6 +362,9 @@ func (p *valueProxy) OptionalString() (*string, error) {
 	v, err := p.String()
 	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
 		return nil, nil
+	}
+	if err != nil {
+		return nil, err
 	}
 	return &v, nil
 }

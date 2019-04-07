@@ -86,6 +86,9 @@ func (p *errorProxy) Bool() (bool, error) {
 }
 
 func (p *errorProxy) OptionalBool() (*bool, error) {
+	if p.errorType == Enotfound {
+		return nil, nil
+	}
 	return nil, p
 }
 
@@ -94,6 +97,9 @@ func (p *errorProxy) Int64() (int64, error) {
 }
 
 func (p *errorProxy) OptionalInt64() (*int64, error) {
+	if p.errorType == Enotfound {
+		return nil, nil
+	}
 	return nil, p
 }
 
@@ -101,6 +107,9 @@ func (p *errorProxy) Uint64() (uint64, error) {
 	return 0, p
 }
 func (p *errorProxy) OptionalUint64() (*uint64, error) {
+	if p.errorType == Enotfound {
+		return nil, nil
+	}
 	return nil, p
 }
 
@@ -109,6 +118,9 @@ func (p *errorProxy) Float64() (float64, error) {
 }
 
 func (p *errorProxy) OptionalFloat64() (*float64, error) {
+	if p.errorType == Enotfound {
+		return nil, nil
+	}
 	return nil, p
 }
 
@@ -117,6 +129,9 @@ func (p *errorProxy) String() (string, error) {
 }
 
 func (p *errorProxy) OptionalString() (*string, error) {
+	if p.errorType == Enotfound {
+		return nil, nil
+	}
 	return nil, p
 }
 
