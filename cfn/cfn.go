@@ -3,6 +3,7 @@ package cfn
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strings"
 	"sync"
 
@@ -12,7 +13,9 @@ import (
 
 // Function is a custom resource function for CloudForamtion.
 type Function struct {
-	APIKey string
+	APIKey         string
+	APIKeyProvider mackerel.APIKeyProvider
+	BaseURL        *url.URL
 
 	mu     sync.Mutex
 	client makerelInterface
@@ -175,7 +178,9 @@ func (f *Function) getclient() makerelInterface {
 	defer f.mu.Unlock()
 	if f.client == nil {
 		f.client = &mackerel.Client{
-			APIKey: f.APIKey,
+			APIKey:         f.APIKey,
+			APIKeyProvider: f.APIKeyProvider,
+			BaseURL:        f.BaseURL,
 		}
 	}
 	return f.client

@@ -3,9 +3,18 @@ Transform: AWS::Serverless-2016-10-31
 Description: provide a CloudFormation macro for creating Mackerel resources.
 
 Parameters: 
-  ApiKey: 
+  ParameterName: 
+    Type: AWS::SSM::Parameter::Name
+    Description: Name of SSM Parameter Store Paramer for the Mackerel API Key.
+  LogLevel:
     Type: String
-    Description: API Key
+    Default: warning
+    AllowedValues: [panic, fatal, error, warn, warning, info, debug, trace]
+    Description: log level(panic, fatal, error, warn, warning, info, debug, trace)
+  BaseUrl:
+    Type: String
+    Default: "https://api.mackerelio.com/"
+    Description: base url for the Mackerel API
 
 Resources:
   ResourceFunction:
@@ -14,9 +23,21 @@ Resources:
       Runtime: go1.x
       CodeUri: ./resource
       Handler: main
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - ssm:GetParameter
+              Resource:
+                - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ParameterName}"
+                - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter${ParameterName}"
       Environment:
         Variables:
-          MACKEREL_APIKEY: !Ref ApiKey
+          MACKEREL_APIKEY_PARAMETER: !Ref ParameterName
+          MACKEREL_APIKEY_WITH_DECRYPT: 1
+          MACKEREL_APIURL: !Ref BaseUrl
+          FORWARD_LOG_LEVEL: !Ref LogLevel
 
   MacroFunction:
     Type: AWS::Serverless::Function

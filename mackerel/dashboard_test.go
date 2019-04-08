@@ -504,6 +504,7 @@ func TestFindDashboard(t *testing.T) {
 			}
 			c := &Client{
 				BaseURL:    u,
+				APIKey:     "DUMMY-API-KEY",
 				HTTPClient: ts.Client(),
 			}
 			got, err := c.FindDashboards(context.Background())
@@ -537,6 +538,7 @@ func TestFindDashboard(t *testing.T) {
 			}
 			c := &Client{
 				BaseURL:    u,
+				APIKey:     "DUMMY-API-KEY",
 				HTTPClient: ts.Client(),
 			}
 			got, err := c.FindDashboard(context.Background(), "foobar")
@@ -570,6 +572,7 @@ func TestFindDashboard(t *testing.T) {
 			}
 			c := &Client{
 				BaseURL:    u,
+				APIKey:     "DUMMY-API-KEY",
 				HTTPClient: ts.Client(),
 			}
 			got, err := c.DeleteDashboard(context.Background(), "foobar")
@@ -969,6 +972,7 @@ func TestCreateDashboard(t *testing.T) {
 			}
 			c := &Client{
 				BaseURL:    u,
+				APIKey:     "DUMMY-API-KEY",
 				HTTPClient: ts.Client(),
 			}
 
