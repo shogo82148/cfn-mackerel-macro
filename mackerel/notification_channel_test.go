@@ -140,6 +140,7 @@ func TestFindNotificationChannels(t *testing.T) {
 			}
 			c := &Client{
 				BaseURL:    u,
+				APIKey:     "DUMMY-API-KEY",
 				HTTPClient: ts.Client(),
 			}
 			got, err := c.FindNotificationChannels(context.Background())
@@ -244,6 +245,7 @@ func TestCreateNotificationChannel(t *testing.T) {
 			}
 			c := &Client{
 				BaseURL:    u,
+				APIKey:     "DUMMY-API-KEY",
 				HTTPClient: ts.Client(),
 			}
 

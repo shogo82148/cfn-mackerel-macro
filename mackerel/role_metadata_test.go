@@ -36,6 +36,7 @@ func TestGetRoleMetaData(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 
@@ -83,6 +84,7 @@ func TestGetRoleMetaDataNameSpaces(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 
@@ -133,6 +135,7 @@ func TestPutRoleMetaData(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 
@@ -175,6 +178,7 @@ func TestDeleteRoleMetaData(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 

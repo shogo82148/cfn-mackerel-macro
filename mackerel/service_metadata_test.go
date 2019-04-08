@@ -35,6 +35,7 @@ func TestGetServiceMetaData(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 
@@ -78,6 +79,7 @@ func TestGetServiceMetaDataNameSpaces(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 
@@ -127,6 +129,7 @@ func TestPutServiceMetaData(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 
@@ -164,6 +167,7 @@ func TestDeleteServiceMetaData(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 
