@@ -1,15 +1,15 @@
 package mackerel
 
 import (
-	"time"
 	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"testing"
 	"sync"
 	"sync/atomic"
+	"testing"
+	"time"
 )
 
 func TestDo(t *testing.T) {
@@ -43,26 +43,26 @@ func TestDo(t *testing.T) {
 	t.Run("dynamic api key", func(t *testing.T) {
 		var cnt int32
 		c := &Client{
-			BaseURL:    u,
-			APIKeyProvider: func(ctx context.Context)(string, error){
+			BaseURL: u,
+			APIKeyProvider: APIKeyProviderFunc(func(ctx context.Context) (string, error) {
 				atomic.AddInt32(&cnt, 1)
 				time.Sleep(100 * time.Millisecond)
 				return apiKey, nil
-			},
+			}),
 			HTTPClient: ts.Client(),
 		}
 
 		// send requests concurrently
 		var wg sync.WaitGroup
 		wg.Add(2)
-		go func () {
+		go func() {
 			defer wg.Done()
 			_, err := c.do(context.Background(), http.MethodGet, "/foo/bar", nil, nil)
 			if err != nil {
 				t.Error(err)
 			}
 		}()
-		go func () {
+		go func() {
 			defer wg.Done()
 			_, err := c.do(context.Background(), http.MethodGet, "/foo/bar", nil, nil)
 			if err != nil {

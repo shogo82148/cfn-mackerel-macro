@@ -12,7 +12,8 @@ import (
 
 // Function is a custom resource function for CloudForamtion.
 type Function struct {
-	APIKey string
+	APIKey         string
+	APIKeyProvider mackerel.APIKeyProvider
 
 	mu     sync.Mutex
 	client makerelInterface
@@ -175,7 +176,8 @@ func (f *Function) getclient() makerelInterface {
 	defer f.mu.Unlock()
 	if f.client == nil {
 		f.client = &mackerel.Client{
-			APIKey: f.APIKey,
+			APIKey:         f.APIKey,
+			APIKeyProvider: f.APIKeyProvider,
 		}
 	}
 	return f.client

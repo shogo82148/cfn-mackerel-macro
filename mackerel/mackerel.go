@@ -26,11 +26,24 @@ func init() {
 	}
 }
 
+// APIKeyProvider is an api key provider.
+type APIKeyProvider interface {
+	MackerelAPIKey(context.Context) (string, error)
+}
+
+// APIKeyProviderFunc type is an adapter to allow the use of ordinary functions.
+type APIKeyProviderFunc func(context.Context) (string, error)
+
+// MackerelAPIKey implements APIKeyProvider
+func (f APIKeyProviderFunc) MackerelAPIKey(ctx context.Context) (string, error) {
+	return f(ctx)
+}
+
 // Client is a client for mackerel.io
 type Client struct {
 	BaseURL        *url.URL
 	APIKey         string
-	APIKeyProvider func(context.Context) (string, error)
+	APIKeyProvider APIKeyProvider
 	UserAgent      string
 	HTTPClient     *http.Client
 
@@ -85,7 +98,7 @@ func (c *Client) getAPIKey(ctx context.Context) (string, error) {
 	if provider == nil {
 		return "", errors.New("api key is not found")
 	}
-	apikey, err := provider(ctx)
+	apikey, err := provider.MackerelAPIKey(ctx)
 	if err != nil {
 		return "", err
 	}
