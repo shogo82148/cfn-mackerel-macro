@@ -3,6 +3,7 @@ package cfn
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strings"
 	"sync"
 
@@ -14,6 +15,7 @@ import (
 type Function struct {
 	APIKey         string
 	APIKeyProvider mackerel.APIKeyProvider
+	BaseURL        *url.URL
 
 	mu     sync.Mutex
 	client makerelInterface
@@ -178,6 +180,7 @@ func (f *Function) getclient() makerelInterface {
 		f.client = &mackerel.Client{
 			APIKey:         f.APIKey,
 			APIKeyProvider: f.APIKeyProvider,
+			BaseURL:        f.BaseURL,
 		}
 	}
 	return f.client

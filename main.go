@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/url"
 	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -30,9 +31,22 @@ func main() {
 	provider, err := aws.LoadDefaultProvider()
 	if err != nil {
 		logrus.WithError(err).Error("fail to load aws config")
+		os.Exit(1)
 	}
+
+	var u *url.URL
+	if base := os.Getenv("MACKEREL_APIURL"); base != "" {
+		var err error
+		u, err = url.Parse(base)
+		if err != nil {
+			logrus.WithError(err).Error("fail to parse base url")
+			os.Exit(1)
+		}
+	}
+
 	f := cfn.Function{
 		APIKeyProvider: provider,
+		BaseURL:        u,
 	}
 	lambda.Start(f.LambdaWrap())
 }
