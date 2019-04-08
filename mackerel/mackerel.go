@@ -6,11 +6,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"sync"
 	"time"
 )
 
@@ -26,10 +28,14 @@ func init() {
 
 // Client is a client for mackerel.io
 type Client struct {
-	BaseURL    *url.URL
-	APIKey     string
-	UserAgent  string
-	HTTPClient *http.Client
+	BaseURL        *url.URL
+	APIKey         string
+	APIKeyProvider func(context.Context) (string, error)
+	UserAgent      string
+	HTTPClient     *http.Client
+
+	mu     sync.RWMutex
+	apikey string // cached api key
 }
 
 func (c *Client) httpClient() *http.Client {
@@ -53,6 +59,40 @@ func (c *Client) urlfor(path string) string {
 	return u.String()
 }
 
+func (c *Client) getAPIKey(ctx context.Context) (string, error) {
+	// check static api key
+	if c.APIKey != "" {
+		return c.APIKey, nil
+	}
+
+	// check cached api key
+	c.mu.RLock()
+	if c.apikey != "" {
+		key := c.apikey
+		c.mu.RUnlock()
+		return key, nil
+	}
+	c.mu.RUnlock()
+
+	// need to update api key
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.apikey != "" {
+		return c.apikey, nil
+	}
+
+	provider := c.APIKeyProvider
+	if provider == nil {
+		return "", errors.New("api key is not found")
+	}
+	apikey, err := provider(ctx)
+	if err != nil {
+		return "", err
+	}
+	c.apikey = apikey
+	return apikey, nil
+}
+
 func (c *Client) newRequest(ctx context.Context, method, path string, body io.Reader) (*http.Request, error) {
 	u := c.urlfor(path)
 	req, err := http.NewRequest(method, u, body)
@@ -61,7 +101,11 @@ func (c *Client) newRequest(ctx context.Context, method, path string, body io.Re
 	}
 
 	req = req.WithContext(ctx)
-	req.Header.Set("X-Api-Key", c.APIKey)
+	apikey, err := c.getAPIKey(ctx)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("X-Api-Key", apikey)
 	if c.UserAgent != "" {
 		req.Header.Set("User-Agent", c.UserAgent)
 	} else {
