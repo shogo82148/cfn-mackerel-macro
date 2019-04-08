@@ -35,6 +35,7 @@ func TestGetHostMetaData(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 
@@ -78,6 +79,7 @@ func TestGetHostMetaDataNameSpaces(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 
@@ -127,6 +129,7 @@ func TestPutHostMetaData(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 
@@ -164,6 +167,7 @@ func TestDeleteHostMetaData(t *testing.T) {
 	}
 	c := &Client{
 		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
 		HTTPClient: ts.Client(),
 	}
 
