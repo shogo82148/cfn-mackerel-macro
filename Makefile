@@ -4,15 +4,19 @@ help: ## Show this text.
 	# https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: all test clean help
+.PHONY: all test clean help release
 
-all: resource/main ## Build a package
+all: macro.zip resource.zip ## Build a package
 
-resource/main: resource $(SRC_FILES) go.mod go.sum
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o resource/main .
-
-resource:
+resource/main: $(SRC_FILES) go.mod go.sum
 	mkdir -p resource
+	./run-in-docker.sh go build -o resource/main .
+
+macro.zip: macro/app.py
+	cd macro && zip -r ../macro.zip .
+
+resource.zip: resource/main
+	cd resource && zip -r ../resource.zip .
 
 test:
 	go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
