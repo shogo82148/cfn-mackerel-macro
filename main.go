@@ -28,6 +28,8 @@ func init() {
 }
 
 func main() {
+	logrus.Infof("cfn_mackerel_macro v%s", version)
+
 	provider, err := aws.LoadDefaultProvider()
 	if err != nil {
 		logrus.WithError(err).Error("fail to load aws config")

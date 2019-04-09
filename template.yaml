@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: provide a CloudFormation macro for creating Mackerel resources.
+Description: "cfn-mackerel-macro v%%VERSION%% - provide a CloudFormation macro for creating Mackerel resources."
 
 Parameters: 
   ParameterName: 
@@ -21,7 +21,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: go1.x
-      CodeUri: ./resource
+      CodeUri: ./resource.zip
       Handler: main
       Policies:
         - Version: '2012-10-17'
@@ -38,16 +38,20 @@ Resources:
           MACKEREL_APIKEY_WITH_DECRYPT: 1
           MACKEREL_APIURL: !Ref BaseUrl
           FORWARD_LOG_LEVEL: !Ref LogLevel
+      Tags:
+        Version: %%VERSION%%
 
   MacroFunction:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: python3.7
-      CodeUri: ./macro
+      CodeUri: ./macro.zip
       Handler: app.handler
       Environment:
         Variables:
           LAMBDA_ARN: !GetAtt ResourceFunction.Arn
+      Tags:
+        Version: %%VERSION%%
 
   Macro:
     Type: AWS::CloudFormation::Macro
