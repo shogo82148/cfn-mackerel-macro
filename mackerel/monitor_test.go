@@ -116,6 +116,56 @@ func TestFindMonitors(t *testing.T) {
 				MissingDurationCritical: ptrUint64(720),
 			},
 		},
+		{
+			resp: map[string]interface{}{
+				"id":                              "2cSZzK3XfmG",
+				"type":                            "external",
+				"name":                            "Example Domain",
+				"memo":                            "Monitors example.com",
+				"method":                          "GET",
+				"url":                             "https://example.com",
+				"service":                         "Hatena-Blog",
+				"notificationInterval":            60,
+				"responseTimeWarning":             5000,
+				"responseTimeCritical":            10000,
+				"responseTimeDuration":            3,
+				"containsString":                  "Example",
+				"maxCheckAttempts":                3,
+				"certificationExpirationWarning":  90,
+				"certificationExpirationCritical": 30,
+				"isMute":                          false,
+				"headers": []interface{}{
+					map[string]interface{}{
+						"name":  "Cache-Control",
+						"value": "no-cache",
+					},
+				},
+			},
+			want: &MonitorExternalHTTP{
+				ID:                   "2cSZzK3XfmG",
+				Name:                 "Example Domain",
+				Memo:                 "Monitors example.com",
+				Type:                 MonitorTypeExternalHTTP,
+				NotificationInterval: 60,
+
+				Method:                          "GET",
+				URL:                             "https://example.com",
+				MaxCheckAttempts:                3,
+				Service:                         "Hatena-Blog",
+				ResponseTimeCritical:            ptrFloat64(10000),
+				ResponseTimeWarning:             ptrFloat64(5000),
+				ResponseTimeDuration:            ptrUint64(3),
+				ContainsString:                  "Example",
+				CertificationExpirationCritical: ptrUint64(30),
+				CertificationExpirationWarning:  ptrUint64(90),
+				Headers: []HeaderField{
+					HeaderField{
+						Name:  "Cache-Control",
+						Value: "no-cache",
+					},
+				},
+			},
+		},
 	}
 
 	for i, tc := range tests {

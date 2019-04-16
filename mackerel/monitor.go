@@ -249,14 +249,23 @@ func (m *MonitorExternalHTTP) MonitorName() string { return m.Name }
 // MonitorID returns monitor id.
 func (m *MonitorExternalHTTP) MonitorID() string { return m.ID }
 
+// UnmarshalJSON implements json.Unmarshaler.
 func (m *MonitorExternalHTTP) UnmarshalJSON(b []byte) error {
-	// TODO
+	type monitor MonitorExternalHTTP
+	data := (*monitor)(m)
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+	m.Type = MonitorTypeExternalHTTP
 	return nil
 }
 
+// MarshalJSON implements json.Marshaler.
 func (m *MonitorExternalHTTP) MarshalJSON() ([]byte, error) {
-	// TODO
-	return []byte{}, nil
+	type monitor MonitorExternalHTTP
+	data := (*monitor)(m)
+	data.Type = MonitorTypeExternalHTTP
+	return json.Marshal(data)
 }
 
 // MonitorExpression represents expression monitor.
