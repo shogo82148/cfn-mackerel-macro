@@ -12,6 +12,15 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
+// Ensure each monitor type conforms to the Monitor interface.
+var (
+	_ Monitor = (*MonitorConnectivity)(nil)
+	_ Monitor = (*MonitorHostMetric)(nil)
+	_ Monitor = (*MonitorServiceMetric)(nil)
+	_ Monitor = (*MonitorExternalHTTP)(nil)
+	_ Monitor = (*MonitorExpression)(nil)
+)
+
 func TestFindMonitors(t *testing.T) {
 	ptrFloat64 := func(v float64) *float64 { return &v }
 	tests := []struct {

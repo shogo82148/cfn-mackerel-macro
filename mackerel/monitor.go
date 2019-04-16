@@ -9,11 +9,11 @@ import (
 
 // Monitor represents interface to which each monitor type must confirm to.
 type Monitor interface {
+	json.Unmarshaler
+	json.Marshaler
 	MonitorType() MonitorType
 	MonitorID() string
 	MonitorName() string
-
-	isMonitor()
 }
 
 // MonitorType is a type of monitors.
@@ -40,22 +40,33 @@ func (t MonitorType) String() string {
 	return string(t)
 }
 
-// Ensure each monitor type conforms to the Monitor interface.
-var (
-	_ Monitor = (*MonitorConnectivity)(nil)
-	_ Monitor = (*MonitorHostMetric)(nil)
-	_ Monitor = (*MonitorServiceMetric)(nil)
-	_ Monitor = (*MonitorExternalHTTP)(nil)
-	_ Monitor = (*MonitorExpression)(nil)
-)
+type monitor struct {
+	Monitor
+}
 
-// Ensure only monitor types defined in this package can be assigned to the
-// Monitor interface.
-func (m *MonitorConnectivity) isMonitor()  {}
-func (m *MonitorHostMetric) isMonitor()    {}
-func (m *MonitorServiceMetric) isMonitor() {}
-func (m *MonitorExternalHTTP) isMonitor()  {}
-func (m *MonitorExpression) isMonitor()    {}
+func (m *monitor) UnmarshalJSON(b []byte) error {
+	var data struct {
+		Type MonitorType `json:"type"`
+	}
+	if err := json.Unmarshal(b, &data); err != nil {
+		return err
+	}
+	switch data.Type {
+	case MonitorTypeConnectivity:
+		m.Monitor = &MonitorConnectivity{}
+	case MonitorTypeHostMetric:
+		m.Monitor = &MonitorHostMetric{}
+	case MonitorTypeServiceMetric:
+		m.Monitor = &MonitorServiceMetric{}
+	case MonitorTypeExternalHTTP:
+		m.Monitor = &MonitorExternalHTTP{}
+	case MonitorTypeExpression:
+		m.Monitor = &MonitorExpression{}
+	default:
+		return fmt.Errorf("unknown monitor type: %s", data.Type)
+	}
+	return json.Unmarshal(b, m.Monitor)
+}
 
 // MonitorConnectivity represents connectivity monitor.
 type MonitorConnectivity struct {
@@ -78,6 +89,16 @@ func (m *MonitorConnectivity) MonitorName() string { return m.Name }
 
 // MonitorID returns monitor id.
 func (m *MonitorConnectivity) MonitorID() string { return m.ID }
+
+func (m *MonitorConnectivity) UnmarshalJSON(b []byte) error {
+	// TODO
+	return nil
+}
+
+func (m *MonitorConnectivity) MarshalJSON() ([]byte, error) {
+	// TODO
+	return []byte{}, nil
+}
 
 // MonitorHostMetric represents host metric monitor.
 type MonitorHostMetric struct {
@@ -108,6 +129,25 @@ func (m *MonitorHostMetric) MonitorName() string { return m.Name }
 // MonitorID returns monitor id.
 func (m *MonitorHostMetric) MonitorID() string { return m.ID }
 
+// UnmarshalJSON implements json.Unmarshal.
+func (m *MonitorHostMetric) UnmarshalJSON(b []byte) error {
+	type monitor MonitorHostMetric
+	data := (*monitor)(m)
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+	m.Type = MonitorTypeHostMetric
+	return nil
+}
+
+// MarshalJSON implements json.Marshal.
+func (m *MonitorHostMetric) MarshalJSON() ([]byte, error) {
+	type monitor MonitorHostMetric
+	data := (*monitor)(m)
+	data.Type = MonitorTypeHostMetric
+	return json.Marshal(data)
+}
+
 // MonitorServiceMetric represents service metric monitor.
 type MonitorServiceMetric struct {
 	ID                   string      `json:"id,omitempty"`
@@ -127,6 +167,16 @@ type MonitorServiceMetric struct {
 
 	MissingDurationWarning  *uint64 `json:"missingDurationWarning"`
 	MissingDurationCritical *uint64 `json:"missingDurationCritical"`
+}
+
+func (m *MonitorServiceMetric) UnmarshalJSON(b []byte) error {
+	// TODO
+	return nil
+}
+
+func (m *MonitorServiceMetric) MarshalJSON() ([]byte, error) {
+	// TODO
+	return []byte{}, nil
 }
 
 // MonitorType returns monitor type.
@@ -181,6 +231,16 @@ func (m *MonitorExternalHTTP) MonitorName() string { return m.Name }
 // MonitorID returns monitor id.
 func (m *MonitorExternalHTTP) MonitorID() string { return m.ID }
 
+func (m *MonitorExternalHTTP) UnmarshalJSON(b []byte) error {
+	// TODO
+	return nil
+}
+
+func (m *MonitorExternalHTTP) MarshalJSON() ([]byte, error) {
+	// TODO
+	return []byte{}, nil
+}
+
 // MonitorExpression represents expression monitor.
 type MonitorExpression struct {
 	ID                   string      `json:"id,omitempty"`
@@ -205,14 +265,29 @@ func (m *MonitorExpression) MonitorName() string { return m.Name }
 // MonitorID returns monitor id.
 func (m *MonitorExpression) MonitorID() string { return m.ID }
 
+func (m *MonitorExpression) UnmarshalJSON(b []byte) error {
+	// TODO
+	return nil
+}
+
+func (m *MonitorExpression) MarshalJSON() ([]byte, error) {
+	// TODO
+	return []byte{}, nil
+}
+
 // FindMonitors returns monitoring settings.
 func (c *Client) FindMonitors(ctx context.Context) ([]Monitor, error) {
-	var resp json.RawMessage
+	var resp []monitor
 	_, err := c.do(ctx, http.MethodGet, "/api/v0/monitors", nil, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return []Monitor{}, nil
+
+	ret := make([]Monitor, 0, len(resp))
+	for _, m := range resp {
+		ret = append(ret, m.Monitor)
+	}
+	return ret, nil
 }
 
 // FindMonitor returns a monitoring setting.
