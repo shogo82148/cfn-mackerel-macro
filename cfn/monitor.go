@@ -192,6 +192,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			CertificationExpirationWarning:  d.OptionalUint64(in.M("CertificationExpirationWarning")),
 			CertificationExpirationCritical: d.OptionalUint64(in.M("CertificationExpirationCritical")),
 			SkipCertificateVerification:     d.Bool(dproxy.Default(in.M("SkipCertificateVerification"), false)),
+			Headers:                         headers,
 		}
 	case mackerel.MonitorTypeExpression.String():
 		mm = &mackerel.MonitorExpression{
