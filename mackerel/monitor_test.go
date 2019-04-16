@@ -258,8 +258,43 @@ func TestFindMonitors(t *testing.T) {
 				return
 			}
 			if diff := cmp.Diff(got, tc.want); diff != "" {
-				t.Errorf("FindMonitors differs: (-got +want)\n%s", diff)
+				t.Errorf("FindMonitor differs: (-got +want)\n%s", diff)
 			}
 		})
+
+		t.Run(fmt.Sprintf("DeleteMonitor-%d", i), func(t *testing.T) {
+			ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.Method != http.MethodDelete {
+					t.Errorf("unexpected method: want %s, got %s", http.MethodDelete, r.Method)
+				}
+				if r.URL.Path != "/api/v0/monitors/2cSZzK3XfmG" {
+					t.Errorf("unexpected path, want %s, got %s", "/api/v0/dashboards/2cSZzK3XfmG", r.URL.Path)
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
+				enc := json.NewEncoder(w)
+				enc.Encode(tc.resp)
+			}))
+			defer ts.Close()
+
+			u, err := url.Parse(ts.URL)
+			if err != nil {
+				t.Fatal(err)
+			}
+			c := &Client{
+				BaseURL:    u,
+				APIKey:     "DUMMY-API-KEY",
+				HTTPClient: ts.Client(),
+			}
+			got, err := c.DeleteMonitor(context.Background(), "2cSZzK3XfmG")
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			if diff := cmp.Diff(got, tc.want); diff != "" {
+				t.Errorf("DeleteMonitor differs: (-got +want)\n%s", diff)
+			}
+		})
+
 	}
 }

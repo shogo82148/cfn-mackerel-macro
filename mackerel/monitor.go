@@ -358,12 +358,12 @@ func (c *Client) UpdateMonitor(ctx context.Context, monitorID string, param Moni
 
 // DeleteMonitor deletes a monitoring.
 func (c *Client) DeleteMonitor(ctx context.Context, monitorID string) (Monitor, error) {
-	var resp json.RawMessage
+	var resp monitor
 	_, err := c.do(ctx, http.MethodDelete, fmt.Sprintf("/api/v0/monitors/%s", monitorID), nil, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return decodeMonitor(resp)
+	return resp.Monitor, nil
 }
 
 func decodeMonitor(mes json.RawMessage) (Monitor, error) {
