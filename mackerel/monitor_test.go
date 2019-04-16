@@ -23,6 +23,7 @@ var (
 
 func TestFindMonitors(t *testing.T) {
 	ptrFloat64 := func(v float64) *float64 { return &v }
+	ptrUint64 := func(v uint64) *uint64 { return &v }
 	tests := []struct {
 		resp map[string]interface{} // the response of the mackerel api
 		want Monitor
@@ -77,6 +78,42 @@ func TestFindMonitors(t *testing.T) {
 				Type:          MonitorTypeConnectivity,
 				Scopes:        []string{"service1"},
 				ExcludeScopes: []string{"service1:role3"},
+			},
+		},
+		{
+			resp: map[string]interface{}{
+				"id":                      "2cSZzK3XfmG",
+				"type":                    "service",
+				"name":                    "Hatena-Blog - access_num.4xx_count",
+				"memo":                    "A monitor that checks the number of 4xx for Hatena Blog",
+				"service":                 "Hatena-Blog",
+				"duration":                1,
+				"metric":                  "access_num.4xx_count",
+				"operator":                ">",
+				"warning":                 50.0,
+				"critical":                100.0,
+				"maxCheckAttempts":        3,
+				"missingDurationWarning":  360,
+				"missingDurationCritical": 720,
+				"notificationInterval":    60,
+			},
+			want: &MonitorServiceMetric{
+				ID:                   "2cSZzK3XfmG",
+				Name:                 "Hatena-Blog - access_num.4xx_count",
+				Memo:                 "A monitor that checks the number of 4xx for Hatena Blog",
+				Type:                 MonitorTypeServiceMetric,
+				NotificationInterval: 60,
+
+				Service:          "Hatena-Blog",
+				Metric:           "access_num.4xx_count",
+				Operator:         ">",
+				Warning:          ptrFloat64(50.0),
+				Critical:         ptrFloat64(100.0),
+				Duration:         1,
+				MaxCheckAttempts: 3,
+
+				MissingDurationWarning:  ptrUint64(360),
+				MissingDurationCritical: ptrUint64(720),
 			},
 		},
 	}

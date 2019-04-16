@@ -90,6 +90,7 @@ func (m *MonitorConnectivity) MonitorName() string { return m.Name }
 // MonitorID returns monitor id.
 func (m *MonitorConnectivity) MonitorID() string { return m.ID }
 
+// UnmarshalJSON implements json.Unmarshaler.
 func (m *MonitorConnectivity) UnmarshalJSON(b []byte) error {
 	type monitor MonitorConnectivity
 	data := (*monitor)(m)
@@ -100,6 +101,7 @@ func (m *MonitorConnectivity) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// MarshalJSON implements json.Marshaler.
 func (m *MonitorConnectivity) MarshalJSON() ([]byte, error) {
 	type monitor MonitorConnectivity
 	data := (*monitor)(m)
@@ -176,16 +178,6 @@ type MonitorServiceMetric struct {
 	MissingDurationCritical *uint64 `json:"missingDurationCritical"`
 }
 
-func (m *MonitorServiceMetric) UnmarshalJSON(b []byte) error {
-	// TODO
-	return nil
-}
-
-func (m *MonitorServiceMetric) MarshalJSON() ([]byte, error) {
-	// TODO
-	return []byte{}, nil
-}
-
 // MonitorType returns monitor type.
 func (m *MonitorServiceMetric) MonitorType() MonitorType { return MonitorTypeServiceMetric }
 
@@ -194,6 +186,25 @@ func (m *MonitorServiceMetric) MonitorName() string { return m.Name }
 
 // MonitorID returns monitor id.
 func (m *MonitorServiceMetric) MonitorID() string { return m.ID }
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (m *MonitorServiceMetric) UnmarshalJSON(b []byte) error {
+	type monitor MonitorServiceMetric
+	data := (*monitor)(m)
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+	m.Type = MonitorTypeServiceMetric
+	return nil
+}
+
+// MarshalJSON implements json.Marshaler.
+func (m *MonitorServiceMetric) MarshalJSON() ([]byte, error) {
+	type monitor MonitorServiceMetric
+	data := (*monitor)(m)
+	data.Type = MonitorTypeServiceMetric
+	return json.Marshal(data)
+}
 
 // MonitorExternalHTTP represents external HTTP monitor.
 type MonitorExternalHTTP struct {
