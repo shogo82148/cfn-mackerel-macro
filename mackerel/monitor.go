@@ -292,14 +292,23 @@ func (m *MonitorExpression) MonitorName() string { return m.Name }
 // MonitorID returns monitor id.
 func (m *MonitorExpression) MonitorID() string { return m.ID }
 
+// UnmarshalJSON implements json.Unmarshaler.
 func (m *MonitorExpression) UnmarshalJSON(b []byte) error {
-	// TODO
+	type monitor MonitorExpression
+	data := (*monitor)(m)
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+	m.Type = MonitorTypeExpression
 	return nil
 }
 
+// MarshalJSON implements json.Marshaler.
 func (m *MonitorExpression) MarshalJSON() ([]byte, error) {
-	// TODO
-	return []byte{}, nil
+	type monitor MonitorExpression
+	data := (*monitor)(m)
+	data.Type = MonitorTypeExpression
+	return json.Marshal(data)
 }
 
 // FindMonitors returns monitoring settings.

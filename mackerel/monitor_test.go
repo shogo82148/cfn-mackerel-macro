@@ -166,6 +166,31 @@ func TestFindMonitors(t *testing.T) {
 				},
 			},
 		},
+		{
+			resp: map[string]interface{}{
+				"id":                   "2cSZzK3XfmG",
+				"type":                 "expression",
+				"name":                 "role average",
+				"memo":                 "Monitors the average of loadavg5",
+				"expression":           "avg(roleSlots(\"server:role\",\"loadavg5\"))",
+				"operator":             ">",
+				"warning":              5.0,
+				"critical":             10.0,
+				"notificationInterval": 60,
+			},
+			want: &MonitorExpression{
+				ID:                   "2cSZzK3XfmG",
+				Name:                 "role average",
+				Memo:                 "Monitors the average of loadavg5",
+				Type:                 MonitorTypeExpression,
+				NotificationInterval: 60,
+
+				Expression: "avg(roleSlots(\"server:role\",\"loadavg5\"))",
+				Operator:   ">",
+				Warning:    ptrFloat64(5.0),
+				Critical:   ptrFloat64(10.0),
+			},
+		},
 	}
 
 	for i, tc := range tests {
