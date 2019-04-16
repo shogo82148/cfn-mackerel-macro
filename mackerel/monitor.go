@@ -338,22 +338,22 @@ func (c *Client) FindMonitor(ctx context.Context, monitorID string) (Monitor, er
 
 // CreateMonitor creates a new monitoring.
 func (c *Client) CreateMonitor(ctx context.Context, param Monitor) (Monitor, error) {
-	var resp json.RawMessage
+	var resp monitor
 	_, err := c.do(ctx, http.MethodPost, "/api/v0/monitors", param, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return decodeMonitor(resp)
+	return resp.Monitor, nil
 }
 
 // UpdateMonitor updates a monitoring.
 func (c *Client) UpdateMonitor(ctx context.Context, monitorID string, param Monitor) (Monitor, error) {
-	var resp json.RawMessage
+	var resp monitor
 	_, err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/monitors/%s", monitorID), param, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return decodeMonitor(resp)
+	return resp.Monitor, nil
 }
 
 // DeleteMonitor deletes a monitoring.
@@ -364,30 +364,4 @@ func (c *Client) DeleteMonitor(ctx context.Context, monitorID string) (Monitor, 
 		return nil, err
 	}
 	return resp.Monitor, nil
-}
-
-func decodeMonitor(mes json.RawMessage) (Monitor, error) {
-	var typeData struct {
-		Type MonitorType `json:"type"`
-	}
-	if err := json.Unmarshal(mes, &typeData); err != nil {
-		return nil, err
-	}
-	var m Monitor
-	switch typeData.Type {
-	case MonitorTypeConnectivity:
-		m = &MonitorConnectivity{}
-	case MonitorTypeHostMetric:
-		m = &MonitorHostMetric{}
-	case MonitorTypeServiceMetric:
-		m = &MonitorServiceMetric{}
-	case MonitorTypeExternalHTTP:
-		m = &MonitorExternalHTTP{}
-	case MonitorTypeExpression:
-		m = &MonitorExpression{}
-	}
-	if err := json.Unmarshal(mes, m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
