@@ -205,6 +205,26 @@ func (m *MonitorExpression) MonitorName() string { return m.Name }
 // MonitorID returns monitor id.
 func (m *MonitorExpression) MonitorID() string { return m.ID }
 
+// FindMonitors returns monitoring settings.
+func (c *Client) FindMonitors(ctx context.Context) ([]Monitor, error) {
+	var resp json.RawMessage
+	_, err := c.do(ctx, http.MethodGet, "/api/v0/monitors", nil, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return []Monitor{}, nil
+}
+
+// FindMonitor returns a monitoring setting.
+func (c *Client) FindMonitor(ctx context.Context, monitorID string) (Monitor, error) {
+	var resp json.RawMessage
+	_, err := c.do(ctx, http.MethodGet, fmt.Sprintf("/api/v0/monitors/%s", monitorID), nil, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return decodeMonitor(resp)
+}
+
 // CreateMonitor creates a new monitoring.
 func (c *Client) CreateMonitor(ctx context.Context, param Monitor) (Monitor, error) {
 	var resp json.RawMessage
