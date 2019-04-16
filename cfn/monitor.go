@@ -90,7 +90,6 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			}
 		}
 		mm = &mackerel.MonitorConnectivity{
-			Type:                 mackerel.MonitorTypeConnectivity,
 			Name:                 d.String(in.M("Name")),
 			Memo:                 d.String(dproxy.Default(in.M("Memo"), "")),
 			Scopes:               scopes,
@@ -120,7 +119,6 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			}
 		}
 		mm = &mackerel.MonitorHostMetric{
-			Type:                 mackerel.MonitorTypeHostMetric,
 			Name:                 d.String(in.M("Name")),
 			Memo:                 d.String(dproxy.Default(in.M("Memo"), "")),
 			Duration:             d.Uint64(dproxy.Default(in.M("Duration"), 1)),
@@ -139,7 +137,6 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			return nil, err
 		}
 		mm = &mackerel.MonitorServiceMetric{
-			Type:                    mackerel.MonitorTypeHostMetric,
 			Name:                    d.String(in.M("Name")),
 			Memo:                    d.String(dproxy.Default(in.M("Memo"), "")),
 			Duration:                d.Uint64(dproxy.Default(in.M("Duration"), 1)),
@@ -176,7 +173,6 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			return nil, err
 		}
 		mm = &mackerel.MonitorExternalHTTP{
-			Type:        mackerel.MonitorTypeExternalHTTP,
 			Name:        d.String(in.M("Name")),
 			Memo:        d.String(dproxy.Default(in.M("Memo"), "")),
 			URL:         d.String(in.M("Url")),
@@ -197,7 +193,6 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 		}
 	case mackerel.MonitorTypeExpression.String():
 		mm = &mackerel.MonitorExpression{
-			Type:                 mackerel.MonitorTypeExpression,
 			Name:                 d.String(in.M("Name")),
 			Memo:                 d.String(dproxy.Default(in.M("Memo"), "")),
 			Expression:           d.String(in.M("Expression")),
