@@ -91,13 +91,20 @@ func (m *MonitorConnectivity) MonitorName() string { return m.Name }
 func (m *MonitorConnectivity) MonitorID() string { return m.ID }
 
 func (m *MonitorConnectivity) UnmarshalJSON(b []byte) error {
-	// TODO
+	type monitor MonitorConnectivity
+	data := (*monitor)(m)
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+	m.Type = MonitorTypeConnectivity
 	return nil
 }
 
 func (m *MonitorConnectivity) MarshalJSON() ([]byte, error) {
-	// TODO
-	return []byte{}, nil
+	type monitor MonitorConnectivity
+	data := (*monitor)(m)
+	data.Type = MonitorTypeConnectivity
+	return json.Marshal(data)
 }
 
 // MonitorHostMetric represents host metric monitor.

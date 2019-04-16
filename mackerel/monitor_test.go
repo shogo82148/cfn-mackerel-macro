@@ -61,6 +61,24 @@ func TestFindMonitors(t *testing.T) {
 				ExcludeScopes: []string{"Hatena-Bookmark:db-master"},
 			},
 		},
+		{
+			resp: map[string]interface{}{
+				"id":            "2cSZzK3XfmG",
+				"type":          "connectivity",
+				"name":          "connectivity service1",
+				"memo":          "A monitor that checks connectivity.",
+				"scopes":        []interface{}{"service1"},
+				"excludeScopes": []interface{}{"service1:role3"},
+			},
+			want: &MonitorConnectivity{
+				ID:            "2cSZzK3XfmG",
+				Name:          "connectivity service1",
+				Memo:          "A monitor that checks connectivity.",
+				Type:          MonitorTypeConnectivity,
+				Scopes:        []string{"service1"},
+				ExcludeScopes: []string{"service1:role3"},
+			},
+		},
 	}
 
 	for i, tc := range tests {
