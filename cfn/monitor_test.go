@@ -300,3 +300,67 @@ func TestCreateMonitor_MonitorExternalHTTP(t *testing.T) {
 		t.Errorf("unexpected type, want %s, got %s", "external", param["Type"].(string))
 	}
 }
+
+func TestCreateMonitor_MonitorExpression(t *testing.T) {
+	ptrFloat64 := func(v float64) *float64 { return &v }
+	m := &monitor{
+		Function: &Function{
+			org: &mackerel.Org{
+				Name: "test-org",
+			},
+			client: &fakeMackerelClient{
+				createMonitor: func(ctx context.Context, param mackerel.Monitor) (mackerel.Monitor, error) {
+					want := &mackerel.MonitorExpression{
+						Name:                 "role average",
+						Memo:                 "Monitors the average of loadavg5",
+						NotificationInterval: 60,
+
+						Expression: "avg(roleSlots(\"server:role\",\"loadavg5\"))",
+						Operator:   ">",
+						Warning:    ptrFloat64(5.0),
+						Critical:   ptrFloat64(10.0),
+					}
+					if diff := cmp.Diff(param, want); diff != "" {
+						t.Errorf("monitor differs: (-got +want)\n%s", diff)
+					}
+					want.ID = "3yAYEDLXKL5"
+					return want, nil
+				},
+			},
+		},
+		Event: cfn.Event{
+			RequestType:       cfn.RequestCreate,
+			RequestID:         "",
+			ResponseURL:       "https://cloudformation-custom-resource-response-apnortheast1.s3-ap-northeast-1.amazonaws.com/xxxxx",
+			ResourceType:      "Custom:Monitor",
+			LogicalResourceID: "Monitor",
+			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
+			ResourceProperties: map[string]interface{}{
+				"Type":                 "expression",
+				"Name":                 "role average",
+				"Memo":                 "Monitors the average of loadavg5",
+				"Expression":           "avg(roleSlots(\"server:role\",\"loadavg5\"))",
+				"Operator":             ">",
+				"Warning":              5.0,
+				"Critical":             10.0,
+				"NotificationInterval": 60.0,
+			},
+		},
+	}
+	id, param, err := m.create(context.Background())
+	if err != nil {
+		t.Error(err)
+	}
+	if id != "mkr:test-org:monitor:3yAYEDLXKL5" {
+		t.Errorf("unexpected host id: want %s, got %s", "mkr:test-org:host:3yAYEDLXKL5", id)
+	}
+	if param["MonitorId"].(string) != "3yAYEDLXKL5" {
+		t.Errorf("unexpected monitor id, want %s, got %s", "3yAYEDLXKL5", param["MonitorId"].(string))
+	}
+	if param["Name"].(string) != "role average" {
+		t.Errorf("unexpected name, want %s, got %s", "role average", param["Name"].(string))
+	}
+	if param["Type"].(string) != "expression" {
+		t.Errorf("unexpected type, want %s, got %s", "expression", param["Type"].(string))
+	}
+}
