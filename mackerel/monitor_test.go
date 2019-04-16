@@ -97,5 +97,39 @@ func TestFindMonitors(t *testing.T) {
 				t.Errorf("FindMonitors differs: (-got +want)\n%s", diff)
 			}
 		})
+
+		t.Run(fmt.Sprintf("FindMonitor-%d", i), func(t *testing.T) {
+			ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.Method != http.MethodGet {
+					t.Errorf("unexpected method: want %s, got %s", http.MethodGet, r.Method)
+				}
+				if r.URL.Path != "/api/v0/monitors/2cSZzK3XfmG" {
+					t.Errorf("unexpected path, want %s, got %s", "/api/v0/dashboards/2cSZzK3XfmG", r.URL.Path)
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
+				enc := json.NewEncoder(w)
+				enc.Encode(tc.resp)
+			}))
+			defer ts.Close()
+
+			u, err := url.Parse(ts.URL)
+			if err != nil {
+				t.Fatal(err)
+			}
+			c := &Client{
+				BaseURL:    u,
+				APIKey:     "DUMMY-API-KEY",
+				HTTPClient: ts.Client(),
+			}
+			got, err := c.FindMonitor(context.Background(), "2cSZzK3XfmG")
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			if diff := cmp.Diff(got, tc.want); diff != "" {
+				t.Errorf("FindMonitors differs: (-got +want)\n%s", diff)
+			}
+		})
 	}
 }
