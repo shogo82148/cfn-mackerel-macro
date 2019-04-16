@@ -56,6 +56,9 @@ func TestCreateMonitor_MonitorConnectivity(t *testing.T) {
 	if id != "mkr:test-org:monitor:3yAYEDLXKL5" {
 		t.Errorf("unexpected host id: want %s, got %s", "mkr:test-org:host:3yAYEDLXKL5", id)
 	}
+	if param["MonitorId"].(string) != "3yAYEDLXKL5" {
+		t.Errorf("unexpected monitor id, want %s, got %s", "3yAYEDLXKL5", param["MonitorId"].(string))
+	}
 	if param["Name"].(string) != "foo-bar" {
 		t.Errorf("unexpected name, want %s, got %s", "foo-bar", param["Name"].(string))
 	}

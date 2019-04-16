@@ -30,8 +30,9 @@ func (m *monitor) create(ctx context.Context) (physicalResourceID string, data m
 		return "", nil, err
 	}
 	return id, map[string]interface{}{
-		"Type": ret.MonitorType().String(),
-		"Name": ret.MonitorName(),
+		"MonitorId": ret.MonitorID(),
+		"Type":      ret.MonitorType().String(),
+		"Name":      ret.MonitorName(),
 	}, nil
 }
 
@@ -52,8 +53,9 @@ func (m *monitor) update(ctx context.Context) (physicalResourceID string, data m
 	}
 
 	return m.Event.PhysicalResourceID, map[string]interface{}{
-		"Type": ret.MonitorType().String(),
-		"Name": ret.MonitorName(),
+		"MonitorId": ret.MonitorID(),
+		"Type":      ret.MonitorType().String(),
+		"Name":      ret.MonitorName(),
 	}, nil
 }
 
