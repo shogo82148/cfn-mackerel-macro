@@ -462,7 +462,7 @@ func TestCreateMonitor(t *testing.T) {
 					t.Errorf("unexpected method: want %s, got %s", http.MethodPost, r.Method)
 				}
 				if r.URL.Path != "/api/v0/monitors" {
-					t.Errorf("unexpected path, want %s, got %s", "/api/v0/dashboards", r.URL.Path)
+					t.Errorf("unexpected path, want %s, got %s", "/api/v0/monitors", r.URL.Path)
 				}
 
 				var data map[string]interface{}
@@ -491,6 +491,46 @@ func TestCreateMonitor(t *testing.T) {
 			}
 
 			_, err = c.CreateMonitor(context.Background(), tc.in)
+			if err != nil {
+				t.Error(err)
+			}
+		})
+
+		t.Run(fmt.Sprintf("UpdateMonitor-%d", i), func(t *testing.T) {
+			ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.Method != http.MethodPut {
+					t.Errorf("unexpected method: want %s, got %s", http.MethodPut, r.Method)
+				}
+				if r.URL.Path != "/api/v0/monitors/2cSZzK3XfmG" {
+					t.Errorf("unexpected path, want %s, got %s", "/api/v0/monitors/2cSZzK3XfmG", r.URL.Path)
+				}
+
+				var data map[string]interface{}
+				dec := json.NewDecoder(r.Body)
+				if err := dec.Decode(&data); err != nil {
+					t.Error(err)
+					return
+				}
+				if diff := cmp.Diff(data, tc.want); diff != "" {
+					t.Errorf("CreateMonitor differs: (-got +want)\n%s", diff)
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
+				fmt.Fprint(w, `{"type":"host"}`) // DUMMY
+			}))
+			defer ts.Close()
+
+			u, err := url.Parse(ts.URL)
+			if err != nil {
+				t.Fatal(err)
+			}
+			c := &Client{
+				BaseURL:    u,
+				APIKey:     "DUMMY-API-KEY",
+				HTTPClient: ts.Client(),
+			}
+
+			_, err = c.UpdateMonitor(context.Background(), "2cSZzK3XfmG", tc.in)
 			if err != nil {
 				t.Error(err)
 			}
