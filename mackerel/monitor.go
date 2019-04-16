@@ -292,12 +292,12 @@ func (c *Client) FindMonitors(ctx context.Context) ([]Monitor, error) {
 
 // FindMonitor returns a monitoring setting.
 func (c *Client) FindMonitor(ctx context.Context, monitorID string) (Monitor, error) {
-	var resp json.RawMessage
+	var resp monitor
 	_, err := c.do(ctx, http.MethodGet, fmt.Sprintf("/api/v0/monitors/%s", monitorID), nil, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return decodeMonitor(resp)
+	return resp.Monitor, nil
 }
 
 // CreateMonitor creates a new monitoring.
