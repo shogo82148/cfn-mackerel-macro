@@ -3,6 +3,7 @@ package cfn
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -215,16 +216,15 @@ func (d *dashboard) convertLayout(dp *dproxy.Drain, properties dproxy.Proxy) *ma
 }
 
 func (d *dashboard) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	id, err := d.Function.parseDashboardID(ctx, d.Event.PhysicalResourceID)
+	physicalResourceID = d.Event.PhysicalResourceID
+	id, err := d.Function.parseDashboardID(ctx, physicalResourceID)
 	if err != nil {
-		return d.Event.PhysicalResourceID, nil, err
+		log.Printf("failed to parse %q as dashboard id: %s", physicalResourceID, err)
+		err = nil
+		return
 	}
 
 	c := d.Function.getclient()
 	_, err = c.DeleteDashboard(ctx, id)
-	if err != nil {
-		return d.Event.PhysicalResourceID, nil, err
-	}
-
-	return d.Event.PhysicalResourceID, map[string]interface{}{}, nil
+	return
 }

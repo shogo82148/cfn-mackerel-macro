@@ -2,6 +2,7 @@ package cfn
 
 import (
 	"context"
+	"log"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -111,6 +112,8 @@ func (g *notificationGroup) delete(ctx context.Context) (physicalResourceID stri
 	physicalResourceID = g.Event.PhysicalResourceID
 	groupID, err := g.Function.parseNotificationGroupID(ctx, physicalResourceID)
 	if err != nil {
+		log.Printf("failed to parse %q as notification group id: %s", physicalResourceID, err)
+		err = nil
 		return
 	}
 	c := g.Function.getclient()

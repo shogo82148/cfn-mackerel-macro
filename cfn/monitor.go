@@ -3,6 +3,7 @@ package cfn
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -214,16 +215,15 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 }
 
 func (m *monitor) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	monitorID, err := m.Function.parseMonitorID(ctx, m.Event.PhysicalResourceID)
+	physicalResourceID = m.Event.PhysicalResourceID
+	id, err := m.Function.parseHostID(ctx, physicalResourceID)
 	if err != nil {
-		return m.Event.PhysicalResourceID, nil, err
+		log.Printf("failed to parse %q as monitor id: %s", physicalResourceID, err)
+		err = nil
+		return
 	}
 
 	c := m.Function.getclient()
-	_, err = c.DeleteMonitor(ctx, monitorID)
-	if err != nil {
-		return m.Event.PhysicalResourceID, nil, err
-	}
-
-	return m.Event.PhysicalResourceID, map[string]interface{}{}, nil
+	_, err = c.DeleteMonitor(ctx, id)
+	return
 }

@@ -3,6 +3,7 @@ package cfn
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/cfn"
@@ -119,10 +120,9 @@ func (u *user) delete(ctx context.Context) (physicalResourceID string, data map[
 	physicalResourceID = u.Event.PhysicalResourceID
 	email, err := u.Function.parseUserID(ctx, physicalResourceID)
 	if err != nil {
+		log.Printf("failed to parse %q as user id: %s", physicalResourceID, err)
+		err = nil
 		return
-	}
-	data = map[string]interface{}{
-		"Email": email,
 	}
 
 	// revoke invitation

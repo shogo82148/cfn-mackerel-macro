@@ -2,6 +2,7 @@ package cfn
 
 import (
 	"context"
+	"log"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -67,18 +68,15 @@ func (s *service) update(ctx context.Context) (physicalResourceID string, data m
 }
 
 func (s *service) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	serviceName, err := s.Function.parseServiceID(ctx, s.Event.PhysicalResourceID)
+	physicalResourceID = s.Event.PhysicalResourceID
+	serviceName, err := s.Function.parseServiceID(ctx, physicalResourceID)
 	if err != nil {
-		return s.Event.PhysicalResourceID, nil, err
+		log.Printf("failed to parse %q as service id: %s", physicalResourceID, err)
+		err = nil
+		return
 	}
 
 	c := s.Function.getclient()
-	ss, err := c.DeleteService(ctx, serviceName)
-	if err != nil {
-		return s.Event.PhysicalResourceID, nil, err
-	}
-
-	return s.Event.PhysicalResourceID, map[string]interface{}{
-		"Name": ss.Name,
-	}, nil
+	_, err = c.DeleteService(ctx, serviceName)
+	return
 }
