@@ -3,6 +3,7 @@ package cfn
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -88,16 +89,15 @@ func (ch *notificationChannel) convertEvents(d *dproxy.Drain, in dproxy.Proxy) [
 }
 
 func (ch *notificationChannel) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	id, err := ch.Function.parseNotificationChannelID(ctx, ch.Event.PhysicalResourceID)
+	physicalResourceID = ch.Event.PhysicalResourceID
+	id, err := ch.Function.parseNotificationChannelID(ctx, physicalResourceID)
 	if err != nil {
-		return ch.Event.PhysicalResourceID, nil, err
+		log.Printf("failed to parse %q as monitor id: %s", physicalResourceID, err)
+		err = nil
+		return
 	}
 
 	c := ch.Function.getclient()
 	_, err = c.DeleteNotificationChannel(ctx, id)
-	if err != nil {
-		return ch.Event.PhysicalResourceID, nil, err
-	}
-
-	return ch.Event.PhysicalResourceID, map[string]interface{}{}, nil
+	return
 }

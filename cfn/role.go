@@ -3,6 +3,7 @@ package cfn
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -70,18 +71,15 @@ func (r *role) update(ctx context.Context) (physicalResourceID string, data map[
 }
 
 func (r *role) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	serviceName, roleName, err := r.Function.parseRoleID(ctx, r.Event.PhysicalResourceID)
+	physicalResourceID = r.Event.PhysicalResourceID
+	serviceName, roleName, err := r.Function.parseRoleID(ctx, physicalResourceID)
 	if err != nil {
-		return r.Event.PhysicalResourceID, nil, err
+		log.Printf("failed to parse %q as role id: %s", physicalResourceID, err)
+		err = nil
+		return
 	}
 
 	c := r.Function.getclient()
-	ss, err := c.DeleteRole(ctx, serviceName, roleName)
-	if err != nil {
-		return r.Event.PhysicalResourceID, nil, err
-	}
-
-	return r.Event.PhysicalResourceID, map[string]interface{}{
-		"Name": ss.Name,
-	}, nil
+	_, err = c.DeleteRole(ctx, serviceName, roleName)
+	return
 }

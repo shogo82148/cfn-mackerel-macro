@@ -2,6 +2,7 @@ package cfn
 
 import (
 	"context"
+	"log"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -84,16 +85,15 @@ func (h *host) convertToParam(ctx context.Context, properties map[string]interfa
 }
 
 func (h *host) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	id, err := h.Function.parseHostID(ctx, h.Event.PhysicalResourceID)
+	physicalResourceID = h.Event.PhysicalResourceID
+	id, err := h.Function.parseHostID(ctx, physicalResourceID)
 	if err != nil {
-		return h.Event.PhysicalResourceID, nil, err
+		log.Printf("failed to parse %q as host id: %s", physicalResourceID, err)
+		err = nil
+		return
 	}
 
 	c := h.Function.getclient()
 	err = c.RetireHost(ctx, id)
-	if err != nil {
-		return h.Event.PhysicalResourceID, nil, err
-	}
-
-	return h.Event.PhysicalResourceID, map[string]interface{}{}, nil
+	return
 }
