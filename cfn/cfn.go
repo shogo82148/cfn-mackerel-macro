@@ -114,6 +114,11 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 	typ := strings.TrimPrefix(event.ResourceType, "Custom::")
 	var r resource
 	switch typ {
+	case "Org":
+		r = &org{
+			Function: f,
+			Event:    event,
+		}
 	case "Service":
 		r = &service{
 			Function: f,
