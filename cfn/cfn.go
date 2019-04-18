@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel"
@@ -101,6 +102,13 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 	if strings.HasPrefix(event.PhysicalResourceID, "mkr::error:") {
 		// it is dummy resource, just ignore it
 		return event.PhysicalResourceID, nil, nil
+	}
+
+	// avoid to be killed by AWS Lambda Service.
+	if deadline, ok := ctx.Deadline(); ok {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithDeadline(ctx, deadline.Add(-100*time.Millisecond))
+		defer cancel()
 	}
 
 	typ := strings.TrimPrefix(event.ResourceType, "Custom::")
