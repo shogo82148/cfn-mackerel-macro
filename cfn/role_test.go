@@ -73,4 +73,7 @@ func TestCreateRole(t *testing.T) {
 	if param["Name"].(string) != "role-app" {
 		t.Errorf("unexpected name, want %s, got %s", "role-app", param["Name"].(string))
 	}
+	if param["FullName"].(string) != "awesome-service:role-app" {
+		t.Errorf("unexpected name, want %s, got %s", "awesome-service:role-app", param["FullName"].(string))
+	}
 }
