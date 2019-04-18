@@ -17,7 +17,7 @@ EOS
 
 DIST=$ROOT/.build/$VERSION
 mkdir -p "$DIST"
-perl -pe 's!%%VERSION%%!'"$VERSION"'!g' template.yaml > "$DIST/template.yaml"
+perl -pe 's!__VERSION__!'"$VERSION"'!g' template.yaml > "$DIST/template.yaml"
 
 make all
 cp macro.zip "$DIST"
