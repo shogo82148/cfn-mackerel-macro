@@ -20,30 +20,34 @@ func (r *role) create(ctx context.Context) (physicalResourceID string, data map[
 	in := dproxy.New(r.Event.ResourceProperties)
 	name := d.String(in.M("Name"))
 	service := d.String(in.M("Service"))
-	if err := d.CombineErrors(); err != nil {
-		return "", nil, err
+	err = d.CombineErrors()
+	if err != nil {
+		return
 	}
 
 	serviceName, err := r.Function.parseServiceID(ctx, service)
 	if err != nil {
-		return "", nil, fmt.Errorf("Failed to parse Service ID: %s", err)
+		err = fmt.Errorf("failed to parse %q as service id: %s", service, err)
+		return
 	}
 
 	c := r.Function.getclient()
-	ss, err := c.CreateRole(ctx, serviceName, &mackerel.CreateRoleParam{
+	role, err := c.CreateRole(ctx, serviceName, &mackerel.CreateRoleParam{
 		Name: name,
 	})
 	if err != nil {
 		return "", nil, err
 	}
 
-	id, err := r.Function.buildRoleID(ctx, serviceName, ss.Name)
+	physicalResourceID, err = r.Function.buildRoleID(ctx, serviceName, role.Name)
 	if err != nil {
-		return "", nil, err
+		return
 	}
-	return id, map[string]interface{}{
-		"Name": ss.Name,
-	}, nil
+	data = map[string]interface{}{
+		"Name":     role.Name,
+		"FullName": serviceName + ":" + role.Name,
+	}
+	return
 }
 
 func (r *role) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
@@ -59,10 +63,16 @@ func (r *role) update(ctx context.Context) (physicalResourceID string, data map[
 		return "", nil, err
 	}
 
+	serviceName, err := r.Function.parseServiceID(ctx, service)
+	if err != nil {
+		err = fmt.Errorf("failed to parse %q as service id: %s", service, err)
+		return
+	}
 	if name == oldName && service == oldService {
 		// No update is needed.
 		return r.Event.PhysicalResourceID, map[string]interface{}{
-			"Name": name,
+			"Name":     name,
+			"FullName": serviceName + ":" + name,
 		}, nil
 	}
 
