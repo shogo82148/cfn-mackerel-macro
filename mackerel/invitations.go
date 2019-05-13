@@ -52,7 +52,7 @@ func (c *Client) RevokeInvitation(ctx context.Context, email string) error {
 	var data struct {
 		Success bool `json:"success"`
 	}
-	_, err := c.do(ctx, http.MethodPost, "/api/v0/invitations", param, &data)
+	_, err := c.do(ctx, http.MethodPost, "/api/v0/invitations/revoke", param, &data)
 	if err != nil {
 		return err
 	}
