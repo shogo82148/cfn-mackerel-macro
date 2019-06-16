@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -32,20 +33,37 @@ func (r *role) create(ctx context.Context) (physicalResourceID string, data map[
 	}
 
 	c := r.Function.getclient()
-	role, err := c.CreateRole(ctx, serviceName, &mackerel.CreateRoleParam{
+	_, err = c.CreateRole(ctx, serviceName, &mackerel.CreateRoleParam{
 		Name: name,
 	})
 	if err != nil {
-		return "", nil, err
-	}
+		merr, ok := err.(mackerel.Error)
+		if !ok {
+			return "", nil, err
+		}
+		if merr.StatusCode() != http.StatusBadRequest {
+			return "", nil, err
+		}
 
-	physicalResourceID, err = r.Function.buildRoleID(ctx, serviceName, role.Name)
+		// the role may already exist. try to override it.
+	}
+	creationErr := err
+
+	physicalResourceID, err = r.Function.buildRoleID(ctx, serviceName, name)
 	if err != nil {
 		return
 	}
+	meta := getmetadata(r.Event)
+	if err := c.PutRoleMetaData(ctx, serviceName, name, "cloudformation", meta); err != nil {
+		if creationErr != nil {
+			return "", nil, creationErr
+		}
+		return physicalResourceID, nil, err
+	}
+
 	data = map[string]interface{}{
-		"Name":     role.Name,
-		"FullName": serviceName + ":" + role.Name,
+		"Name":     name,
+		"FullName": serviceName + ":" + name,
 	}
 	return
 }
