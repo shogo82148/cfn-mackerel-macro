@@ -2,6 +2,7 @@ package cfn
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel"
 )
@@ -207,4 +208,21 @@ func (c *fakeMackerelClient) CreateInvitation(ctx context.Context, email string,
 
 func (c *fakeMackerelClient) RevokeInvitation(ctx context.Context, email string) error {
 	return c.revokeInvitation(ctx, email)
+}
+
+type mkrError struct {
+	statusCode int
+	message    string
+}
+
+func (e mkrError) Error() string {
+	return fmt.Sprintf("status: %d, %s", e.statusCode, e.message)
+}
+
+func (e mkrError) StatusCode() int {
+	return e.statusCode
+}
+
+func (e mkrError) Message() string {
+	return e.message
 }
