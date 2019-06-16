@@ -229,6 +229,6 @@ func TestDeleteRole_RoleNotFound(t *testing.T) {
 		t.Error(err)
 	}
 	if !deleted {
-		t.Error("the service is not deleted")
+		t.Error("the role is not deleted")
 	}
 }
