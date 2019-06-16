@@ -167,3 +167,44 @@ func TestDeleteService(t *testing.T) {
 		t.Error("the service is not deleted")
 	}
 }
+
+func TestDeleteService_serviceNotFound(t *testing.T) {
+	var deleted bool
+	s := &service{
+		Function: &Function{
+			org: &mackerel.Org{
+				Name: "test-org",
+			},
+			client: &fakeMackerelClient{
+				deleteService: func(ctx context.Context, serviceName string) (*mackerel.Service, error) {
+					deleted = true
+					if serviceName != "awesome-service" {
+						t.Errorf("unexpected service name, want awesome-service, got %s", serviceName)
+					}
+					return nil, mkrError{
+						statusCode: http.StatusNotFound,
+					}
+				},
+			},
+		},
+		Event: cfn.Event{
+			RequestType:       cfn.RequestDelete,
+			RequestID:         "",
+			ResponseURL:       "https://cloudformation-custom-resource-response-apnortheast1.s3-ap-northeast-1.amazonaws.com/xxxxx",
+			ResourceType:      "Custom:Service",
+			LogicalResourceID: "Service",
+			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
+			ResourceProperties: map[string]interface{}{
+				"Name": "awesome-service",
+			},
+			PhysicalResourceID: "mkr:test-org:service:awesome-service",
+		},
+	}
+	_, _, err := s.delete(context.Background())
+	if err != nil {
+		t.Error(err)
+	}
+	if !deleted {
+		t.Error("the service is not deleted")
+	}
+}

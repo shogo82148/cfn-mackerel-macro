@@ -91,5 +91,9 @@ func (s *service) delete(ctx context.Context) (physicalResourceID string, data m
 
 	c := s.Function.getclient()
 	_, err = c.DeleteService(ctx, serviceName)
+	if merr, ok := err.(mackerel.Error); ok && merr.StatusCode() == http.StatusNotFound {
+		// the service may be already deleted. ignore this error.
+		err = nil
+	}
 	return
 }
