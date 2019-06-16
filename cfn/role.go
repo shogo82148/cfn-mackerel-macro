@@ -109,5 +109,9 @@ func (r *role) delete(ctx context.Context) (physicalResourceID string, data map[
 
 	c := r.Function.getclient()
 	_, err = c.DeleteRole(ctx, serviceName, roleName)
+	if merr, ok := err.(mackerel.Error); ok && merr.StatusCode() == http.StatusNotFound {
+		log.Printf("It seems that the role %q is already deleted, ignore the error: %s", physicalResourceID, err)
+		err = nil
+	}
 	return
 }

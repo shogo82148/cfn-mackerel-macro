@@ -142,3 +142,93 @@ func TestCreateRole_AlreadyExists(t *testing.T) {
 		t.Errorf("unexpected name, want %s, got %s", "awesome-service:role-app", param["FullName"].(string))
 	}
 }
+
+func TestDeleteRole(t *testing.T) {
+	var deleted bool
+	r := &role{
+		Function: &Function{
+			org: &mackerel.Org{
+				Name: "test-org",
+			},
+			client: &fakeMackerelClient{
+				deleteRole: func(ctx context.Context, serviceName, roleName string) (*mackerel.Role, error) {
+					deleted = true
+					if serviceName != "awesome-service" {
+						t.Errorf("unexpected service name, want awesome-service, got %s", serviceName)
+					}
+					if roleName != "role-app" {
+						t.Errorf("unexpected role name, want role-app, got %s", roleName)
+					}
+					return &mackerel.Role{
+						Name: roleName,
+					}, nil
+				},
+			},
+		},
+		Event: cfn.Event{
+			RequestType:       cfn.RequestDelete,
+			RequestID:         "",
+			ResponseURL:       "https://cloudformation-custom-resource-response-apnortheast1.s3-ap-northeast-1.amazonaws.com/xxxxx",
+			ResourceType:      "Custom::Role",
+			LogicalResourceID: "Role",
+			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
+			ResourceProperties: map[string]interface{}{
+				"Service": "mkr:test-org:role:awesome-service:role-app",
+				"Name":    "role-app",
+			},
+			PhysicalResourceID: "mkr:test-org:role:awesome-service:role-app",
+		},
+	}
+	_, _, err := r.delete(context.Background())
+	if err != nil {
+		t.Error(err)
+	}
+	if !deleted {
+		t.Error("the service is not deleted")
+	}
+}
+
+func TestDeleteRole_RoleNotFound(t *testing.T) {
+	var deleted bool
+	r := &role{
+		Function: &Function{
+			org: &mackerel.Org{
+				Name: "test-org",
+			},
+			client: &fakeMackerelClient{
+				deleteRole: func(ctx context.Context, serviceName, roleName string) (*mackerel.Role, error) {
+					deleted = true
+					if serviceName != "awesome-service" {
+						t.Errorf("unexpected service name, want awesome-service, got %s", serviceName)
+					}
+					if roleName != "role-app" {
+						t.Errorf("unexpected role name, want role-app, got %s", roleName)
+					}
+					return nil, mkrError{
+						statusCode: http.StatusNotFound,
+					}
+				},
+			},
+		},
+		Event: cfn.Event{
+			RequestType:       cfn.RequestDelete,
+			RequestID:         "",
+			ResponseURL:       "https://cloudformation-custom-resource-response-apnortheast1.s3-ap-northeast-1.amazonaws.com/xxxxx",
+			ResourceType:      "Custom::Role",
+			LogicalResourceID: "Role",
+			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
+			ResourceProperties: map[string]interface{}{
+				"Service": "mkr:test-org:role:awesome-service:role-app",
+				"Name":    "role-app",
+			},
+			PhysicalResourceID: "mkr:test-org:role:awesome-service:role-app",
+		},
+	}
+	_, _, err := r.delete(context.Background())
+	if err != nil {
+		t.Error(err)
+	}
+	if !deleted {
+		t.Error("the service is not deleted")
+	}
+}
