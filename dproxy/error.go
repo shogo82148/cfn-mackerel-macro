@@ -47,7 +47,7 @@ func (et ErrorType) String() string {
 	}
 }
 
-// Error get detail information of the errror.
+// Error get detail information of the error.
 type Error interface {
 	// ErrorType returns type of error.
 	ErrorType() ErrorType
