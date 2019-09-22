@@ -3,6 +3,7 @@ package cfn
 import (
 	"context"
 	"log"
+	"errors"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/cfn"
@@ -91,7 +92,8 @@ func (s *service) delete(ctx context.Context) (physicalResourceID string, data m
 
 	c := s.Function.getclient()
 	_, err = c.DeleteService(ctx, serviceName)
-	if merr, ok := err.(mackerel.Error); ok && merr.StatusCode() == http.StatusNotFound {
+	var merr mackerel.Error
+	if errors.As(err, &merr) && merr.StatusCode() == http.StatusNotFound {
 		log.Printf("It seems that the service %q is already deleted, ignore the error: %s", physicalResourceID, err)
 		err = nil
 	}
