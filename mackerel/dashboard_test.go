@@ -13,10 +13,72 @@ import (
 )
 
 func TestFindDashboard(t *testing.T) {
+	ptrString := func(v string) *string { return &v }
 	tests := []struct {
 		resp map[string]interface{} // the response of the mackerel api
 		want *Dashboard
 	}{
+		/////////// Alert Status Widgets
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":         "alertStatus",
+						"title":        "status title",
+						"roleFullname": "service:role",
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetAlertStatus{
+						Type:         WidgetTypeAlertStatus,
+						Title:        "status title",
+						RoleFullname: ptrString("service:role"),
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
+		{
+			resp: map[string]interface{}{
+				"id":      "foobar",
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []map[string]interface{}{
+					{
+						"type":         "alertStatus",
+						"title":        "status title",
+						"roleFullname": nil, // roleFullname may be nil
+					},
+				},
+				"createdAt": 1234567890,
+				"updatedAt": 1234567890,
+			},
+			want: &Dashboard{
+				ID:      "foobar",
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetAlertStatus{
+						Type:         WidgetTypeAlertStatus,
+						Title:        "status title",
+						RoleFullname: nil,
+					},
+				},
+				CreatedAt: 1234567890,
+				UpdatedAt: 1234567890,
+			},
+		},
 		/////////// Graph Widgets
 		{
 			resp: map[string]interface{}{
@@ -588,10 +650,37 @@ func TestFindDashboard(t *testing.T) {
 }
 
 func TestCreateDashboard(t *testing.T) {
+	ptrString := func(v string) *string { return &v }
 	tests := []struct {
 		in   *Dashboard
 		want map[string]interface{}
 	}{
+		/////////// Alert Status Widgets
+		{
+			in: &Dashboard{
+				Title:   "title",
+				URLPath: "url path",
+				Widgets: []Widget{
+					&WidgetAlertStatus{
+						// the type field will be autocomplete from the Golang's type.
+						// Type:  WidgetTypeAlertStatus,
+						Title:        "status title",
+						RoleFullname: ptrString("service:role"),
+					},
+				},
+			},
+			want: map[string]interface{}{
+				"title":   "title",
+				"urlPath": "url path",
+				"widgets": []interface{}{
+					map[string]interface{}{
+						"type":         "alertStatus",
+						"title":        "status title",
+						"roleFullname": "service:role",
+					},
+				},
+			},
+		},
 		/////////// Graph Widgets
 		{
 			in: &Dashboard{
