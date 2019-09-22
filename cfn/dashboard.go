@@ -98,6 +98,17 @@ func (d *dashboard) convertWidget(ctx context.Context, dp *dproxy.Drain, propert
 			Markdown: dp.String(dproxy.Default(properties.M("Markdown"), "")),
 			Layout:   d.convertLayout(dp, properties.M("Layout")),
 		}
+	case mackerel.WidgetTypeAlertStatus.String():
+		id, err := properties.M("Role").String()
+		dp.Put(err)
+		serviceName, roleName, err := d.Function.parseRoleID(ctx, id)
+		dp.Put(err)
+		roleFullname := serviceName + ":" + roleName
+		return &mackerel.WidgetAlertStatus{
+			Title:        dp.String(dproxy.Default(properties.M("Title"), "")),
+			RoleFullname: &roleFullname,
+			Layout:       d.convertLayout(dp, properties.M("Layout")),
+		}
 	}
 	dp.Put(fmt.Errorf("unknown widget type: %s", typ))
 	return nil
