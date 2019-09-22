@@ -29,8 +29,7 @@ func (p *KMS) MackerelAPIKey(ctx context.Context) (string, error) {
 	req := svc.DecryptRequest(&kms.DecryptInput{
 		CiphertextBlob: b,
 	})
-	req.SetContext(ctx)
-	resp, err := req.Send()
+	resp, err := req.Send(ctx)
 	if err != nil {
 		return "", err
 	}

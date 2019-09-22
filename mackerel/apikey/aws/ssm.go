@@ -26,8 +26,7 @@ func (p *SSM) MackerelAPIKey(ctx context.Context) (string, error) {
 		Name:           aws.String(apikey),
 		WithDecryption: aws.Bool(p.WithDecryption),
 	})
-	req.SetContext(ctx)
-	resp, err := req.Send()
+	resp, err := req.Send(ctx)
 	if err != nil {
 		return "", err
 	}
