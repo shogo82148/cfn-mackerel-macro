@@ -19,6 +19,18 @@ type CreateServiceParam struct {
 	Memo string `json:"memo"`
 }
 
+// FindServices return the list of services.
+func (c *Client) FindServices(ctx context.Context) ([]*Service, error) {
+	var resp struct {
+		Services []*Service `json:"services"`
+	}
+	_, err := c.do(ctx, http.MethodGet, "/api/v0/services", nil, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp.Services, nil
+}
+
 // CreateService creates a new service
 func (c *Client) CreateService(ctx context.Context, param *CreateServiceParam) (*Service, error) {
 	service := &Service{}

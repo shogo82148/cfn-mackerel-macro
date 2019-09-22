@@ -3,6 +3,7 @@ package cfn
 import (
 	"context"
 	"log"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -22,26 +23,38 @@ func (s *service) create(ctx context.Context) (physicalResourceID string, data m
 	}
 
 	c := s.Function.getclient()
-	ss, err := c.CreateService(ctx, &mackerel.CreateServiceParam{
+	_, err = c.CreateService(ctx, &mackerel.CreateServiceParam{
 		Name: name,
 		// TODO: memo
 	})
 	if err != nil {
-		return "", nil, err
-	}
+		merr, ok := err.(mackerel.Error)
+		if !ok {
+			return "", nil, err
+		}
+		if merr.StatusCode() != http.StatusBadRequest {
+			return "", nil, err
+		}
 
-	id, err := s.Function.buildServiceID(ctx, ss.Name)
+		// the service may already exist. try to continue.
+	}
+	creationErr := err
+
+	id, err := s.Function.buildServiceID(ctx, name)
 	if err != nil {
 		return "", nil, err
 	}
 
 	meta := getmetadata(s.Event)
-	if err := c.PutServiceMetaData(ctx, ss.Name, "cloudformation", meta); err != nil {
+	if err := c.PutServiceMetaData(ctx, name, "cloudformation", meta); err != nil {
+		if creationErr != nil {
+			return "", nil, creationErr
+		}
 		return id, nil, err
 	}
 
 	return id, map[string]interface{}{
-		"Name": ss.Name,
+		"Name": name,
 	}, nil
 }
 
@@ -78,5 +91,9 @@ func (s *service) delete(ctx context.Context) (physicalResourceID string, data m
 
 	c := s.Function.getclient()
 	_, err = c.DeleteService(ctx, serviceName)
+	if merr, ok := err.(mackerel.Error); ok && merr.StatusCode() == http.StatusNotFound {
+		log.Printf("It seems that the service %q is already deleted, ignore the error: %s", physicalResourceID, err)
+		err = nil
+	}
 	return
 }
