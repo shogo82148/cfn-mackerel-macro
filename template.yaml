@@ -5,7 +5,7 @@ Description: "cfn-mackerel-macro v__VERSION__ - provide a CloudFormation macro f
 Parameters: 
   ParameterName: 
     Type: AWS::SSM::Parameter::Name
-    Description: Name of SSM Parameter Store Paramer for the Mackerel API Key.
+    Description: Name of SSM Parameter Store Parameter for the Mackerel API Key.
   LogLevel:
     Type: String
     Default: warning
@@ -35,7 +35,7 @@ Resources:
       Environment:
         Variables:
           MACKEREL_APIKEY_PARAMETER: !Ref ParameterName
-          MACKEREL_APIKEY_WITH_DECRYPT: 1
+          MACKEREL_APIKEY_WITH_DECRYPT: "1"
           MACKEREL_APIURL: !Ref BaseUrl
           FORWARD_LOG_LEVEL: !Ref LogLevel
       Tags:
