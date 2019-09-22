@@ -65,6 +65,9 @@ const (
 
 	// WidgetTypeMarkdown is a markdown widget.
 	WidgetTypeMarkdown WidgetType = "markdown"
+
+	// WidgetTypeAlertStatus is an alert status widget.
+	WidgetTypeAlertStatus WidgetType = "alertStatus"
 )
 
 func (t WidgetType) String() string {
@@ -108,6 +111,8 @@ func (w *widget) UnmarshalJSON(b []byte) error {
 		w.Widget = &WidgetValue{}
 	case WidgetTypeMarkdown:
 		w.Widget = &WidgetMarkdown{}
+	case WidgetTypeAlertStatus:
+		w.Widget = &WidgetAlertStatus{}
 	default:
 		return fmt.Errorf("unknown widget type: %s", data.Type)
 	}
@@ -244,6 +249,47 @@ func (w *WidgetMarkdown) UnmarshalJSON(b []byte) error {
 	}
 
 	w.Type = WidgetTypeMarkdown
+	return nil
+}
+
+// WidgetAlertStatus is an alert status widget for dashboards.
+type WidgetAlertStatus struct {
+	Type         WidgetType `json:"type"`
+	Title        string     `json:"title"`
+	RoleFullname *string    `json:"roleFullname,omitempty"`
+	Layout       *Layout    `json:"layout,omitempty"`
+}
+
+var _ Widget = (*WidgetAlertStatus)(nil)
+
+// WidgetType returns WidgetTypeAlertStatus.
+func (w *WidgetAlertStatus) WidgetType() WidgetType { return WidgetTypeAlertStatus }
+
+// WidgetTitle returns the title of the widget.
+func (w *WidgetAlertStatus) WidgetTitle() string { return w.Title }
+
+// WidgetLayout returns the layout of the widget.
+func (w *WidgetAlertStatus) WidgetLayout() *Layout { return w.Layout }
+
+// MarshalJSON implements the json.Marshaler.
+func (w *WidgetAlertStatus) MarshalJSON() ([]byte, error) {
+	type widgetAlertStatus WidgetAlertStatus
+	data := *(*widgetAlertStatus)(w)
+	data.Type = WidgetTypeAlertStatus
+	return json.Marshal(data)
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (w *WidgetAlertStatus) UnmarshalJSON(b []byte) error {
+	// wrap Metric with metric type to use custom UnmarshalJSON func
+	type widgetAlertStatus WidgetAlertStatus
+	data := (*widgetAlertStatus)(w)
+
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+
+	w.Type = WidgetTypeAlertStatus
 	return nil
 }
 
