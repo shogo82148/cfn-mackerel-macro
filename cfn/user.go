@@ -2,6 +2,7 @@ package cfn
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -44,8 +45,8 @@ func (u *user) create(ctx context.Context) (physicalResourceID string, data map[
 
 	// failed to invite.
 	// already invited, already in the org, or the request is bad.
-	merr, ok := err.(mackerel.Error)
-	if !ok || merr.StatusCode() != http.StatusBadRequest {
+	var merr mackerel.Error
+	if !errors.As(err, &merr) || merr.StatusCode() != http.StatusBadRequest {
 		return
 	}
 
@@ -125,17 +126,18 @@ func (u *user) delete(ctx context.Context) (physicalResourceID string, data map[
 		return
 	}
 
-	// revoke invitation
+	// try to revoke invitation
 	c := u.Function.getclient()
 	err = c.RevokeInvitation(ctx, email)
-	if merr, ok := err.(mackerel.Error); ok {
+	var merr mackerel.Error
+	if errors.As(err, &merr) {
 		if merr.StatusCode() != http.StatusNotFound {
 			return
 		}
 		// maybe already accept the invitation
 	}
 
-	// delete the user
+	// try to delete the user
 	uid, err := u.getUserID(ctx, email)
 	if err != nil {
 		return
@@ -145,7 +147,7 @@ func (u *user) delete(ctx context.Context) (physicalResourceID string, data map[
 		return
 	}
 	_, err = c.DeleteUser(ctx, uid)
-	if merr, ok := err.(mackerel.Error); ok {
+	if errors.As(err, &merr) {
 		if merr.StatusCode() != http.StatusNotFound {
 			return
 		}

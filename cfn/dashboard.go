@@ -2,8 +2,10 @@ package cfn
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -237,5 +239,10 @@ func (d *dashboard) delete(ctx context.Context) (physicalResourceID string, data
 
 	c := d.Function.getclient()
 	_, err = c.DeleteDashboard(ctx, id)
+	var merr mackerel.Error
+	if errors.As(err, &merr) && merr.StatusCode() == http.StatusNotFound {
+		log.Printf("It seems that the role %q is already deleted, ignore the error: %s", physicalResourceID, err)
+		err = nil
+	}
 	return
 }

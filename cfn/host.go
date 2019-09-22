@@ -3,6 +3,8 @@ package cfn
 import (
 	"context"
 	"log"
+	"errors"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -95,5 +97,10 @@ func (h *host) delete(ctx context.Context) (physicalResourceID string, data map[
 
 	c := h.Function.getclient()
 	err = c.RetireHost(ctx, id)
+	var merr mackerel.Error
+	if errors.As(err, &merr) && merr.StatusCode() == http.StatusNotFound {
+		log.Printf("It seems that the role %q is already deleted, ignore the error: %s", physicalResourceID, err)
+		err = nil
+	}
 	return
 }

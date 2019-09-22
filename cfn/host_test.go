@@ -2,6 +2,7 @@ package cfn
 
 import (
 	"context"
+	"net/http"
 	"testing"
 
 	"github.com/aws/aws-lambda-go/cfn"
@@ -64,5 +65,87 @@ func TestCreateHost(t *testing.T) {
 	}
 	if param["Name"].(string) != "host-foobar" {
 		t.Errorf("unexpected name, want %s, got %s", "host-foobar", param["Name"].(string))
+	}
+}
+
+func TestDeleteHost(t *testing.T) {
+	var deleted bool
+	h := &host{
+		Function: &Function{
+			org: &mackerel.Org{
+				Name: "test-org",
+			},
+			client: &fakeMackerelClient{
+				retireHost: func(ctx context.Context, id string) error {
+					deleted = true
+					if id != "3yAYEDLXKL5" {
+						t.Errorf("unexpected host id: want %s, got %s", "3yAYEDLXKL5", id)
+					}
+					return nil
+				},
+			},
+		},
+		Event: cfn.Event{
+			RequestType:       cfn.RequestDelete,
+			RequestID:         "",
+			ResponseURL:       "https://cloudformation-custom-resource-response-apnortheast1.s3-ap-northeast-1.amazonaws.com/xxxxx",
+			ResourceType:      "Custom:Host",
+			LogicalResourceID: "Host",
+			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
+			ResourceProperties: map[string]interface{}{
+				"Name":  "host-foobar",
+				"Roles": []interface{}{"mkr:test-org:role:awesome-service:role-hogehoge"},
+			},
+			PhysicalResourceID: "mkr:test-org:host:3yAYEDLXKL5",
+		},
+	}
+	_, _, err := h.delete(context.Background())
+	if err != nil {
+		t.Error(err)
+	}
+	if !deleted {
+		t.Error("the host is not deleted")
+	}
+}
+
+func TestDeleteHost_hotNotFound(t *testing.T) {
+	var deleted bool
+	h := &host{
+		Function: &Function{
+			org: &mackerel.Org{
+				Name: "test-org",
+			},
+			client: &fakeMackerelClient{
+				retireHost: func(ctx context.Context, id string) error {
+					deleted = true
+					if id != "3yAYEDLXKL5" {
+						t.Errorf("unexpected host id: want %s, got %s", "3yAYEDLXKL5", id)
+					}
+					return mkrError{
+						statusCode: http.StatusNotFound,
+					}
+				},
+			},
+		},
+		Event: cfn.Event{
+			RequestType:       cfn.RequestDelete,
+			RequestID:         "",
+			ResponseURL:       "https://cloudformation-custom-resource-response-apnortheast1.s3-ap-northeast-1.amazonaws.com/xxxxx",
+			ResourceType:      "Custom:Host",
+			LogicalResourceID: "Host",
+			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
+			ResourceProperties: map[string]interface{}{
+				"Name":  "host-foobar",
+				"Roles": []interface{}{"mkr:test-org:role:awesome-service:role-hogehoge"},
+			},
+			PhysicalResourceID: "mkr:test-org:host:3yAYEDLXKL5",
+		},
+	}
+	_, _, err := h.delete(context.Background())
+	if err != nil {
+		t.Error(err)
+	}
+	if !deleted {
+		t.Error("the host is not deleted")
 	}
 }
