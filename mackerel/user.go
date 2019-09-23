@@ -15,7 +15,7 @@ type User struct {
 	IsInRegistrationProcess bool                       `json:"isInRegistrationProcess"`
 	IsMFAEnabled            bool                       `json:"isMFAEnabled"`
 	AuthenticationMethods   []UserAuthenticationMethod `json:"authenticationMethods"`
-	JoinedAt                int64                      `json:"joinedAt"`
+	JoinedAt                Timestamp                  `json:"joinedAt"`
 }
 
 // UserAuthority is authority type for user.
