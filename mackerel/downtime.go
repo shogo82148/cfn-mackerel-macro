@@ -116,12 +116,14 @@ func (d DowntimeWeekday) MarshalJSON() ([]byte, error) {
 
 // FindDowntimes finds downtimes
 func (c *Client) FindDowntimes(ctx context.Context) ([]*Downtime, error) {
-	var ret []*Downtime
+	var ret struct {
+		Downtimes []*Downtime `json:"downtimes"`
+	}
 	_, err := c.do(ctx, http.MethodGet, "/api/v0/downtimes", nil, &ret)
 	if err != nil {
 		return nil, err
 	}
-	return ret, nil
+	return ret.Downtimes, nil
 }
 
 // CreateDowntime creates new downtime.
