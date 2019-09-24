@@ -64,7 +64,9 @@ func TestFindDowntimes(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(ret)
+		if err := json.NewEncoder(w).Encode(ret); err != nil {
+			panic(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -153,7 +155,9 @@ func TestCreateDowntime(t *testing.T) {
 		}
 		w.WriteHeader(http.StatusOK)
 		want["id"] = downtimeID
-		json.NewEncoder(w).Encode(want)
+		if err := json.NewEncoder(w).Encode(want); err != nil {
+			panic(err)
+		}
 	}))
 	defer ts.Close()
 
