@@ -211,8 +211,8 @@ func (d *dashboard) convertRange(ctx context.Context, dp *dproxy.Drain, properti
 		}
 	case mackerel.GraphRangeTypeAbsolute.String():
 		return &mackerel.GraphRangeAbsolute{
-			Start: dp.Int64(properties.M("Start")),
-			End:   dp.Int64(properties.M("End")),
+			Start: mackerel.Timestamp(dp.Int64(properties.M("Start"))),
+			End:   mackerel.Timestamp(dp.Int64(properties.M("End"))),
 		}
 	}
 	dp.Put(fmt.Errorf("unknown graph range type: %s", typ))
