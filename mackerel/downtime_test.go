@@ -258,3 +258,57 @@ func TestUpdateDowntime(t *testing.T) {
 		t.Errorf("downtime differs: (-got +want)\n%s", diff)
 	}
 }
+
+func TestDeleteDowntime(t *testing.T) {
+	const (
+		downtimeID = "9rxGOHfVF8F"
+	)
+
+	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v0/downtimes/"+downtimeID {
+			t.Errorf("unexpected request path: want %s, got %s", "/api/v0/downtimes/"+downtimeID, r.URL.Path)
+		}
+		if r.Method != http.MethodDelete {
+			t.Errorf("unexpected request method: want %s, got %s", "DELETE", r.Method)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		ret := map[string]interface{}{
+			"id":       downtimeID,
+			"name":     "downtime name",
+			"memo":     "memo",
+			"start":    1234567890.0,
+			"duration": 10.0,
+		}
+		if err := json.NewEncoder(w).Encode(ret); err != nil {
+			panic(err)
+		}
+	}))
+	defer ts.Close()
+
+	u, err := url.Parse(ts.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	c := &Client{
+		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
+		HTTPClient: ts.Client(),
+	}
+
+	got, err := c.DeleteDowntime(context.Background(), downtimeID)
+	if err != nil {
+		t.Error(err)
+	}
+
+	want := &Downtime{
+		ID:       downtimeID,
+		Name:     "downtime name",
+		Memo:     "memo",
+		Start:    1234567890,
+		Duration: 10,
+	}
+	if diff := cmp.Diff(got, want); diff != "" {
+		t.Errorf("downtime differs: (-got +want)\n%s", diff)
+	}
+}
