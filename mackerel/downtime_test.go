@@ -17,6 +17,9 @@ func TestFindDowntimes(t *testing.T) {
 		if r.URL.Path != "/api/v0/downtimes" {
 			t.Errorf("unexpected request path: want %s, got %s", "/api/v0/downtimes", r.URL.Path)
 		}
+		if r.Method != http.MethodGet {
+			t.Errorf("unexpected request method: want %s, got %s", "GET", r.Method)
+		}
 		ret := map[string]interface{}{
 			"downtimes": []interface{}{
 				map[string]interface{}{
@@ -139,6 +142,12 @@ func TestCreateDowntime(t *testing.T) {
 	)
 
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v0/downtimes" {
+			t.Errorf("unexpected request path: want %s, got %s", "/api/v0/downtimes", r.URL.Path)
+		}
+		if r.Method != http.MethodPost {
+			t.Errorf("unexpected request method: want %s, got %s", "POST", r.Method)
+		}
 		w.Header().Set("Content-Type", "application/json")
 		var data interface{}
 		if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
