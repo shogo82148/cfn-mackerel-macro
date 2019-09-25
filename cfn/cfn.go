@@ -89,6 +89,12 @@ type makerelInterface interface {
 	FindInvitations(ctx context.Context) ([]*mackerel.Invitation, error)
 	CreateInvitation(ctx context.Context, email string, authority mackerel.UserAuthority) (*mackerel.Invitation, error)
 	RevokeInvitation(ctx context.Context, email string) error
+
+	// downtime
+	FindDowntimes(ctx context.Context) ([]*mackerel.Downtime, error)
+	CreateDowntime(ctx context.Context, param *mackerel.Downtime) (*mackerel.Downtime, error)
+	UpdateDowntime(ctx context.Context, downtimeID string, param *mackerel.Downtime) (*mackerel.Downtime, error)
+	DeleteDowntime(ctx context.Context, downtimeID string) (*mackerel.Downtime, error)
 }
 
 type resource interface {
@@ -156,6 +162,11 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 		}
 	case "User":
 		r = &user{
+			Function: f,
+			Event:    event,
+		}
+	case "Downtime":
+		r = &downtime{
 			Function: f,
 			Event:    event,
 		}

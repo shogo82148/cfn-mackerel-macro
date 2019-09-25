@@ -48,6 +48,10 @@ type fakeMackerelClient struct {
 	findInvitations              func(ctx context.Context) ([]*mackerel.Invitation, error)
 	createInvitation             func(ctx context.Context, email string, authority mackerel.UserAuthority) (*mackerel.Invitation, error)
 	revokeInvitation             func(ctx context.Context, email string) error
+	findDowntimes                func(ctx context.Context) ([]*mackerel.Downtime, error)
+	createDowntime               func(ctx context.Context, param *mackerel.Downtime) (*mackerel.Downtime, error)
+	updateDowntime               func(ctx context.Context, downtimeID string, param *mackerel.Downtime) (*mackerel.Downtime, error)
+	deleteDowntime               func(ctx context.Context, downtimeID string) (*mackerel.Downtime, error)
 }
 
 var _ makerelInterface = (*fakeMackerelClient)(nil)
@@ -208,6 +212,22 @@ func (c *fakeMackerelClient) CreateInvitation(ctx context.Context, email string,
 
 func (c *fakeMackerelClient) RevokeInvitation(ctx context.Context, email string) error {
 	return c.revokeInvitation(ctx, email)
+}
+
+func (c *fakeMackerelClient) FindDowntimes(ctx context.Context) ([]*mackerel.Downtime, error) {
+	return c.findDowntimes(ctx)
+}
+
+func (c *fakeMackerelClient) CreateDowntime(ctx context.Context, param *mackerel.Downtime) (*mackerel.Downtime, error) {
+	return c.createDowntime(ctx, param)
+}
+
+func (c *fakeMackerelClient) UpdateDowntime(ctx context.Context, downtimeID string, param *mackerel.Downtime) (*mackerel.Downtime, error) {
+	return c.updateDowntime(ctx, downtimeID, param)
+}
+
+func (c *fakeMackerelClient) DeleteDowntime(ctx context.Context, downtimeID string) (*mackerel.Downtime, error) {
+	return c.deleteDowntime(ctx, downtimeID)
 }
 
 type mkrError struct {
