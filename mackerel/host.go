@@ -16,13 +16,13 @@ type Host struct {
 	Status           string `json:"status"`
 	Memo             string `json:"memo"`
 	// Roles            Roles       `json:"roles"`
-	IsRetired bool     `json:"isRetired"`
-	CreatedAt int32    `json:"createdAt"`
-	Meta      HostMeta `json:"meta"`
+	IsRetired bool      `json:"isRetired"`
+	CreatedAt Timestamp `json:"createdAt"`
+	Meta      HostMeta  `json:"meta"`
 	// Interfaces       []Interface `json:"interfaces"`
 }
 
-// HostMeta host meta informations
+// HostMeta host meta information
 type HostMeta struct {
 	AgentRevision string `json:"agent-revision,omitempty"`
 	AgentVersion  string `json:"agent-version,omitempty"`
@@ -73,7 +73,7 @@ func (c *Client) UpdateHost(ctx context.Context, hostID string, param *UpdateHos
 	return data.ID, nil
 }
 
-// RetireHost make the host retuired.
+// RetireHost make the host retired.
 func (c *Client) RetireHost(ctx context.Context, id string) error {
 	param := map[string]string{}
 	_, err := c.do(ctx, http.MethodPost, fmt.Sprintf("/api/v0/hosts/%s/retire", id), param, nil)

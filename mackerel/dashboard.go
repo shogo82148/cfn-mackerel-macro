@@ -10,13 +10,13 @@ import (
 // Dashboard is a dashboard.
 // https://mackerel.io/api-docs/entry/dashboards#create
 type Dashboard struct {
-	ID        string   `json:"id,omitempty"`
-	Title     string   `json:"title,omitempty"`
-	Memo      string   `json:"memo,omitempty"`
-	URLPath   string   `json:"urlPath,omitempty"`
-	Widgets   []Widget `json:"-"`
-	CreatedAt int64    `json:"createdAt,omitempty"`
-	UpdatedAt int64    `json:"updatedAt,omitempty"`
+	ID        string    `json:"id,omitempty"`
+	Title     string    `json:"title,omitempty"`
+	Memo      string    `json:"memo,omitempty"`
+	URLPath   string    `json:"urlPath,omitempty"`
+	Widgets   []Widget  `json:"-"`
+	CreatedAt Timestamp `json:"createdAt,omitempty"`
+	UpdatedAt Timestamp `json:"updatedAt,omitempty"`
 }
 
 // MarshalJSON mashal JSON.
@@ -651,8 +651,8 @@ func (r *GraphRangeRelative) UnmarshalJSON(b []byte) error {
 // GraphRangeAbsolute is an absolute range.
 type GraphRangeAbsolute struct {
 	Type  GraphRangeType `json:"type"`
-	Start int64          `json:"start"`
-	End   int64          `json:"end"`
+	Start Timestamp      `json:"start"`
+	End   Timestamp      `json:"end"`
 }
 
 // GraphRangeType returns GraphRangeTypeAbsolute.

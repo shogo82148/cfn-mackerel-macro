@@ -89,6 +89,12 @@ type makerelInterface interface {
 	FindInvitations(ctx context.Context) ([]*mackerel.Invitation, error)
 	CreateInvitation(ctx context.Context, email string, authority mackerel.UserAuthority) (*mackerel.Invitation, error)
 	RevokeInvitation(ctx context.Context, email string) error
+
+	// downtime
+	FindDowntimes(ctx context.Context) ([]*mackerel.Downtime, error)
+	CreateDowntime(ctx context.Context, param *mackerel.Downtime) (*mackerel.Downtime, error)
+	UpdateDowntime(ctx context.Context, downtimeID string, param *mackerel.Downtime) (*mackerel.Downtime, error)
+	DeleteDowntime(ctx context.Context, downtimeID string) (*mackerel.Downtime, error)
 }
 
 type resource interface {
@@ -156,6 +162,11 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 		}
 	case "User":
 		r = &user{
+			Function: f,
+			Event:    event,
+		}
+	case "Downtime":
+		r = &downtime{
 			Function: f,
 			Event:    event,
 		}
@@ -253,6 +264,10 @@ func (f *Function) buildNotificationGroupID(ctx context.Context, groupID string)
 
 func (f *Function) buildUserID(ctx context.Context, email string) (string, error) {
 	return f.buildID(ctx, "user", email)
+}
+
+func (f *Function) buildDowntimeID(ctx context.Context, downtimeID string) (string, error) {
+	return f.buildID(ctx, "downtime", downtimeID)
 }
 
 // parseID parses ID of Mackerel resources.
@@ -359,6 +374,17 @@ func (f *Function) parseUserID(ctx context.Context, id string) (string, error) {
 	}
 	if typ != "user" {
 		return "", fmt.Errorf("invalid type %s, expected user", typ)
+	}
+	return parts[0], nil
+}
+
+func (f *Function) parseDowntimeID(ctx context.Context, id string) (string, error) {
+	typ, parts, err := f.parseID(ctx, id, 1)
+	if err != nil {
+		return "", err
+	}
+	if typ != "downtime" {
+		return "", fmt.Errorf("invalid type %s, expected downtime", typ)
 	}
 	return parts[0], nil
 }

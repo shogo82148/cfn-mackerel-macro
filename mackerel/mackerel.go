@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -212,4 +213,51 @@ func handleError(resp *http.Response) error {
 		statusCode: resp.StatusCode,
 		message:    data.Error.Message,
 	}
+}
+
+// Timestamp is unix epoch time.
+type Timestamp int64
+
+// MarshalJSON implements the json.Marshaler interface.
+func (t Timestamp) MarshalJSON() ([]byte, error) {
+	buf := make([]byte, 0, 20)
+	buf = strconv.AppendInt(buf, int64(t), 10)
+	return buf, nil
+}
+
+// MarshalText implements the encoding.TextMarshaler interface.
+func (t Timestamp) MarshalText() ([]byte, error) {
+	buf := make([]byte, 0, 20)
+	buf = strconv.AppendInt(buf, int64(t), 10)
+	return buf, nil
+}
+
+// UnmarshalJSON implements the json.Unmarshaler interface.
+func (t *Timestamp) UnmarshalJSON(data []byte) error {
+	// Ignore null, like in the main JSON package.
+	if string(data) == "null" {
+		return nil
+	}
+
+	unix, err := strconv.ParseInt(string(data), 10, 64)
+	if err != nil {
+		return err
+	}
+	*t = Timestamp(unix)
+	return nil
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
+func (t *Timestamp) UnmarshalText(data []byte) error {
+	unix, err := strconv.ParseInt(string(data), 10, 64)
+	if err != nil {
+		return err
+	}
+	*t = Timestamp(unix)
+	return nil
+}
+
+// Time converts t to time.Time type.
+func (t Timestamp) Time() time.Time {
+	return time.Unix(int64(t), 0)
 }

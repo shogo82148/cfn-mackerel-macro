@@ -10,7 +10,7 @@ import (
 type Invitation struct {
 	Email     string        `json:"email"`
 	Authority UserAuthority `json:"authority"`
-	ExpiresAt int64         `json:"expiresAt"`
+	ExpiresAt Timestamp     `json:"expiresAt"`
 }
 
 // FindInvitations returns a list of user invitations.
