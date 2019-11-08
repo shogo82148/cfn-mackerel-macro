@@ -122,6 +122,12 @@ func TestCreateDowntime(t *testing.T) {
 				"RoleExcludeScopes": []interface{}{
 					"mkr:test-org:role:service1:role1",
 				},
+				"MonitorScopes": []interface{}{
+					"mkr:test-org:monitor:monitor0",
+				},
+				"MonitorExcludeScopes": []interface{}{
+					"mkr:test-org:monitor:monitor1",
+				},
 			},
 		},
 	}

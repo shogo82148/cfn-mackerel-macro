@@ -140,6 +140,32 @@ func (r *downtime) convertToParam(ctx context.Context, properties map[string]int
 		d.Put(err)
 	}
 
+	// Monitor Scopes
+	if scopes, err := in.M("MonitorScopes").ProxySet().StringArray(); err == nil {
+		monitors := make([]string, 0, len(scopes))
+		for _, scope := range scopes {
+			monitor, err := r.Function.parseMonitorID(ctx, scope)
+			d.Put(err)
+			monitors = append(monitors, monitor)
+		}
+		param.MonitorScopes = monitors
+	} else if !dproxy.IsErrorCode(err, dproxy.ErrorCodeNotFound) {
+		d.Put(err)
+	}
+
+	// Monitor Exclude Scopes
+	if scopes, err := in.M("MonitorExcludeScopes").ProxySet().StringArray(); err == nil {
+		monitors := make([]string, 0, len(scopes))
+		for _, scope := range scopes {
+			monitor, err := r.Function.parseMonitorID(ctx, scope)
+			d.Put(err)
+			monitors = append(monitors, monitor)
+		}
+		param.MonitorExcludeScopes = monitors
+	} else if !dproxy.IsErrorCode(err, dproxy.ErrorCodeNotFound) {
+		d.Put(err)
+	}
+
 	if err := d.CombineErrors(); err != nil {
 		return nil, err
 	}
