@@ -46,7 +46,7 @@ func TestSetTypeError(t *testing.T) {
 	if !ok {
 		t.Fatal("err is not Error:", err)
 	}
-	if et := err2.ErrorType(); et != Etype {
+	if et := err2.ErrorCode(); et != ErrorCodeType {
 		t.Fatal("unexpected ErrorType:", et)
 	}
 	if ea := err2.FullAddress(); ea != "[2]" {

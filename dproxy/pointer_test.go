@@ -26,8 +26,8 @@ func TestPointerInvalidQuery(t *testing.T) {
 	if !ok {
 		t.Fatalf("it should be *errorProxy but: %+v", p)
 	}
-	if err.errorType != EinvalidQuery {
-		t.Fatalf("errorType should be EinvalidQuery but: %s", err.errorType)
+	if err.errorCode != ErrorCodeInvalidQuery {
+		t.Fatalf("errorType should be ErrorCodeInvalidQuery but: %s", err.errorCode)
 	}
 }
 

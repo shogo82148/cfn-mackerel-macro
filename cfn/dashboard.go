@@ -195,7 +195,7 @@ func (d *dashboard) convertMetric(ctx context.Context, dp *dproxy.Drain, propert
 }
 
 func (d *dashboard) convertRange(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.GraphRange {
-	if err, ok := properties.(dproxy.Error); ok && err.ErrorType() == dproxy.Enotfound {
+	if dproxy.IsError(properties, dproxy.ErrorCodeNotFound) {
 		return nil
 	}
 	typ, err := properties.M("Type").String()

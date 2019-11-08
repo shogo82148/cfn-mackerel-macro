@@ -9,7 +9,7 @@ func TestValueProxy_Bool(t *testing.T) {
 	tests := []struct {
 		in  interface{}
 		out bool
-		err ErrorType
+		err ErrorCode
 	}{
 		// boolean types
 		{
@@ -116,11 +116,11 @@ func TestValueProxy_Bool(t *testing.T) {
 		// errors
 		{
 			in:  struct{}{},
-			err: Etype,
+			err: ErrorCodeType,
 		},
 		{
 			in:  "foobar",
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 	}
 
@@ -137,8 +137,8 @@ func TestValueProxy_Bool(t *testing.T) {
 				t.Errorf("%d: want dproxy.Error, but not", i)
 				continue
 			}
-			if myErr.ErrorType() != tt.err {
-				t.Errorf("%d: unexpected error type: want %s, got %s", i, tt.err, myErr.ErrorType())
+			if myErr.ErrorCode() != tt.err {
+				t.Errorf("%d: unexpected error type: want %s, got %s", i, tt.err, myErr.ErrorCode())
 			}
 		}
 	}
@@ -148,7 +148,7 @@ func TestValueProxy_Int64(t *testing.T) {
 	tests := []struct {
 		in  interface{}
 		out int64
-		err ErrorType
+		err ErrorCode
 	}{
 		// integer types
 		{
@@ -231,31 +231,31 @@ func TestValueProxy_Int64(t *testing.T) {
 		// errors
 		{
 			in:  struct{}{},
-			err: Etype,
+			err: ErrorCodeType,
 		},
 		{
 			in:  "foobar",
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  uint64(math.MaxInt64 + 1),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  float32(1 << 63),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  math.Float32frombits(math.Float32bits(-(1 << 63)) + 1),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  float64(1 << 63),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  math.Float64frombits(math.Float64bits(-(1 << 63)) + 1),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 	}
 
@@ -272,8 +272,8 @@ func TestValueProxy_Int64(t *testing.T) {
 				t.Errorf("%d: want dproxy.Error, but not", i)
 				continue
 			}
-			if myErr.ErrorType() != tt.err {
-				t.Errorf("%d: unexpected error type: want %s, got %s", i, tt.err, myErr.ErrorType())
+			if myErr.ErrorCode() != tt.err {
+				t.Errorf("%d: unexpected error type: want %s, got %s", i, tt.err, myErr.ErrorCode())
 			}
 		}
 	}
@@ -283,7 +283,7 @@ func TestValueProxy_Uint64(t *testing.T) {
 	tests := []struct {
 		in  interface{}
 		out uint64
-		err ErrorType
+		err ErrorCode
 	}{
 		// integer types
 		{
@@ -342,43 +342,43 @@ func TestValueProxy_Uint64(t *testing.T) {
 		// errors
 		{
 			in:  struct{}{},
-			err: Etype,
+			err: ErrorCodeType,
 		},
 		{
 			in:  int(-1),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  int8(-1),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  int16(-1),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  int32(-1),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  int64(-1),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  float64(-1),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  float64(1 << 64),
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  "foobar",
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 		{
 			in:  "18446744073709551616", // math.MaxUint64 + 1
-			err: EconvertFailure,
+			err: ErrorCodeConvertFailure,
 		},
 	}
 
@@ -395,8 +395,8 @@ func TestValueProxy_Uint64(t *testing.T) {
 				t.Errorf("%d: want dproxy.Error, but not", i)
 				continue
 			}
-			if myErr.ErrorType() != tt.err {
-				t.Errorf("%d: unexpected error type: want %s, got %s", i, tt.err, myErr.ErrorType())
+			if myErr.ErrorCode() != tt.err {
+				t.Errorf("%d: unexpected error type: want %s, got %s", i, tt.err, myErr.ErrorCode())
 			}
 		}
 	}

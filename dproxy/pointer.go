@@ -14,7 +14,7 @@ func pointer(p Proxy, q string) Proxy {
 	}
 	if q[0] != '/' {
 		return &errorProxy{
-			errorType: EinvalidQuery,
+			errorCode: ErrorCodeInvalidQuery,
 			parent:    p,
 			infoStr:   "not start with '/'",
 		}

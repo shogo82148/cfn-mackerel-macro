@@ -174,7 +174,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 					Value: d.String(item.M("Value")),
 				})
 			}
-		} else if perr, ok := err.(dproxy.Error); !ok || perr.ErrorType() != dproxy.Enotfound {
+		} else if dproxy.IsErrorCode(err, dproxy.ErrorCodeNotFound) {
 			return nil, err
 		}
 		mm = &mackerel.MonitorExternalHTTP{

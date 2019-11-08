@@ -50,7 +50,7 @@ func (p *valueProxy) Bool() (bool, error) {
 		w, err := strconv.ParseBool(v)
 		if err != nil {
 			return false, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   err.Error(),
 			}
@@ -63,7 +63,7 @@ func (p *valueProxy) Bool() (bool, error) {
 
 func (p *valueProxy) OptionalBool() (*bool, error) {
 	v, err := p.Bool()
-	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
+	if err, ok := err.(Error); ok && err.ErrorCode() == ErrorCodeNotFound {
 		return nil, nil
 	}
 	if err != nil {
@@ -91,7 +91,7 @@ func (p *valueProxy) Int64() (int64, error) {
 	case float32:
 		if v < -(1<<63) || v >= 1<<63 {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   "overflow",
 			}
@@ -100,7 +100,7 @@ func (p *valueProxy) Int64() (int64, error) {
 	case float64:
 		if v < -(1<<63) || v >= 1<<63 {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   "overflow",
 			}
@@ -117,7 +117,7 @@ func (p *valueProxy) Int64() (int64, error) {
 	case uint64:
 		if v > math.MaxInt64 {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   "overflow",
 			}
@@ -127,7 +127,7 @@ func (p *valueProxy) Int64() (int64, error) {
 		w, err := v.Int64()
 		if err != nil {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   err.Error(),
 			}
@@ -137,7 +137,7 @@ func (p *valueProxy) Int64() (int64, error) {
 		w, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   err.Error(),
 			}
@@ -149,10 +149,10 @@ func (p *valueProxy) Int64() (int64, error) {
 }
 
 func (p *valueProxy) OptionalInt64() (*int64, error) {
-	v, err := p.Int64()
-	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
+	if IsError(p, ErrorCodeNotFound) {
 		return nil, nil
 	}
+	v, err := p.Int64()
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +168,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 	case int:
 		if v < 0 {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   "overflow",
 			}
@@ -177,7 +177,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 	case int8:
 		if v < 0 {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   "overflow",
 			}
@@ -186,7 +186,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 	case int16:
 		if v < 0 {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   "overflow",
 			}
@@ -195,7 +195,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 	case int32:
 		if v < 0 {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   "overflow",
 			}
@@ -204,7 +204,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 	case int64:
 		if v < 0 {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   "overflow",
 			}
@@ -213,7 +213,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 	case float32:
 		if v < 0 || v >= 1<<64 {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   "overflow",
 			}
@@ -222,7 +222,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 	case float64:
 		if v < 0 || v >= 1<<64 {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   "overflow",
 			}
@@ -242,7 +242,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 		w, err := v.Uint64()
 		if err != nil {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   err.Error(),
 			}
@@ -252,7 +252,7 @@ func (p *valueProxy) Uint64() (uint64, error) {
 		w, err := strconv.ParseUint(v, 10, 64)
 		if err != nil {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   err.Error(),
 			}
@@ -264,10 +264,10 @@ func (p *valueProxy) Uint64() (uint64, error) {
 }
 
 func (p *valueProxy) OptionalUint64() (*uint64, error) {
-	v, err := p.Uint64()
-	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
+	if IsError(p, ErrorCodeNotFound) {
 		return nil, nil
 	}
+	v, err := p.Uint64()
 	if err != nil {
 		return nil, err
 	}
@@ -294,7 +294,7 @@ func (p *valueProxy) Float64() (float64, error) {
 		w, err := v.Float64()
 		if err != nil {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   err.Error(),
 			}
@@ -307,7 +307,7 @@ func (p *valueProxy) Float64() (float64, error) {
 	case uint64:
 		if v > math.MaxInt64 {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   "overflow",
 			}
@@ -317,7 +317,7 @@ func (p *valueProxy) Float64() (float64, error) {
 		w, err := v.Int64()
 		if err != nil {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   err.Error(),
 			}
@@ -327,7 +327,7 @@ func (p *valueProxy) Float64() (float64, error) {
 		w, err := strconv.ParseFloat(v, 64)
 		if err != nil {
 			return 0, &errorProxy{
-				errorType: EconvertFailure,
+				errorCode: ErrorCodeConvertFailure,
 				parent:    p,
 				infoStr:   err.Error(),
 			}
@@ -339,10 +339,10 @@ func (p *valueProxy) Float64() (float64, error) {
 }
 
 func (p *valueProxy) OptionalFloat64() (*float64, error) {
-	v, err := p.Float64()
-	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
+	if IsError(p, ErrorCodeNotFound) {
 		return nil, nil
 	}
+	v, err := p.Float64()
 	if err != nil {
 		return nil, err
 	}
@@ -359,10 +359,10 @@ func (p *valueProxy) String() (string, error) {
 }
 
 func (p *valueProxy) OptionalString() (*string, error) {
-	v, err := p.String()
-	if err, ok := err.(Error); ok && err.ErrorType() == Enotfound {
+	if IsError(p, ErrorCodeNotFound) {
 		return nil, nil
 	}
+	v, err := p.String()
 	if err != nil {
 		return nil, err
 	}
@@ -455,7 +455,7 @@ func (p *valueProxy) findJPT(t string) Proxy {
 		n, err := strconv.ParseUint(t, 10, 0)
 		if err != nil {
 			return &errorProxy{
-				errorType: EinvalidIndex,
+				errorCode: ErrorCodeInvalidIndex,
 				parent:    p,
 				infoStr:   err.Error(),
 			}
@@ -463,7 +463,7 @@ func (p *valueProxy) findJPT(t string) Proxy {
 		return p.A(int(n))
 	default:
 		return &errorProxy{
-			errorType: EmapNorArray,
+			errorCode: ErrorCodeMapNorArray,
 			parent:    p,
 			actual:    detectType(v),
 		}
@@ -480,7 +480,7 @@ func (p *valueProxy) frameLabel() string {
 
 // Default return the v as default value, if p is not found error.
 func Default(p Proxy, v interface{}) Proxy {
-	if err, ok := p.(Error); ok && err.ErrorType() == Enotfound {
+	if err, ok := p.(Error); ok && err.ErrorCode() == ErrorCodeNotFound {
 		return New(v)
 	}
 	return p
