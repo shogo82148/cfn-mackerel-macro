@@ -29,7 +29,7 @@ func (r *role) create(ctx context.Context) (physicalResourceID string, data map[
 
 	serviceName, err := r.Function.parseServiceID(ctx, service)
 	if err != nil {
-		err = fmt.Errorf("failed to parse %q as service id: %s", service, err)
+		err = fmt.Errorf("failed to parse %q as service id: %w", service, err)
 		return
 	}
 
@@ -37,18 +37,19 @@ func (r *role) create(ctx context.Context) (physicalResourceID string, data map[
 	_, err = c.CreateRole(ctx, serviceName, &mackerel.CreateRoleParam{
 		Name: name,
 	})
+	creationErr := fmt.Errorf("failed to create role: %w", err)
 	if err != nil {
-		merr, ok := err.(mackerel.Error)
-		if !ok {
-			return "", nil, err
-		}
-		if merr.StatusCode() != http.StatusBadRequest {
-			return "", nil, err
+		var merr mackerel.Error
+		if errors.As(err, &merr) {
+			if merr.StatusCode() != http.StatusBadRequest {
+				err = creationErr
+				return
+			}
 		}
 
-		// the role may already exist. try to override it.
+		log.Println("the role may already exist. try to override it.")
+		err = nil
 	}
-	creationErr := err
 
 	physicalResourceID, err = r.Function.buildRoleID(ctx, serviceName, name)
 	if err != nil {
@@ -57,9 +58,9 @@ func (r *role) create(ctx context.Context) (physicalResourceID string, data map[
 	meta := getmetadata(r.Event)
 	if err := c.PutRoleMetaData(ctx, serviceName, name, "cloudformation", meta); err != nil {
 		if creationErr != nil {
-			return "", nil, creationErr
+			return physicalResourceID, nil, creationErr
 		}
-		return physicalResourceID, nil, err
+		return physicalResourceID, nil, fmt.Errorf("failed to put role metadata: %w", err)
 	}
 
 	data = map[string]interface{}{
