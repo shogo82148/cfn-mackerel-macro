@@ -71,6 +71,8 @@ func (r *downtime) convertToParam(ctx context.Context, properties map[string]int
 					weekdays = append(weekdays, ret)
 				}
 			}
+		} else if !dproxy.IsErrorCode(err, dproxy.ErrorCodeNotFound) {
+			d.Put(err)
 		}
 
 		param.Recurrence = &mackerel.DowntimeRecurrence{
@@ -79,6 +81,8 @@ func (r *downtime) convertToParam(ctx context.Context, properties map[string]int
 			Weekdays: weekdays,
 			Until:    (*mackerel.Timestamp)(d.OptionalInt64(recurrence.M("Until"))),
 		}
+	} else if !dproxy.IsErrorCode(err, dproxy.ErrorCodeNotFound) {
+		d.Put(err)
 	}
 
 	if err := d.CombineErrors(); err != nil {
