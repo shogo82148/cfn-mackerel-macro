@@ -266,6 +266,10 @@ func (f *Function) buildUserID(ctx context.Context, email string) (string, error
 	return f.buildID(ctx, "user", email)
 }
 
+func (f *Function) buildDowntimeID(ctx context.Context, downtimeID string) (string, error) {
+	return f.buildID(ctx, "downtime", downtimeID)
+}
+
 // parseID parses ID of Mackerel resources.
 func (f *Function) parseID(ctx context.Context, id string, n int) (string, []string, error) {
 	org, err := f.getorg(ctx)

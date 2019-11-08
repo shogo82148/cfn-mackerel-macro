@@ -18,14 +18,14 @@ func (r *downtime) create(ctx context.Context) (physicalResourceID string, data 
 	c := r.Function.getclient()
 	param, err := r.convertToParam(ctx, r.Event.ResourceProperties)
 	if err != nil {
-		return "", nil, err
+		return
 	}
 	ret, err := c.CreateDowntime(ctx, param)
 	if err != nil {
-		return "", nil, err
+		return
 	}
 
-	physicalResourceID = "mkr:test-org:downtime:" + ret.ID
+	physicalResourceID, err = r.Function.buildDowntimeID(ctx, ret.ID)
 	return
 }
 
