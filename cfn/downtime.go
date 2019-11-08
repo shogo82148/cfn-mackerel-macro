@@ -2,6 +2,7 @@ package cfn
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -41,6 +42,44 @@ func (r *downtime) convertToParam(ctx context.Context, properties map[string]int
 	param.Memo = d.String(dproxy.Default(in.M("Memo"), ""))
 	param.Start = mackerel.Timestamp(d.Int64(in.M("Start")))
 	param.Duration = d.Int64(in.M("Duration"))
+
+	recurrence := in.M("Recurrence")
+	if _, err := recurrence.Map(); err == nil {
+		var typ mackerel.DowntimeRecurrenceType
+		switch d.String(recurrence.M("Type")) {
+		case "hourly":
+			typ = mackerel.DowntimeRecurrenceTypeHourly
+		case "daily":
+			typ = mackerel.DowntimeRecurrenceTypeDaily
+		case "weekly":
+			typ = mackerel.DowntimeRecurrenceTypeWeekly
+		case "monthly":
+			typ = mackerel.DowntimeRecurrenceTypeMonthly
+		case "yearly":
+			typ = mackerel.DowntimeRecurrenceTypeYearly
+		default:
+			d.Put(fmt.Errorf("unknown recurrence type: %s", d.String(recurrence.M("Type"))))
+		}
+		var weekdays []mackerel.DowntimeWeekday
+		days := recurrence.M("Weekdays")
+		if days, err := days.ProxySet().StringArray(); err == nil {
+			weekdays = make([]mackerel.DowntimeWeekday, 0, len(days))
+			for _, day := range days {
+				if ret, err := mackerel.ParseDowntimeWeekday(day); err != nil {
+					d.Put(err)
+				} else {
+					weekdays = append(weekdays, ret)
+				}
+			}
+		}
+
+		param.Recurrence = &mackerel.DowntimeRecurrence{
+			Type:     typ,
+			Interval: d.Int64(recurrence.M("Interval")),
+			Weekdays: weekdays,
+			Until:    (*mackerel.Timestamp)(d.OptionalInt64(recurrence.M("Until"))),
+		}
+	}
 
 	if err := d.CombineErrors(); err != nil {
 		return nil, err
