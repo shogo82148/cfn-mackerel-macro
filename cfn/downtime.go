@@ -60,9 +60,9 @@ func (r *downtime) convertToParam(ctx context.Context, properties map[string]int
 		default:
 			d.Put(fmt.Errorf("unknown recurrence type: %s", d.String(recurrence.M("Type"))))
 		}
+
 		var weekdays []mackerel.DowntimeWeekday
-		days := recurrence.M("Weekdays")
-		if days, err := days.ProxySet().StringArray(); err == nil {
+		if days, err := recurrence.M("Weekdays").ProxySet().StringArray(); err == nil {
 			if typ != mackerel.DowntimeRecurrenceTypeWeekly {
 				d.Put(fmt.Errorf("weekdays are available with weekly type, but it is %s type", typ))
 			}
@@ -84,6 +84,58 @@ func (r *downtime) convertToParam(ctx context.Context, properties map[string]int
 			Weekdays: weekdays,
 			Until:    (*mackerel.Timestamp)(d.OptionalInt64(recurrence.M("Until"))),
 		}
+	} else if !dproxy.IsErrorCode(err, dproxy.ErrorCodeNotFound) {
+		d.Put(err)
+	}
+
+	// Service Scopes
+	if scopes, err := in.M("ServiceScopes").ProxySet().StringArray(); err == nil {
+		services := make([]string, 0, len(scopes))
+		for _, scope := range scopes {
+			name, err := r.Function.parseServiceID(ctx, scope)
+			d.Put(err)
+			services = append(services, name)
+		}
+		param.ServiceScopes = services
+	} else if !dproxy.IsErrorCode(err, dproxy.ErrorCodeNotFound) {
+		d.Put(err)
+	}
+
+	// Service Exclude Scopes
+	if scopes, err := in.M("ServiceExcludeScopes").ProxySet().StringArray(); err == nil {
+		services := make([]string, 0, len(scopes))
+		for _, scope := range scopes {
+			name, err := r.Function.parseServiceID(ctx, scope)
+			d.Put(err)
+			services = append(services, name)
+		}
+		param.ServiceExcludeScopes = services
+	} else if !dproxy.IsErrorCode(err, dproxy.ErrorCodeNotFound) {
+		d.Put(err)
+	}
+
+	// Role Scopes
+	if scopes, err := in.M("RoleScopes").ProxySet().StringArray(); err == nil {
+		roles := make([]string, 0, len(scopes))
+		for _, scope := range scopes {
+			role, service, err := r.Function.parseRoleID(ctx, scope)
+			d.Put(err)
+			roles = append(roles, role+":"+service)
+		}
+		param.RoleScopes = roles
+	} else if !dproxy.IsErrorCode(err, dproxy.ErrorCodeNotFound) {
+		d.Put(err)
+	}
+
+	// Role Exclude Scopes
+	if scopes, err := in.M("RoleExcludeScopes").ProxySet().StringArray(); err == nil {
+		roles := make([]string, 0, len(scopes))
+		for _, scope := range scopes {
+			role, service, err := r.Function.parseRoleID(ctx, scope)
+			d.Put(err)
+			roles = append(roles, role+":"+service)
+		}
+		param.RoleExcludeScopes = roles
 	} else if !dproxy.IsErrorCode(err, dproxy.ErrorCodeNotFound) {
 		d.Put(err)
 	}

@@ -39,10 +39,10 @@ func TestCreateDowntime(t *testing.T) {
 							"service2",
 						},
 						RoleScopes: []string{
-							"service3: role1",
+							"service3:role1",
 						},
 						RoleExcludeScopes: []string{
-							"service1: role1",
+							"service1:role1",
 						},
 						MonitorScopes: []string{
 							"monitor0",
@@ -112,6 +112,15 @@ func TestCreateDowntime(t *testing.T) {
 				},
 				"ServiceScopes": []interface{}{
 					"mkr:test-org:service:service1",
+				},
+				"ServiceExcludeScopes": []interface{}{
+					"mkr:test-org:service:service2",
+				},
+				"RoleScopes": []interface{}{
+					"mkr:test-org:role:service3:role1",
+				},
+				"RoleExcludeScopes": []interface{}{
+					"mkr:test-org:role:service1:role1",
 				},
 			},
 		},
