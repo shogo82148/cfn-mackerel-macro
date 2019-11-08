@@ -37,8 +37,9 @@ func (r *role) create(ctx context.Context) (physicalResourceID string, data map[
 	_, err = c.CreateRole(ctx, serviceName, &mackerel.CreateRoleParam{
 		Name: name,
 	})
-	creationErr := fmt.Errorf("failed to create role: %w", err)
+	var creationErr error
 	if err != nil {
+		creationErr = fmt.Errorf("failed to create role: %w", err)
 		var merr mackerel.Error
 		if errors.As(err, &merr) {
 			if merr.StatusCode() != http.StatusBadRequest {
