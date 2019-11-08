@@ -378,6 +378,17 @@ func (f *Function) parseUserID(ctx context.Context, id string) (string, error) {
 	return parts[0], nil
 }
 
+func (f *Function) parseDowntimeID(ctx context.Context, id string) (string, error) {
+	typ, parts, err := f.parseID(ctx, id, 1)
+	if err != nil {
+		return "", err
+	}
+	if typ != "downtime" {
+		return "", fmt.Errorf("invalid type %s, expected downtime", typ)
+	}
+	return parts[0], nil
+}
+
 type metadata struct {
 	StackName string `json:"stack_name"`
 	StackID   string `json:"stack_id"`

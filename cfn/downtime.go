@@ -30,6 +30,17 @@ func (r *downtime) create(ctx context.Context) (physicalResourceID string, data 
 }
 
 func (r *downtime) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+	c := r.Function.getclient()
+	physicalResourceID = r.Event.PhysicalResourceID
+	param, err := r.convertToParam(ctx, r.Event.ResourceProperties)
+	if err != nil {
+		return
+	}
+	id, err := r.Function.parseDowntimeID(ctx, physicalResourceID)
+	if err != nil {
+		return
+	}
+	_, err = c.UpdateDowntime(ctx, id, param)
 	return
 }
 
