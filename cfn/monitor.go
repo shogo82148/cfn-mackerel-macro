@@ -81,7 +81,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			} else if serviceName, roleName, err := m.Function.parseRoleID(ctx, s); err == nil {
 				scopes = append(scopes, serviceName+":"+roleName)
 			} else {
-				return nil, fmt.Errorf("scopes should be a service of a role: %s", s)
+				d.Put(fmt.Errorf("scopes should be a service of a role: %s", s))
 			}
 		}
 		for _, item := range d.Array(dproxy.Default(in.M("ExcludeScopes"), []interface{}{})) {
@@ -91,7 +91,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			} else if serviceName, roleName, err := m.Function.parseRoleID(ctx, s); err == nil {
 				excludeScopes = append(excludeScopes, serviceName+":"+roleName)
 			} else {
-				return nil, fmt.Errorf("excludeScopes should be a service of a role: %s", s)
+				d.Put(fmt.Errorf("excludeScopes should be a service of a role: %s", s))
 			}
 		}
 		mm = &mackerel.MonitorConnectivity{
@@ -110,7 +110,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			} else if serviceName, roleName, err := m.Function.parseRoleID(ctx, s); err == nil {
 				scopes = append(scopes, serviceName+":"+roleName)
 			} else {
-				return nil, fmt.Errorf("scopes should be a service of a role: %s", s)
+				d.Put(fmt.Errorf("scopes should be a service of a role: %s", s))
 			}
 		}
 		for _, item := range d.Array(dproxy.Default(in.M("ExcludeScopes"), []interface{}{})) {
@@ -120,7 +120,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			} else if serviceName, roleName, err := m.Function.parseRoleID(ctx, s); err == nil {
 				excludeScopes = append(excludeScopes, serviceName+":"+roleName)
 			} else {
-				return nil, fmt.Errorf("excludeScopes should be a service of a role: %s", s)
+				d.Put(fmt.Errorf("excludeScopes should be a service of a role: %s", s))
 			}
 		}
 		mm = &mackerel.MonitorHostMetric{
@@ -160,9 +160,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 		if s := d.OptionalString(in.M("Service")); s != nil {
 			var err error
 			serviceName, err = m.Function.parseServiceID(ctx, *s)
-			if err != nil {
-				return nil, err
-			}
+			d.Put(err)
 		}
 		var headers []mackerel.HeaderField
 		h, err := in.M("Headers").ProxySet().ProxyArray()
@@ -206,6 +204,28 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			Warning:              d.OptionalFloat64(in.M("Warning")),
 			Critical:             d.OptionalFloat64(in.M("Critical")),
 			NotificationInterval: d.Uint64(dproxy.Default(in.M("NotificationInterval"), 0)),
+		}
+	case mackerel.MonitorTypeAnomalyDetection.String():
+		var scopes []string
+		for _, item := range d.Array(in.M("Scopes")) {
+			s := d.String(dproxy.New(item))
+			if serviceName, err := m.Function.parseServiceID(ctx, s); err == nil {
+				scopes = append(scopes, serviceName)
+			} else if serviceName, roleName, err := m.Function.parseRoleID(ctx, s); err == nil {
+				scopes = append(scopes, serviceName+":"+roleName)
+			} else {
+				d.Put(fmt.Errorf("scopes should be a service of a role: %s", s))
+			}
+		}
+		mm = &mackerel.MonitorAnomalyDetection{
+			Name:                 d.String(in.M("Name")),
+			Memo:                 d.String(dproxy.Default(in.M("Memo"), "")),
+			Scopes:               scopes,
+			MaxCheckAttempts:     d.Uint64(dproxy.Default(in.M("MaxCheckAttempts"), 0)),
+			NotificationInterval: d.Uint64(dproxy.Default(in.M("NotificationInterval"), 0)),
+			WarningSensitivity:   mackerel.AnomalyDetectionSensitivityType(d.String(dproxy.Default(in.M("WarningSensitivity"), ""))),
+			CriticalSensitivity:  mackerel.AnomalyDetectionSensitivityType(d.String(dproxy.Default(in.M("CriticalSensitivity"), ""))),
+			TrainingPeriodFrom:   mackerel.Timestamp(d.Int64(dproxy.Default(in.M("TrainingPeriodFrom"), 0))),
 		}
 	default:
 		return nil, fmt.Errorf("unknown monitor type: %s", typ)

@@ -29,11 +29,14 @@ const (
 	// MonitorTypeServiceMetric is a type for Service metric monitoring.
 	MonitorTypeServiceMetric MonitorType = "service"
 
-	// MonitorTypeExternalHTTP is type for External monitoring.
+	// MonitorTypeExternalHTTP is a type for External monitoring.
 	MonitorTypeExternalHTTP MonitorType = "external"
 
 	// MonitorTypeExpression is a type for Expression monitoring.
 	MonitorTypeExpression MonitorType = "expression"
+
+	// MonitorTypeAnomalyDetection is a type for anomaly detection.
+	MonitorTypeAnomalyDetection MonitorType = "anomalyDetection"
 )
 
 func (t MonitorType) String() string {
@@ -62,6 +65,8 @@ func (m *monitor) UnmarshalJSON(b []byte) error {
 		m.Monitor = &MonitorExternalHTTP{}
 	case MonitorTypeExpression:
 		m.Monitor = &MonitorExpression{}
+	case MonitorTypeAnomalyDetection:
+		m.Monitor = &MonitorAnomalyDetection{}
 	default:
 		return fmt.Errorf("unknown monitor type: %s", data.Type)
 	}
@@ -308,6 +313,64 @@ func (m *MonitorExpression) MarshalJSON() ([]byte, error) {
 	type monitor MonitorExpression
 	data := (*monitor)(m)
 	data.Type = MonitorTypeExpression
+	return json.Marshal(data)
+}
+
+// AnomalyDetectionSensitivityType is a type for sensitivity of anomaly detection monitorings.
+type AnomalyDetectionSensitivityType string
+
+const (
+	// AnomalyDetectionSensitivityInsensitive is insensitive
+	AnomalyDetectionSensitivityInsensitive AnomalyDetectionSensitivityType = "insensitive"
+
+	// AnomalyDetectionSensitivityNormal is normal
+	AnomalyDetectionSensitivityNormal AnomalyDetectionSensitivityType = "normal"
+
+	// AnomalyDetectionSensitivitySensitive is sensitive
+	AnomalyDetectionSensitivitySensitive AnomalyDetectionSensitivityType = "sensitive"
+)
+
+// MonitorAnomalyDetection represents anomaly detection monitor.
+type MonitorAnomalyDetection struct {
+	ID                   string      `json:"id,omitempty"`
+	Name                 string      `json:"name,omitempty"`
+	Memo                 string      `json:"memo,omitempty"`
+	Type                 MonitorType `json:"type,omitempty"`
+	IsMute               bool        `json:"isMute,omitempty"`
+	NotificationInterval uint64      `json:"notificationInterval,omitempty"`
+
+	Scopes              []string                        `json:"scopes"`
+	WarningSensitivity  AnomalyDetectionSensitivityType `json:"warningSensitivity,omitempty"`
+	CriticalSensitivity AnomalyDetectionSensitivityType `json:"criticalSensitivity,omitempty"`
+	MaxCheckAttempts    uint64                          `json:"maxCheckAttempts,omitempty"`
+	TrainingPeriodFrom  Timestamp                       `json:"trainingPeriodFrom,omitempty"`
+}
+
+// MonitorType returns monitor type.
+func (m *MonitorAnomalyDetection) MonitorType() MonitorType { return MonitorTypeAnomalyDetection }
+
+// MonitorName returns monitor name.
+func (m *MonitorAnomalyDetection) MonitorName() string { return m.Name }
+
+// MonitorID returns monitor id.
+func (m *MonitorAnomalyDetection) MonitorID() string { return m.ID }
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (m *MonitorAnomalyDetection) UnmarshalJSON(b []byte) error {
+	type monitor MonitorAnomalyDetection
+	data := (*monitor)(m)
+	if err := json.Unmarshal(b, data); err != nil {
+		return err
+	}
+	m.Type = MonitorTypeAnomalyDetection
+	return nil
+}
+
+// MarshalJSON implements json.Marshaler.
+func (m *MonitorAnomalyDetection) MarshalJSON() ([]byte, error) {
+	type monitor MonitorAnomalyDetection
+	data := (*monitor)(m)
+	data.Type = MonitorTypeAnomalyDetection
 	return json.Marshal(data)
 }
 

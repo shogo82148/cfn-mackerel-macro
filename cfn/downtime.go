@@ -96,7 +96,7 @@ func (r *downtime) convertToParam(ctx context.Context, properties map[string]int
 			Type:     typ,
 			Interval: d.Int64(recurrence.M("Interval")),
 			Weekdays: weekdays,
-			Until:    (*mackerel.Timestamp)(d.OptionalInt64(recurrence.M("Until"))),
+			Until:    mackerel.Timestamp(d.Int64(dproxy.Default(in.M("Until"), 0))),
 		}
 	} else if !dproxy.IsErrorCode(err, dproxy.ErrorCodeNotFound) {
 		d.Put(err)

@@ -19,6 +19,7 @@ var (
 	_ Monitor = (*MonitorServiceMetric)(nil)
 	_ Monitor = (*MonitorExternalHTTP)(nil)
 	_ Monitor = (*MonitorExpression)(nil)
+	_ Monitor = (*MonitorAnomalyDetection)(nil)
 )
 
 func TestFindMonitors(t *testing.T) {
@@ -189,6 +190,26 @@ func TestFindMonitors(t *testing.T) {
 				Operator:   ">",
 				Warning:    ptrFloat64(5.0),
 				Critical:   ptrFloat64(10.0),
+			},
+		},
+		{
+			resp: map[string]interface{}{
+				"id":                 "2cSZzK3XfmG",
+				"type":               "anomalyDetection",
+				"name":               "anomaly detection",
+				"memo":               "my anomaly detection for roles",
+				"scopes":             []interface{}{"myService:myRole"},
+				"warningSensitivity": "insensitive",
+				"maxCheckAttempts":   3,
+			},
+			want: &MonitorAnomalyDetection{
+				ID:                 "2cSZzK3XfmG",
+				Name:               "anomaly detection",
+				Memo:               "my anomaly detection for roles",
+				Type:               MonitorTypeAnomalyDetection,
+				Scopes:             []string{"myService:myRole"},
+				WarningSensitivity: AnomalyDetectionSensitivityInsensitive,
+				MaxCheckAttempts:   3,
 			},
 		},
 	}
@@ -451,6 +472,23 @@ func TestCreateMonitor(t *testing.T) {
 				"warning":              5.0,
 				"critical":             10.0,
 				"notificationInterval": 60.0,
+			},
+		},
+		{
+			in: &MonitorAnomalyDetection{
+				Name:               "anomaly detection",
+				Memo:               "my anomaly detection for roles",
+				Scopes:             []string{"myService:myRole"},
+				WarningSensitivity: AnomalyDetectionSensitivityInsensitive,
+				MaxCheckAttempts:   3,
+			},
+			want: map[string]interface{}{
+				"type":               "anomalyDetection",
+				"name":               "anomaly detection",
+				"memo":               "my anomaly detection for roles",
+				"scopes":             []interface{}{"myService:myRole"},
+				"warningSensitivity": "insensitive",
+				"maxCheckAttempts":   3.0,
 			},
 		},
 	}

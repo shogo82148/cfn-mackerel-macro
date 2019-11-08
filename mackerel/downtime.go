@@ -52,7 +52,7 @@ type DowntimeRecurrence struct {
 	Type     DowntimeRecurrenceType `json:"type,omitempty"`
 	Interval int64                  `json:"interval,omitempty"`
 	Weekdays []DowntimeWeekday      `json:"weekdays,omitempty"`
-	Until    *Timestamp             `json:"until,omitempty"`
+	Until    Timestamp              `json:"until,omitempty"`
 }
 
 // DowntimeWeekday specifies a day of the week (Sunday = 0, ...)

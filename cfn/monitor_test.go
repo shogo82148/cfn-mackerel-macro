@@ -364,3 +364,62 @@ func TestCreateMonitor_MonitorExpression(t *testing.T) {
 		t.Errorf("unexpected type, want %s, got %s", "expression", param["Type"].(string))
 	}
 }
+
+func TestCreateMonitor_MonitorAnomalyDetection(t *testing.T) {
+	m := &monitor{
+		Function: &Function{
+			org: &mackerel.Org{
+				Name: "test-org",
+			},
+			client: &fakeMackerelClient{
+				createMonitor: func(ctx context.Context, param mackerel.Monitor) (mackerel.Monitor, error) {
+					want := &mackerel.MonitorAnomalyDetection{
+						Name:               "anomaly detection",
+						Memo:               "my anomaly detection for roles",
+						Scopes:             []string{"myService", "myService:myRole"},
+						WarningSensitivity: mackerel.AnomalyDetectionSensitivityInsensitive,
+					}
+					if diff := cmp.Diff(param, want); diff != "" {
+						t.Errorf("monitor differs: (-got +want)\n%s", diff)
+					}
+					want.ID = "3yAYEDLXKL5"
+					return want, nil
+				},
+			},
+		},
+		Event: cfn.Event{
+			RequestType:       cfn.RequestCreate,
+			RequestID:         "",
+			ResponseURL:       "https://cloudformation-custom-resource-response-apnortheast1.s3-ap-northeast-1.amazonaws.com/xxxxx",
+			ResourceType:      "Custom:Monitor",
+			LogicalResourceID: "Monitor",
+			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
+			ResourceProperties: map[string]interface{}{
+				"Type": "anomalyDetection",
+				"Name": "anomaly detection",
+				"Memo": "my anomaly detection for roles",
+				"Scopes": []interface{}{
+					"mkr:test-org:service:myService",
+					"mkr:test-org:role:myService:myRole",
+				},
+				"WarningSensitivity": "insensitive",
+			},
+		},
+	}
+	id, param, err := m.create(context.Background())
+	if err != nil {
+		t.Error(err)
+	}
+	if id != "mkr:test-org:monitor:3yAYEDLXKL5" {
+		t.Errorf("unexpected host id: want %s, got %s", "mkr:test-org:host:3yAYEDLXKL5", id)
+	}
+	if param["MonitorId"].(string) != "3yAYEDLXKL5" {
+		t.Errorf("unexpected monitor id, want %s, got %s", "3yAYEDLXKL5", param["MonitorId"].(string))
+	}
+	if param["Name"].(string) != "anomaly detection" {
+		t.Errorf("unexpected name, want %s, got %s", "anomaly detection", param["Name"].(string))
+	}
+	if param["Type"].(string) != "anomalyDetection" {
+		t.Errorf("unexpected type, want %s, got %s", "anomalyDetection", param["Type"].(string))
+	}
+}
