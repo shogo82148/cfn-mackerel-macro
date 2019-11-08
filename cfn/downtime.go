@@ -63,6 +63,9 @@ func (r *downtime) convertToParam(ctx context.Context, properties map[string]int
 		var weekdays []mackerel.DowntimeWeekday
 		days := recurrence.M("Weekdays")
 		if days, err := days.ProxySet().StringArray(); err == nil {
+			if typ != mackerel.DowntimeRecurrenceTypeWeekly {
+				d.Put(fmt.Errorf("weekdays are available with weekly type, but it is %s type", typ))
+			}
 			weekdays = make([]mackerel.DowntimeWeekday, 0, len(days))
 			for _, day := range days {
 				if ret, err := mackerel.ParseDowntimeWeekday(day); err != nil {
