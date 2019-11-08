@@ -2,7 +2,10 @@ package cfn
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"log"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -184,5 +187,19 @@ func (r *downtime) convertToParam(ctx context.Context, properties map[string]int
 }
 
 func (r *downtime) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+	c := r.Function.getclient()
+	physicalResourceID = r.Event.PhysicalResourceID
+	id, err := r.Function.parseDowntimeID(ctx, physicalResourceID)
+	if err != nil {
+		log.Printf("failed to parse %q as downtime id: %s", physicalResourceID, err)
+		err = nil // ignore it
+		return
+	}
+	_, err = c.DeleteDowntime(ctx, id)
+	var merr mackerel.Error
+	if errors.As(err, &merr) && merr.StatusCode() == http.StatusNotFound {
+		log.Printf("It seems that the role %q is already deleted, ignore the error: %s", physicalResourceID, err)
+		err = nil // ignore it
+	}
 	return
 }
