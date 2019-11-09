@@ -32,8 +32,41 @@
         },
         "Mackerel::Service": {
             "Documentation": "https://mackerel.io/api-docs/entry/services",
-            "Attributes": {},
-            "Properties": {}
+            "Attributes": {
+                "Name": {
+                    "PrimitiveType": "String"
+                }
+            },
+            "Properties": {
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                }
+            }
+        },
+        "Mackerel::Role": {
+            "Documentation": "https://mackerel.io/api-docs/entry/services#rolelist",
+            "Attributes": {
+                "Name": {
+                    "PrimitiveType": "String"
+                },
+                "FullName": {
+                    "PrimitiveType": "String"
+                }
+            },
+            "Properties": {
+                "Service": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                },
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                }
+            }
         },
         "Mackerel::Downtime": {
             "Documentation": "https://mackerel.io/api-docs/entry/downtimes",

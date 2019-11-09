@@ -8,7 +8,15 @@ Resources:
 
   Service:
     Type: Mackerel::Service
+    Properties:
+      Name: myService
 
+  Role:
+    Type: Mackerel::Role
+    Properties:
+      Service: !Ref Service
+      Name: myRole
+    
   Downtime:
     Type: Mackerel::Downtime
     Properties:
@@ -35,3 +43,9 @@ Resources:
 Outputs:
   OrgName:
     Value: !GetAtt Org.Name
+  ServiceName:
+    Value: !GetAtt Service.Name
+  RoleName:
+    Value: !GetAtt Role.Name
+  RoleFullName:
+    Value: !GetAtt Role.FullName
