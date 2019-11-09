@@ -23,6 +23,13 @@ func TestGetRoleMetaData(t *testing.T) {
 	lastModified := time.Date(2018, 3, 6, 3, 0, 0, 0, time.UTC)
 
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.String() != "/api/v0/services/awesome-service/roles/role-app/metadata/testing" {
+			t.Errorf("unexpected url: want %s, got %s", "/api/v0/services/awesome-service/roles/role-app/metadata/testing", r.URL.String())
+		}
+		if r.Method != http.MethodGet {
+			t.Errorf("unexpected method: got %s, want %s", http.MethodGet, r.Method)
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Last-Modified", lastModified.Format(http.TimeFormat))
 		w.WriteHeader(http.StatusOK)
@@ -72,6 +79,12 @@ func TestGetRoleMetaDataNameSpaces(t *testing.T) {
 		roleName    = "role-app"
 	)
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.String() != "/api/v0/services/awesome-service/roles/role-app/metadata" {
+			t.Errorf("unexpected url: want %s, got %s", "/api/v0/services/awesome-service/roles/role-app/metadata", r.URL.String())
+		}
+		if r.Method != http.MethodGet {
+			t.Errorf("unexpected method: got %s, want %s", http.MethodGet, r.Method)
+		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, `{"metadata":[{"namespace": "test"}]}`)
@@ -105,6 +118,12 @@ func TestPutRoleMetaData(t *testing.T) {
 	)
 
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.String() != "/api/v0/services/awesome-service/roles/role-app/metadata/testing" {
+			t.Errorf("unexpected url: want %s, got %s", "/api/v0/services/awesome-service/roles/role-app/metadata/testing", r.URL.String())
+		}
+		if r.Method != http.MethodPut {
+			t.Errorf("unexpected method: got %s, want %s", http.MethodPut, r.Method)
+		}
 		var got map[string]interface{}
 		dec := json.NewDecoder(r.Body)
 		if err := dec.Decode(&got); err != nil {
@@ -163,6 +182,9 @@ func TestDeleteRoleMetaData(t *testing.T) {
 		namespace   = "testing"
 	)
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.String() != "/api/v0/services/awesome-service/roles/role-app/metadata/testing" {
+			t.Errorf("unexpected url: want %s, got %s", "/api/v0/services/awesome-service/roles/role-app/metadata/testing", r.URL.String())
+		}
 		if r.Method != http.MethodDelete {
 			t.Errorf("unexpected method: got %s, want %s", http.MethodDelete, r.Method)
 		}
