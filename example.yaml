@@ -54,8 +54,12 @@ Resources:
       Start: 1573198000
       Duration: 10
       Recurrence:
-        Type: hourly
+        Type: weekly
         Interval: 2
+        Weekdays:
+          - Sunday
+          - Saturday
+        Until: 1573198000
 
   User:
     Type: Mackerel::User

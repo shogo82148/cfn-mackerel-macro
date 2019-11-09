@@ -13,8 +13,14 @@
                 "UpdateType": "Mutable"
             },
             "Weekdays": {
-                "PrimitiveType": "String",
+                "Type": "List",
+                "PrimitiveItemType": "String",
                 "DuplicatesAllowed": false,
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Until": {
+                "PrimitiveType": "Integer",
                 "Required": false,
                 "UpdateType": "Mutable"
             }
@@ -85,6 +91,7 @@
                     "Type": "List",
                     "PrimitiveItemType": "String",
                     "Required": true,
+                    "DuplicatesAllowed": false,
                     "UpdateType": "Mutable"
                 }
             }
