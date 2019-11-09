@@ -20,7 +20,11 @@ resource.zip: resource/main
 
 test:
 	go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
-	cfn-lint --override-spec cfn-resource-specification.json example.yaml
+	if command -v cfn-lint; then \
+		cfn-lint --override-spec cfn-resource-specification.json example.yaml; \
+	else \
+		echo "cfn-lint is not found. skip it" >&2; \
+	fi
 
 clean:
 	@rm -f packaged.yaml
