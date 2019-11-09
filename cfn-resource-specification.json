@@ -1,6 +1,11 @@
 {
     "ResourceSpecificationVersion": "1.0.0",
     "ResourceTypes": {
+        "Mackerel::Org": {
+            "Documentation": "https://mackerel.io/api-docs/entry/organizations",
+            "Attributes": {},
+            "Properties": {}
+        },
         "Mackerel::Service": {
             "Documentation": "https://mackerel.io/api-docs/entry/services",
             "Attributes": {},

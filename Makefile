@@ -20,6 +20,7 @@ resource.zip: resource/main
 
 test:
 	go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
+	cfn-lint --override-spec cfn-resource-specification.json example.yaml
 
 clean:
 	@rm -f packaged.yaml

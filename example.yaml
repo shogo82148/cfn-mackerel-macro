@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: Mackerel
+Description: Mackerel resources
+
+Resources:
+  Org:
+    Type: Mackerel::Org
+
+  Downtime:
+    Type: Mackerel::Downtime
+    Properties:
+      Name: test of downtime
+      Start: 1573198000
+      Duration: 10

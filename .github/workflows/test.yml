@@ -18,5 +18,8 @@ jobs:
     - name: Test
       run: |
         make test
-      env:
-        GO111MODULE: "on"
+
+    - name: cfn-lint
+      uses: scottbrenner/cfn-lint-action@master
+      with:
+        args: --override-spec cfn-resource-specification.json example.yaml
