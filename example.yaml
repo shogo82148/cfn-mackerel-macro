@@ -24,6 +24,85 @@ Resources:
       Roles:
         - !Ref Role
 
+  MonitorConnectivity:
+    Type: Mackerel::Monitor
+    Properties:
+      Type: connectivity
+      Name: connectivity
+      Memo: memo
+      Scopes:
+        - !Ref Service
+        - !Ref Role
+      ExcludeScopes:
+        - !Ref Service
+        - !Ref Role
+      NotificationInterval: 10
+
+  MonitorHost:
+    Type: Mackerel::Monitor
+    Properties:
+      Type: host
+      Name: host
+      Duration: 1
+      Metric: some.metric
+      Operator: ">"
+      Warning: 2.71828182846
+      Critical: 3.14159265359
+      MaxCheckAttempts: 10
+      Scopes:
+        - !Ref Service
+        - !Ref Role
+      ExcludeScopes:
+        - !Ref Service
+        - !Ref Role
+      NotificationInterval: 10
+
+  MonitorExternal:
+    Type: Mackerel::Monitor
+    Properties:
+      Type: external
+      Name: external
+      Method: GET
+      Url: https://example.com
+      Service: !Ref Service
+      NotificationInterval: 60
+      ResponseTimeWarning: 5000
+      ResponseTimeCritical: 10000
+      ResponseTimeDuration: 3
+      ContainsString: Example
+      MaxCheckAttempts: 3
+      CertificationLimitWarning: 90
+      CertificationLimitCritical: 30
+      SkipCertificateVerification: false
+      Headers:
+        - Name: Cache-Control
+          Value: no-cache
+
+  MonitorExpression:
+    Type: Mackerel::Monitor
+    Properties:
+      Type: expression
+      Name: expression
+      Expression: avg(roleSlots("server:role","loadavg5"))
+      Operator: ">"
+      Warning: 5.0
+      Critical: 10.0
+      NotificationInterval: 60
+
+  MonitorAnomalyDetection:
+    Type: Mackerel::Monitor
+    Properties:
+      Type: anomalyDetection
+      Name: anomaly detection
+      Scopes:
+        - !Ref Service
+        - !Ref Role
+      WarningSensitivity: insensitive
+      CriticalSensitivity: normal
+      MaxCheckAttempts: 3
+      TrainingPeriodFrom: 1573198000
+      NotificationInterval: 60
+
   Downtime:
     Type: Mackerel::Downtime
     Properties:
@@ -43,9 +122,9 @@ Resources:
         - !Ref Role
         - !Ref Role
       MonitorScopes:
-        - "TODO"
+        - !Ref MonitorConnectivity
       MonitorExcludeScopes:
-        - "TODO"
+        - !Ref MonitorHost
 
   DowntimeWithRecurrence:
     Type: Mackerel::Downtime
