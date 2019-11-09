@@ -31,11 +31,21 @@ Resources:
       Start: 1573198000
       Duration: 10
       ServiceScopes:
-        - !Ref: Service
-        - !Ref: Service
+        - !Ref Service
+        - !Ref Service
       ServiceExcludeScopes:
-        - !Ref: Service
-        - !Ref: Service
+        - !Ref Service
+        - !Ref Service
+      RoleScopes:
+        - !Ref Role
+        - !Ref Role
+      RoleExcludeScopes:
+        - !Ref Role
+        - !Ref Role
+      MonitorScopes:
+        - "TODO"
+      MonitorExcludeScopes:
+        - "TODO"
 
   DowntimeWithRecurrence:
     Type: Mackerel::Downtime

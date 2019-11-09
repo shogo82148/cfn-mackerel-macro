@@ -82,7 +82,8 @@
                     "UpdateType": "Mutable"
                 },
                 "Roles": {
-                    "PrimitiveType": "String",
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
                     "Required": true,
                     "UpdateType": "Mutable"
                 }
@@ -117,6 +118,37 @@
                     "UpdateType": "Mutable"
                 },
                 "ServiceScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ServiceExcludeScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "RoleScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "RoleExcludeScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "MonitorScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "MonitorExcludeScopes": {
+                    "Type": "List",
                     "PrimitiveItemType": "String",
                     "Required": false,
                     "UpdateType": "Mutable"
