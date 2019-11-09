@@ -54,7 +54,7 @@ func (c *Client) PutRoleMetaData(ctx context.Context, serviceName, roleName, nam
 	var data struct {
 		Success bool `json:"success"`
 	}
-	_, err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/services/%s/roles/%s/metadata", serviceName, roleName), v, &data)
+	_, err := c.do(ctx, http.MethodPut, fmt.Sprintf("/api/v0/services/%s/roles/%s/metadata/%s", serviceName, roleName, namespace), v, &data)
 	if err != nil {
 		return err
 	}
