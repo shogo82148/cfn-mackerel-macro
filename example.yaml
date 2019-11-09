@@ -103,6 +103,50 @@ Resources:
       TrainingPeriodFrom: 1573198000
       NotificationInterval: 60
 
+  NotificationChannelEmail:
+    Type: Mackerel::NotificationChannel
+    Properties:
+      Type: email
+      Name: email notification
+      Emails:
+        - john.doe@example.com
+      Events:
+        - alert
+        - alertGroup
+
+  NotificationChannelSlack:
+    Type: Mackerel::NotificationChannel
+    Properties:
+      Type: slack
+      Name: slack notification
+      Url: https://example.com
+      Mentions:
+        Ok: it's ok message
+        Warning: it's warning message
+        Critical: it's critical message
+      EnabledGraphImage: true
+      Events:
+        - alert
+        - alertGroup
+        - hostStatus
+        - hostRegister
+        - hostRetire
+        - monitor
+
+  NotificationChannelWebHook:
+    Type: Mackerel::NotificationChannel
+    Properties:
+      Type: webhook
+      Name: webhook
+      Url: https://example.com
+      Events:
+        - alert
+        - alertGroup
+        - hostStatus
+        - hostRegister
+        - hostRetire
+        - monitor
+
   Downtime:
     Type: Mackerel::Downtime
     Properties:

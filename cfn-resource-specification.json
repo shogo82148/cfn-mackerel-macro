@@ -36,6 +36,23 @@
                 "Required": true,
                 "UpdateType": "Mutable"
             }
+        },
+        "Mackerel::NotificationChannel.Mentions": {
+            "Ok": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Immutable"
+            },
+            "Warning": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Immutable"
+            },
+            "Critical": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Immutable"
+            }
         }
     },
     "ResourceTypes": {
@@ -249,6 +266,51 @@
                     "PrimitiveType": "Integer",
                     "Required": false,
                     "UpdateType": "Mutable"
+                }
+            }
+        },
+        "Mackerel::NotificationChannel": {
+            "Documentation": "https://mackerel.io/api-docs/entry/channels",
+            "Attributes": {},
+            "Properties": {
+                "Type": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                },
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                },
+                "Events": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable",
+                    "DuplicatesAllowed": false
+                },
+                "Emails": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Immutable",
+                    "DuplicatesAllowed": false
+                },
+                "Url": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Immutable"
+                },
+                "EnabledGraphImage": {
+                    "PrimitiveType": "Boolean",
+                    "Required": false,
+                    "UpdateType": "Immutable"
+                },
+                "Mentions": {
+                    "Type": "Mentions",
+                    "Required": false,
+                    "UpdateType": "Immutable"
                 }
             }
         },
