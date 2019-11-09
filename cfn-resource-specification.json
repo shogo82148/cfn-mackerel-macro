@@ -154,6 +154,21 @@
                     "UpdateType": "Mutable"
                 }
             }
+        },
+        "Mackerel::User": {
+            "Documentation": "https://mackerel.io/api-docs/entry/users",
+            "Attributes": {
+                "Email": {
+                    "PrimitiveType": "String"
+                }
+            },
+            "Properties": {
+                "Email": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                }
+            }
         }
     }
 }

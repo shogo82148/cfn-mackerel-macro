@@ -57,6 +57,11 @@ Resources:
         Type: hourly
         Interval: 2
 
+  User:
+    Type: Mackerel::User
+    Properties:
+      Email: john.doe@example.com
+
 Outputs:
   OrgName:
     Value: !GetAtt Org.Name
@@ -68,3 +73,5 @@ Outputs:
     Value: !GetAtt Role.FullName
   HostName:
     Value: !GetAtt Host.Name
+  UserEmail:
+    Value: !GetAtt User.Email
