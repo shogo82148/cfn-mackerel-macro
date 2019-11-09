@@ -6,9 +6,32 @@ Resources:
   Org:
     Type: Mackerel::Org
 
+  Service:
+    Type: Mackerel::Service
+
   Downtime:
     Type: Mackerel::Downtime
     Properties:
       Name: test of downtime
       Start: 1573198000
       Duration: 10
+      ServiceScopes:
+        - !Ref: Service
+        - !Ref: Service
+      ServiceExcludeScopes:
+        - !Ref: Service
+        - !Ref: Service
+
+  DowntimeWithRecurrence:
+    Type: Mackerel::Downtime
+    Properties:
+      Name: test of downtime
+      Start: 1573198000
+      Duration: 10
+      Recurrence:
+        Type: hourly
+        Interval: 2
+
+Outputs:
+  OrgName:
+    Value: !GetAtt Org.Name

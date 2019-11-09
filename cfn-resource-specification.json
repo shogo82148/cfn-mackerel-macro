@@ -1,15 +1,74 @@
 {
     "ResourceSpecificationVersion": "1.0.0",
+    "PropertyTypes": {
+        "Mackerel::Downtime.Recurrence": {
+            "Type": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Interval": {
+                "PrimitiveType": "Integer",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Weekdays": {
+                "PrimitiveType": "String",
+                "DuplicatesAllowed": false,
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
+        }
+    },
     "ResourceTypes": {
         "Mackerel::Org": {
             "Documentation": "https://mackerel.io/api-docs/entry/organizations",
-            "Attributes": {},
+            "Attributes": {
+                "Name": {
+                    "PrimitiveType": "String"
+                }
+            },
             "Properties": {}
         },
         "Mackerel::Service": {
             "Documentation": "https://mackerel.io/api-docs/entry/services",
             "Attributes": {},
             "Properties": {}
+        },
+        "Mackerel::Downtime": {
+            "Documentation": "https://mackerel.io/api-docs/entry/downtimes",
+            "Attributes": {},
+            "Properties": {
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Memo": {
+                    "PrimitiveType": "String",
+                    "Required": false
+                },
+                "Start": {
+                    "PrimitiveType": "Integer",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Duration": {
+                    "PrimitiveType": "Integer",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Recurrence": {
+                    "Type": "Recurrence",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ServiceScopes": {
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                }
+            }
         }
     }
 }
