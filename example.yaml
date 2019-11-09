@@ -16,7 +16,14 @@ Resources:
     Properties:
       Service: !Ref Service
       Name: myRole
-    
+
+  Host:
+    Type: Mackerel::Host
+    Properties:
+      Name: myHost
+      Roles:
+        - !Ref Role
+
   Downtime:
     Type: Mackerel::Downtime
     Properties:
@@ -49,3 +56,5 @@ Outputs:
     Value: !GetAtt Role.Name
   RoleFullName:
     Value: !GetAtt Role.FullName
+  HostName:
+    Value: !GetAtt Host.Name

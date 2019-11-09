@@ -68,6 +68,26 @@
                 }
             }
         },
+        "Mackerel::Host": {
+            "Documentation": "https://mackerel.io/api-docs/entry/hosts",
+            "Attributes": {
+                "Name": {
+                    "PrimitiveType": "String"
+                }
+            },
+            "Properties": {
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Roles": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                }
+            }
+        },
         "Mackerel::Downtime": {
             "Documentation": "https://mackerel.io/api-docs/entry/downtimes",
             "Attributes": {},
