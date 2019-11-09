@@ -1,0 +1,10 @@
+{
+    "ResourceSpecificationVersion": "1.0.0",
+    "ResourceTypes": {
+        "Mackerel::Service": {
+            "Documentation": "https://mackerel.io/api-docs/entry/services",
+            "Attributes": {},
+            "Properties": {}
+        }
+    }
+}

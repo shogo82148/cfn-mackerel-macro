@@ -1,0 +1,114 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$comment": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-resource-specification-format.html",
+    "definitions": {
+        "PropertyType": {
+            "type": "object",
+            "properties": {
+                "Documentation": {
+                    "type": "string",
+                    "description": "A link to the AWS CloudFormation User Guide that provides information about the property."
+                },
+                "DuplicatesAllowed": {
+                    "type": "boolean",
+                    "description": "If the value of the Type field is List, indicates whether AWS CloudFormation allows duplicate values. If the value is true, AWS CloudFormation ignores duplicate values. If the value is false, AWS CloudFormation returns an error if you submit duplicate values."
+                },
+                "ItemType": {
+                    "type": "string",
+                    "description": "If the value of the Type field is List or Map, indicates the type of list or map if they contain non-primitive types. Otherwise, this field is omitted. For lists or maps that contain primitive types, the PrimitiveItemType property indicates the valid value type."
+                },
+                "PrimitiveItemType": {
+                    "type": "string",
+                    "enum": ["String", "Long", "Integer", "Double", "Boolean", "Timestamp"],
+                    "description": "If the value of the Type field is List or Map, indicates the type of list or map if they contain primitive types. Otherwise, this field is omitted. For lists or maps that contain non-primitive types, the ItemType property indicates the valid value type."
+                },
+                "PrimitiveType": {
+                    "type": "string",
+                    "enum": ["String", "Long", "Integer", "Double", "Boolean", "Timestamp", "Json"],
+                    "description": "For primitive values, the valid primitive type for the property. A primitive type is a basic data type for resource property values. The valid primitive types are String, Long, Integer, Double, Boolean, Timestamp or Json. If valid values are a non-primitive type, this field is omitted and the Type field indicates the valid value type."
+                },
+                "Required": {
+                    "type": "boolean",
+                    "description": "Indicates whether the property is required."
+                },
+                "Type": {
+                    "type": "string",
+                    "description": "For non-primitive types, valid values for the property. The valid types are a subproperty name, List or Map. If valid values are a primitive type, this field is omitted and the PrimitiveType field indicates the valid value type."
+                },
+                "UpdateType": {
+                    "type": "string",
+                    "enum": ["Mutable", "Immutable", "Conditional"],
+                    "description": "During a stack update, the update behavior when you add, remove, or modify the property. AWS CloudFormation replaces the resource when you change immutable properties. AWS CloudFormation doesn't replace the resource when you change mutable properties. Conditional updates can be mutable or immutable, depending on, for example, which other properties you updated. For more information, see the relevant resource type documentation."
+                }
+            }
+        }
+    },
+    "type": "object",
+    "properties": {
+        "ResourceSpecificationVersion": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+            "description": "The version of the resource specification. The version format is majorVersion.minorVersion.patch, where each release increments the version number. All resources have the same version number regardless of whether the resource was updated."
+        },
+        "PropertyTypes": {
+            "type": "object",
+            "patternProperties": {
+                "^[_a-zA-Z][a-zA-Z0-9_-]*(::[_a-zA-Z][a-zA-Z0-9_-]*)*\\.[_a-zA-Z][a-zA-Z0-9_-]*$": {
+                    "$ref": "#/definitions/PropertyType"
+                }
+            }
+        },
+        "ResourceTypes": {
+            "type": "object",
+            "patternProperties": {
+                "^[_a-zA-Z][a-zA-Z0-9_-]*(::[_a-zA-Z][a-zA-Z0-9_-]*)*$": {
+                    "type": "object",
+                    "properties": {
+                        "Attributes": {
+                            "type": "object",
+                            "description": "A list of resource attributes that you can use in an Fn::GetAtt function. For each attribute, this section provides the attribute name and the type of value that AWS CloudFormation returns.",
+                            "patternProperties": {
+                                "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
+                                    "type": "object",
+                                    "properties": {
+                                        "ItemType": {
+                                            "type": "string",
+                                            "description": "If the value of the Type field is List, indicates the type of list that the Fn::GetAtt function returns for the attribute if the list contains non-primitive types. The valid type is a name of a property."
+                                        },
+                                        "PrimitiveItemType": {
+                                            "type": "string",
+                                            "enum": ["String", "Long", "Integer", "Double", "Boolean", "Timestamp"],
+                                            "description": "If the value of the Type field is List, indicates the type of list that the Fn::GetAtt function returns for the attribute if the list contains primitive types. For lists that contain non-primitive types, the ItemType property indicates the valid value type. The valid primitive types for lists are String, Long, Integer, Double, Boolean, or Timestamp."
+                                        },
+                                        "PrimitiveType": {
+                                            "type": "string",
+                                            "enum": ["String", "Long", "Integer", "Double", "Boolean", "Timestamp", "Json"],
+                                            "description": "For primitive return values, the type of primitive value that the Fn::GetAtt function returns for the attribute. A primitive type is a basic data type for resource property values. The valid primitive types are String, Long, Integer, Double, Boolean, Timestamp or Json."
+                                        },
+                                        "Type": {
+                                            "type": "string",
+                                            "description": "For non-primitive return values, the type of value that the Fn::GetAtt function returns for the attribute. The valid types are a property name or List."
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "Documentation": {
+                            "type": "string",
+                            "description": "A link to the AWS CloudFormation User Guide for information about the resource."
+                        },
+                        "Properties": {
+                            "type": "object",
+                            "description": "A list of property specifications for the resource. For details, see Property Specification.",
+                            "patternProperties": {
+                                "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
+                                    "$ref": "#/definitions/PropertyType"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
