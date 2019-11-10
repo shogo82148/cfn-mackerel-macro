@@ -53,6 +53,25 @@
                 "Required": false,
                 "UpdateType": "Immutable"
             }
+        },
+        "Mackerel::NotificationGroup.Service": {
+            "Id": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::NotificationGroup.Monitor": {
+            "Id": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "SkipDefault": {
+                "PrimitiveType": "Boolean",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
         }
     },
     "ResourceTypes": {
@@ -311,6 +330,50 @@
                     "Type": "Mentions",
                     "Required": false,
                     "UpdateType": "Immutable"
+                }
+            }
+        },
+        "Mackerel::NotificationGroup": {
+            "Documentation": "https://mackerel.io/api-docs/entry/notification-groups",
+            "Attributes": {},
+            "Properties": {
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "NotificationLevel": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ChildNotificationGroupIds": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "DuplicatesAllowed": false,
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ChildChannelIds": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "DuplicatesAllowed": false,
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Services": {
+                    "Type": "List",
+                    "ItemType": "Service",
+                    "DuplicatesAllowed": false,
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Monitors": {
+                    "Type": "List",
+                    "ItemType": "Monitor",
+                    "DuplicatesAllowed": false,
+                    "Required": false,
+                    "UpdateType": "Mutable"
                 }
             }
         },

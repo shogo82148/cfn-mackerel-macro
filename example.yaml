@@ -147,6 +147,28 @@ Resources:
         - hostRetire
         - monitor
 
+  NotificationGroup1:
+    Type: Mackerel::NotificationGroup
+    Properties:
+      Name: notification group1
+
+  NotificationGroup2:
+    Type: Mackerel::NotificationGroup
+    Properties:
+      Name: notification group2
+      NotificationLevel: critical
+      ChildNotificationGroupIds:
+        - !Ref NotificationGroup1
+      ChildChannelIds:
+        - !Ref NotificationChannelEmail
+        - !Ref NotificationChannelSlack
+        - !Ref NotificationChannelWebHook
+      Monitors:
+        - Id: !Ref MonitorConnectivity
+          SkipDefault: true
+      Services:
+        - Id: !Ref Service
+
   Downtime:
     Type: Mackerel::Downtime
     Properties:
