@@ -1,0 +1,639 @@
+{
+    "ResourceSpecificationVersion": "1.0.0",
+    "PropertyTypes": {
+        "Mackerel::Downtime.Recurrence": {
+            "Type": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Interval": {
+                "PrimitiveType": "Integer",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Weekdays": {
+                "Type": "List",
+                "PrimitiveItemType": "String",
+                "DuplicatesAllowed": false,
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Until": {
+                "PrimitiveType": "Integer",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::Monitor.Header": {
+            "Name": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Value": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::NotificationChannel.Mentions": {
+            "Ok": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Immutable"
+            },
+            "Warning": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Immutable"
+            },
+            "Critical": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Immutable"
+            }
+        },
+        "Mackerel::NotificationGroup.Service": {
+            "Id": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::NotificationGroup.Monitor": {
+            "Id": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "SkipDefault": {
+                "PrimitiveType": "Boolean",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::Dashboard.Widget": {
+            "Type": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Title": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Layout": {
+                "Type": "Layout",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Graph": {
+                "Type": "Graph",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Range": {
+                "Type": "Range",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Metric": {
+                "Type": "Metric",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Markdown": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Role": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::Dashboard.Layout": {
+            "X": {
+                "PrimitiveType": "Integer",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Y": {
+                "PrimitiveType": "Integer",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Width": {
+                "PrimitiveType": "Integer",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Height": {
+                "PrimitiveType": "Integer",
+                "Required": true,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::Dashboard.Graph": {
+            "Type": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Name": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Host": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Role": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Service": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Expression": {
+                "PrimitiveType": "Json",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::Dashboard.Range": {
+            "Type": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Period": {
+                "PrimitiveType": "Integer",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Offset": {
+                "PrimitiveType": "Integer",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Start": {
+                "PrimitiveType": "Integer",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "End": {
+                "PrimitiveType": "Integer",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::Dashboard.Metric": {
+            "Type": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Name": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Host": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Service": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Expression": {
+                "PrimitiveType": "Json",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
+        }
+    },
+    "ResourceTypes": {
+        "Mackerel::Org": {
+            "Documentation": "https://mackerel.io/api-docs/entry/organizations",
+            "Attributes": {
+                "Name": {
+                    "PrimitiveType": "String"
+                }
+            },
+            "Properties": {}
+        },
+        "Mackerel::Service": {
+            "Documentation": "https://mackerel.io/api-docs/entry/services",
+            "Attributes": {
+                "Name": {
+                    "PrimitiveType": "String"
+                }
+            },
+            "Properties": {
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                }
+            }
+        },
+        "Mackerel::Role": {
+            "Documentation": "https://mackerel.io/api-docs/entry/services#rolelist",
+            "Attributes": {
+                "Name": {
+                    "PrimitiveType": "String"
+                },
+                "FullName": {
+                    "PrimitiveType": "String"
+                }
+            },
+            "Properties": {
+                "Service": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                },
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                }
+            }
+        },
+        "Mackerel::Host": {
+            "Documentation": "https://mackerel.io/api-docs/entry/hosts",
+            "Attributes": {
+                "Name": {
+                    "PrimitiveType": "String"
+                }
+            },
+            "Properties": {
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Roles": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": true,
+                    "DuplicatesAllowed": false,
+                    "UpdateType": "Mutable"
+                }
+            }
+        },
+        "Mackerel::Monitor": {
+            "Documentation": "https://mackerel.io/api-docs/entry/monitors",
+            "Attributes": {},
+            "Properties": {
+                "Type": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                },
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Memo": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Scopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ExcludeScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "NotificationInterval": {
+                    "PrimitiveType": "Integer",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Duration": {
+                    "PrimitiveType": "Integer",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Metric": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Operator": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Warning": {
+                    "PrimitiveType": "Double",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Critical": {
+                    "PrimitiveType": "Double",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "MaxCheckAttempts": {
+                    "PrimitiveType": "Integer",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Method": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Url": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Service": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ResponseTimeWarning": {
+                    "PrimitiveType": "Integer",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ResponseTimeCritical": {
+                    "PrimitiveType": "Integer",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ResponseTimeDuration": {
+                    "PrimitiveType": "Integer",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ContainsString": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "CertificationLimitWarning": {
+                    "PrimitiveType": "Integer",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "CertificationLimitCritical": {
+                    "PrimitiveType": "Integer",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Headers": {
+                    "Type": "List",
+                    "ItemType": "Header",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "SkipCertificateVerification": {
+                    "PrimitiveType": "Boolean",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Expression": {
+                    "PrimitiveType": "Json",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "WarningSensitivity": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "CriticalSensitivity": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "TrainingPeriodFrom": {
+                    "PrimitiveType": "Integer",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                }
+            }
+        },
+        "Mackerel::NotificationChannel": {
+            "Documentation": "https://mackerel.io/api-docs/entry/channels",
+            "Attributes": {},
+            "Properties": {
+                "Type": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                },
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                },
+                "Events": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable",
+                    "DuplicatesAllowed": false
+                },
+                "Emails": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Immutable",
+                    "DuplicatesAllowed": false
+                },
+                "Url": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Immutable"
+                },
+                "EnabledGraphImage": {
+                    "PrimitiveType": "Boolean",
+                    "Required": false,
+                    "UpdateType": "Immutable"
+                },
+                "Mentions": {
+                    "Type": "Mentions",
+                    "Required": false,
+                    "UpdateType": "Immutable"
+                }
+            }
+        },
+        "Mackerel::NotificationGroup": {
+            "Documentation": "https://mackerel.io/api-docs/entry/notification-groups",
+            "Attributes": {},
+            "Properties": {
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "NotificationLevel": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ChildNotificationGroupIds": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "DuplicatesAllowed": false,
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ChildChannelIds": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "DuplicatesAllowed": false,
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Services": {
+                    "Type": "List",
+                    "ItemType": "Service",
+                    "DuplicatesAllowed": false,
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Monitors": {
+                    "Type": "List",
+                    "ItemType": "Monitor",
+                    "DuplicatesAllowed": false,
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                }
+            }
+        },
+        "Mackerel::Dashboard": {
+            "Documentation": "https://mackerel.io/api-docs/entry/dashboards",
+            "Attributes": {},
+            "Properties": {
+                "Title": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Memo": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "UrlPath": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Widgets": {
+                    "Type": "List",
+                    "ItemType": "Widget",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                }
+            }
+        },
+        "Mackerel::Downtime": {
+            "Documentation": "https://mackerel.io/api-docs/entry/downtimes",
+            "Attributes": {},
+            "Properties": {
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Memo": {
+                    "PrimitiveType": "String",
+                    "Required": false
+                },
+                "Start": {
+                    "PrimitiveType": "Integer",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Duration": {
+                    "PrimitiveType": "Integer",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Recurrence": {
+                    "Type": "Recurrence",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ServiceScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ServiceExcludeScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "RoleScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "RoleExcludeScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "MonitorScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "MonitorExcludeScopes": {
+                    "Type": "List",
+                    "PrimitiveItemType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                }
+            }
+        },
+        "Mackerel::User": {
+            "Documentation": "https://mackerel.io/api-docs/entry/users",
+            "Attributes": {
+                "Email": {
+                    "PrimitiveType": "String"
+                }
+            },
+            "Properties": {
+                "Email": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                }
+            }
+        }
+    }
+}
