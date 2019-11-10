@@ -72,6 +72,156 @@
                 "Required": false,
                 "UpdateType": "Mutable"
             }
+        },
+        "Mackerel::Dashboard.Widget": {
+            "Type": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Title": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Layout": {
+                "Type": "Layout",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Graph": {
+                "Type": "Graph",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Range": {
+                "Type": "Range",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Metric": {
+                "Type": "Metric",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Markdown": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Role": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::Dashboard.Layout": {
+            "X": {
+                "PrimitiveType": "Integer",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Y": {
+                "PrimitiveType": "Integer",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Width": {
+                "PrimitiveType": "Integer",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Height": {
+                "PrimitiveType": "Integer",
+                "Required": true,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::Dashboard.Graph": {
+            "Type": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Name": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Host": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Role": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Service": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Expression": {
+                "PrimitiveType": "Json",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::Dashboard.Range": {
+            "Type": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Period": {
+                "PrimitiveType": "Integer",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Offset": {
+                "PrimitiveType": "Integer",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Start": {
+                "PrimitiveType": "Integer",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "End": {
+                "PrimitiveType": "Integer",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::Dashboard.Metric": {
+            "Type": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Name": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Host": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Service": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Expression": {
+                "PrimitiveType": "Json",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
         }
     },
     "ResourceTypes": {
@@ -373,6 +523,33 @@
                     "ItemType": "Monitor",
                     "DuplicatesAllowed": false,
                     "Required": false,
+                    "UpdateType": "Mutable"
+                }
+            }
+        },
+        "Mackerel::Dashboard": {
+            "Documentation": "https://mackerel.io/api-docs/entry/dashboards",
+            "Attributes": {},
+            "Properties": {
+                "Title": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Memo": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "UrlPath": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Mutable"
+                },
+                "Widgets": {
+                    "Type": "List",
+                    "ItemType": "Widget",
+                    "Required": true,
                     "UpdateType": "Mutable"
                 }
             }

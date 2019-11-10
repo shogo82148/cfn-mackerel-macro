@@ -169,6 +169,124 @@ Resources:
       Services:
         - Id: !Ref Service
 
+  Dashboard:
+    Type: Mackerel::Dashboard
+    Properties:
+      Title: awesome dashboard
+      Memo: my memo
+      UrlPath: awesome-dashboard
+      Widgets:
+        - Type: graph
+          Title: host graph
+          Graph:
+            Type: host
+            Name: host
+            Host: !Ref Host
+          Range:
+            Type: relative
+            Period: 3600
+            Offset: 0
+          Layout:
+            X: 0
+            Y: 0
+            Width: 24
+            Height: 32
+        - Type: graph
+          Title: role graph
+          Graph:
+            Type: role
+            Role: !Ref Role
+            Name: some.metric
+            IsStacked: false
+          Range:
+            Type: relative
+            Period: 3600
+            Offset: 0
+          Layout:
+            X: 0
+            Y: 0
+            Width: 24
+            Height: 32
+        - Type: graph
+          Title: service graph
+          Graph:
+            Type: service
+            Service: !Ref Service
+            Name: some.metric
+          Range:
+            Type: relative
+            Period: 3600
+            Offset: 0
+          Layout:
+            X: 0
+            Y: 0
+            Width: 24
+            Height: 32
+        - Type: graph
+          Title: service expression
+          Graph:
+            Type: expression
+            Expression: avg(roleSlots("server:role","loadavg5"))
+          Range:
+            Type: relative
+            Period: 3600
+            Offset: 0
+          Layout:
+            X: 0
+            Y: 0
+            Width: 24
+            Height: 32
+        - Type: value
+          Title: host value
+          Metric:
+            Type: host
+            Host: !Ref Host
+            Name: some.metric
+          Layout:
+            X: 0
+            Y: 0
+            Width: 24
+            Height: 32
+        - Type: value
+          Title: service value
+          Metric:
+            Type: service
+            Service: !Ref: Service
+            Name: some.metric
+          Layout:
+            X: 0
+            Y: 0
+            Width: 24
+            Height: 32
+        - Type: value
+          Title: expression value
+          Metric:
+            Type: expression
+            Expression: avg(roleSlots("server:role","loadavg5"))
+          Layout:
+            X: 0
+            Y: 0
+            Width: 24
+            Height: 32
+        - Type: markdown
+          Title: markdown
+          Markdown: |
+            # Some Awesome Service
+            - Markdown Text Here
+          Layout:
+            X: 0
+            Y: 0
+            Width: 24
+            Height: 32
+        - Type: alertStatus
+          Title: alert status
+          Role: !Ref Role
+          Layout:
+            X: 0
+            Y: 0
+            Width: 24
+            Height: 32
+
   Downtime:
     Type: Mackerel::Downtime
     Properties:
