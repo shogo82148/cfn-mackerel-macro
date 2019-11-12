@@ -71,14 +71,13 @@ func (m *monitor) update(ctx context.Context) (physicalResourceID string, data m
 }
 
 func (m *monitor) needsReplace() (bool, error) {
+	var d dproxy.Drain
 	in := dproxy.New(m.Event.ResourceProperties)
-	typ, err := in.M("Type").String()
-	if err != nil {
-		return false, err
-	}
+	typ := d.String(in.M("Type"))
 	old := dproxy.New(m.Event.OldResourceProperties)
-	oldType, err := old.M("Type").String()
-	if err != nil {
+	oldType := d.String(old.M("Type"))
+
+	if err := d.CombineErrors(); err != nil {
 		return false, err
 	}
 	return typ != oldType, nil
