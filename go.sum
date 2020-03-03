@@ -3,6 +3,8 @@ github.com/aws/aws-lambda-go v1.13.3 h1:SuCy7H3NLyp+1Mrfp+m80jcbi9KYWAs9/BXwppwR
 github.com/aws/aws-lambda-go v1.13.3/go.mod h1:4UKl9IzQMoD+QF79YdCuzCwp8VbmG4VAQwij/eHl5CU=
 github.com/aws/aws-lambda-go v1.14.0 h1:kTr1VPabIgJsMVzHuZpNhs/5RR46LU6wyWUiHxtb3ag=
 github.com/aws/aws-lambda-go v1.14.0/go.mod h1:4UKl9IzQMoD+QF79YdCuzCwp8VbmG4VAQwij/eHl5CU=
+github.com/aws/aws-lambda-go v1.14.1 h1:iklNeBEa1+EbcYVomAcZXXSEViwFzygvAPQ48TLvDlA=
+github.com/aws/aws-lambda-go v1.14.1/go.mod h1:FEwgPLE6+8wcGBTe5cJN3JWurd1Ztm9zN4jsXsjzKKw=
 github.com/aws/aws-sdk-go-v2 v0.16.0 h1:X5pkFnjRNdDEX18NwDGWMaWL5ocNQX0qIYEhEcsTy64=
 github.com/aws/aws-sdk-go-v2 v0.16.0/go.mod h1:pFLIN9LDjOEwHfruGweAXEq0XaD6uRkY8FsRkxhuBIg=
 github.com/aws/aws-sdk-go-v2 v0.17.0 h1:b/9gp0SD6doAWv72f3ZwzFJSsWmUw9dM8wMNmf6OBws=
@@ -41,6 +43,7 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/urfave/cli v1.22.1/go.mod h1:Gos4lmkARVdJ6EkW0WaNv/tZAAMe9V7XWyB60NtXRu0=
+github.com/urfave/cli/v2 v2.1.1/go.mod h1:SE9GqnLQmjVa0iPEY0f1w3ygNIYcIJ0OKPMoW2caLfQ=
 github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f h1:J9EGpcZtP0E/raorCMxlFGSTBrsSlaDGf3jU/qvAE2c=
 github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f/go.mod h1:N2zxlSyiKSe5eX1tZViRH5QA0qijqEDrYZiPEAiq3wU=
 github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 h1:EzJWgHovont7NscjpAxXsDA8S8BMYve8Y5+7cuRE7R0=
