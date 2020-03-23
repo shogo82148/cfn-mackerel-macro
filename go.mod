@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v0.20.0
 	github.com/google/go-cmp v0.4.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.5.0
 	github.com/xeipuuv/gojsonschema v1.2.0
 	golang.org/x/net v0.0.0-20191112182307-2180aed22343 // indirect
 	golang.org/x/sys v0.0.0-20191112214154-59a1497f0cea // indirect
