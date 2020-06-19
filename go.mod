@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/aws/aws-lambda-go v1.17.0
 	github.com/aws/aws-sdk-go-v2 v0.23.0
-	github.com/google/go-cmp v0.4.1
+	github.com/google/go-cmp v0.5.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/sirupsen/logrus v1.5.0
 	github.com/xeipuuv/gojsonschema v1.2.0
