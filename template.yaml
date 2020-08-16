@@ -2,8 +2,8 @@ AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: "cfn-mackerel-macro v__VERSION__ - provide a CloudFormation macro for creating Mackerel resources."
 
-Parameters: 
-  ParameterName: 
+Parameters:
+  ParameterName:
     Type: AWS::SSM::Parameter::Name
     Description: Name of SSM Parameter Store Parameter for the Mackerel API Key.
   LogLevel:
@@ -24,7 +24,7 @@ Resources:
       CodeUri: ./resource.zip
       Handler: main
       Policies:
-        - Version: '2012-10-17'
+        - Version: "2012-10-17"
           Statement:
             - Effect: Allow
               Action:
