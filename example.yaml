@@ -71,8 +71,8 @@ Resources:
       ResponseTimeDuration: 3
       ContainsString: Example
       MaxCheckAttempts: 3
-      CertificationLimitWarning: 90
-      CertificationLimitCritical: 30
+      CertificationExpirationWarning: 90
+      CertificationExpirationCritical: 30
       SkipCertificateVerification: false
       Headers:
         - Name: Cache-Control
