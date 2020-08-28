@@ -395,12 +395,12 @@
                     "Required": false,
                     "UpdateType": "Mutable"
                 },
-                "CertificationLimitWarning": {
+                "CertificationExpirationWarning": {
                     "PrimitiveType": "Integer",
                     "Required": false,
                     "UpdateType": "Mutable"
                 },
-                "CertificationLimitCritical": {
+                "CertificationExpirationCritical": {
                     "PrimitiveType": "Integer",
                     "Required": false,
                     "UpdateType": "Mutable"
