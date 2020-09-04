@@ -7,10 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: golangci-lint
-        uses: docker://reviewdog/action-golangci-lint:v1
+        uses: reviewdog/action-golangci-lint@v1
         with:
+          reporter: github-pr-review
           github_token: ${{ secrets.github_token }}
           level: warning
 
@@ -19,10 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: misspell
         uses: reviewdog/action-misspell@v1
         with:
+          reporter: github-pr-review
           github_token: ${{ secrets.github_token }}
           locale: "US"
 
@@ -31,10 +33,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: shellcheck
         uses: reviewdog/action-shellcheck@v1
         with:
+          reporter: github-pr-review
           github_token: ${{ secrets.github_token }}
           path: "."
           pattern: "*.sh"
