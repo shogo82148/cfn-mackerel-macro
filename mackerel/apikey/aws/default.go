@@ -1,16 +1,17 @@
 package aws
 
 import (
+	"context"
 	"os"
 
-	"github.com/aws/aws-sdk-go-v2/aws/external"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel"
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel/apikey"
 )
 
 // LoadDefaultProvider returns default provider.
-func LoadDefaultProvider() (mackerel.APIKeyProvider, error) {
-	cfg, err := external.LoadDefaultAWSConfig()
+func LoadDefaultProvider(ctx context.Context) (mackerel.APIKeyProvider, error) {
+	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		return nil, err
 	}
