@@ -238,7 +238,7 @@ func TestCreateMonitor_MonitorExternalHTTP(t *testing.T) {
 						CertificationExpirationCritical: ptrUint64(30),
 						CertificationExpirationWarning:  ptrUint64(90),
 						Headers: []mackerel.HeaderField{
-							mackerel.HeaderField{
+							{
 								Name:  "Cache-Control",
 								Value: "no-cache",
 							},
