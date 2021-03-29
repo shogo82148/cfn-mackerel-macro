@@ -435,6 +435,16 @@
                     "PrimitiveType": "Integer",
                     "Required": false,
                     "UpdateType": "Mutable"
+                },
+                "MissingDurationWarning": {
+                    "PrimitiveType": "Integer",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "MissingDurationCritical": {
+                    "PrimitiveType": "Integer",
+                    "Required": false,
+                    "UpdateType": "Mutable"
                 }
             }
         },
