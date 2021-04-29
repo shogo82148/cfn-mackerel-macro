@@ -14,7 +14,7 @@ import (
 func init() {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
-	s := os.Getenv("FORWARD_LOG_LEVEL")
+	s := os.Getenv("MACKEREL_LOG_LEVEL")
 	if s != "" {
 		level, err := logrus.ParseLevel(s)
 		if err != nil {
