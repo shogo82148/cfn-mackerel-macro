@@ -34,7 +34,7 @@ func TestFindServices(t *testing.T) {
 		t.Error(err)
 	}
 	want := []*Service{
-		&Service{
+		{
 			Name: "awesome-service",
 			Memo: "some memo",
 			Roles: []string{
