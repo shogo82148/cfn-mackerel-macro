@@ -24,6 +24,9 @@ func (c *Client) GetServiceMetaData(ctx context.Context, serviceName, namespace 
 
 	ret := &ServiceMetaMetaData{}
 	ret.LastModified, err = http.ParseTime(h.Get("Last-Modified"))
+	if err != nil {
+		return nil, err
+	}
 	return ret, nil
 }
 

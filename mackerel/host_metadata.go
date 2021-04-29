@@ -24,6 +24,9 @@ func (c *Client) GetHostMetaData(ctx context.Context, hostID, namespace string, 
 
 	ret := &HostMetaMetaData{}
 	ret.LastModified, err = http.ParseTime(h.Get("Last-Modified"))
+	if err != nil {
+		return nil, err
+	}
 	return ret, nil
 }
 
