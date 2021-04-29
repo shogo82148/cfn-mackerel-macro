@@ -20,11 +20,9 @@ jobs:
           make test
 
       - name: Send coverage
-        env:
-          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          GO111MODULE=off go get github.com/mattn/goveralls
-          $(go env GOPATH)/bin/goveralls -coverprofile=coverage.out -service=github
+        uses: shogo82148/actions-goveralls@v1
+        with:
+          path-to-profile: coverage.out
 
       - name: cfn-lint
         uses: scottbrenner/cfn-lint-action@master
