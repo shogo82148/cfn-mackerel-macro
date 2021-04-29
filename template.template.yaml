@@ -37,14 +37,9 @@ Resources:
       CodeUri: ./resource.zip
       Handler: main
       Policies:
-        - Version: "2012-10-17"
-          Statement:
-            - Effect: Allow
-              Action:
-                - ssm:GetParameter
-              Resource:
-                - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${ParameterName}"
-                - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter${ParameterName}"
+        - SSMParameterReadPolicy:
+            # HACK: trim "/" prefix. See https://github.com/aws/serverless-application-model/issues/1112
+            ParameterName: !Join ["", !Split ["^/", !Sub "^${ParameterName}"]]
       Environment:
         Variables:
           MACKEREL_APIKEY_PARAMETER: !Ref ParameterName
