@@ -123,8 +123,7 @@ func (c *Client) newRequest(ctx context.Context, method, path string, body io.Re
 	if c.UserAgent != "" {
 		req.Header.Set("User-Agent", c.UserAgent)
 	} else {
-		agent := fmt.Sprintf("cfn-mackerel-macro/0.0.0")
-		req.Header.Set("User-Agent", agent)
+		req.Header.Set("User-Agent", "cfn-mackerel-macro/main")
 	}
 
 	return req, nil

@@ -50,6 +50,7 @@ func main() {
 	f := cfn.Function{
 		APIKeyProvider: provider,
 		BaseURL:        u,
+		Version:        version,
 	}
 	lambda.Start(f.LambdaWrap())
 }

@@ -24,6 +24,9 @@ func (c *Client) GetRoleMetaData(ctx context.Context, serviceName, roleName, nam
 
 	ret := &RoleMetaMetaData{}
 	ret.LastModified, err = http.ParseTime(h.Get("Last-Modified"))
+	if err != nil {
+		return nil, err
+	}
 	return ret, nil
 }
 

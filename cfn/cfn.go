@@ -17,6 +17,7 @@ type Function struct {
 	APIKey         string
 	APIKeyProvider mackerel.APIKeyProvider
 	BaseURL        *url.URL
+	Version        string
 
 	mu     sync.Mutex
 	client makerelInterface
@@ -201,11 +202,15 @@ func (f *Function) getclient() makerelInterface {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	if f.client == nil {
-		f.client = &mackerel.Client{
+		c := &mackerel.Client{
 			APIKey:         f.APIKey,
 			APIKeyProvider: f.APIKeyProvider,
 			BaseURL:        f.BaseURL,
 		}
+		if f.Version != "" {
+			c.UserAgent = fmt.Sprintf("cfn-mackerel-macro/%s", f.Version)
+		}
+		f.client = c
 	}
 	return f.client
 }
