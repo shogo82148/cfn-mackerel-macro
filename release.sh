@@ -2,7 +2,7 @@
 
 ROOT=$(cd "$(dirname "$0")" && pwd)
 
-set -ue
+set -uex
 
 VERSION=$(cat VERSION)
 MAJOR=$(echo "$VERSION" | cut -d. -f 1)
