@@ -45,7 +45,7 @@ Resources:
           MACKEREL_APIKEY_PARAMETER: !Ref ParameterName
           MACKEREL_APIKEY_WITH_DECRYPT: "1"
           MACKEREL_APIURL: !Ref BaseUrl
-          FORWARD_LOG_LEVEL: !Ref LogLevel
+          MACKEREL_LOG_LEVEL: !Ref LogLevel
       Tags:
         Version: __VERSION__
 
