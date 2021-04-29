@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -160,7 +159,7 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 
 	if out == nil {
 		// ignore the body
-		io.Copy(ioutil.Discard, resp.Body)
+		io.Copy(io.Discard, resp.Body)
 	} else {
 		dec := json.NewDecoder(resp.Body)
 		if err := dec.Decode(out); err != nil {
@@ -195,7 +194,7 @@ func (e mkrError) Message() string {
 }
 
 func handleError(resp *http.Response) error {
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}

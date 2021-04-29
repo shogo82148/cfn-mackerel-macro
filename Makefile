@@ -8,9 +8,9 @@ help: ## Show this text.
 
 all: macro.zip resource.zip template.yaml ## Build a package
 
-resource/main: $(SRC_FILES) go.mod go.sum
+resource/bootstrap: $(SRC_FILES) go.mod go.sum
 	mkdir -p resource
-	./run-in-docker.sh go build -o resource/main .
+	./run-in-docker.sh go build -tags lambda.norpc -o resource/bootstrap .
 
 version.go template.yaml: VERSION generate.sh template.template.yaml
 	./generate.sh
@@ -18,7 +18,7 @@ version.go template.yaml: VERSION generate.sh template.template.yaml
 macro.zip: macro/app.py
 	cd macro && zip -r ../macro.zip .
 
-resource.zip: resource/main
+resource.zip: resource/bootstrap
 	cd resource && zip -r ../resource.zip .
 
 test: ## run tests
@@ -30,5 +30,7 @@ test: ## run tests
 	fi
 
 clean:
-	@rm -f resource.zip
-	@rm -f macro.zip
+	-rm -f resource.zip
+	-rm -f macro.zip
+	-rm -rf .build .build-sam resource
+	-docker volume rm cfn-mackerel-macro-cache
