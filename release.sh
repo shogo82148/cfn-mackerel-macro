@@ -2,27 +2,24 @@
 
 ROOT=$(cd "$(dirname "$0")" && pwd)
 
-set -ue
+set -uex
 
-MAJOR=0
-MINOR=0
-PATCH=5
-VERSION="$MAJOR.$MINOR.$PATCH"
-
-cat << EOS > version.go
-package main
-
-const version = "$VERSION"
-EOS
+VERSION=$(cat VERSION)
+MAJOR=$(echo "$VERSION" | cut -d. -f 1)
+MINOR=$(echo "$VERSION" | cut -d. -f 2)
+PATCH=$(echo "$VERSION" | cut -d. -f 3)
 
 DIST=$ROOT/.build/$VERSION
 mkdir -p "$DIST"
-perl -pe 's!__VERSION__!'"$VERSION"'!g' template.yaml > "$DIST/template.yaml"
 
 make all
 cp macro.zip "$DIST"
 cp resource.zip "$DIST"
+cp template.yaml "$DIST"
+cp README.md "$DIST"
+cp LICENSE "$DIST"
 
+: publish as a CloudFormation template
 cd "$DIST"
 while read -r REGION; do
     BUCKET=shogo82148-cloudformation-template-$REGION
@@ -63,3 +60,17 @@ EOS
 cd "$ROOT"
 ( git add . && git commit -m "bump up to v$VERSION" && git push ) || true
 ghr -u shogo82148 --draft --replace "v$VERSION" "$DIST"
+
+: publish to AWS Serverless Application Repository
+DIST_SAM=$ROOT/.build-sam/$VERSION
+mkdir -p "$DIST_SAM"
+cp README.md "$DIST_SAM"
+cp LICENSE "$DIST_SAM"
+sam package \
+    --region us-east-1 \
+    --template-file "template.yaml" \
+    --output-template-file "$DIST_SAM/packaged.yaml" \
+    --s3-bucket shogo82148-sam
+sam publish \
+    --region us-east-1 \
+    --template "$DIST_SAM/packaged.yaml"

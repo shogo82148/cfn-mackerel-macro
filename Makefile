@@ -6,11 +6,14 @@ help: ## Show this text.
 
 .PHONY: all test clean help release
 
-all: macro.zip resource.zip ## Build a package
+all: macro.zip resource.zip template.yaml ## Build a package
 
 resource/main: $(SRC_FILES) go.mod go.sum
 	mkdir -p resource
 	./run-in-docker.sh go build -o resource/main .
+
+version.go template.yaml: VERSION generate.sh template.template.yaml
+	./generate.sh
 
 macro.zip: macro/app.py
 	cd macro && zip -r ../macro.zip .
@@ -18,7 +21,7 @@ macro.zip: macro/app.py
 resource.zip: resource/main
 	cd resource && zip -r ../resource.zip .
 
-test:
+test: ## run tests
 	go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
 	if command -v cfn-lint; then \
 		cfn-lint --override-spec cfn-resource-specification.json example.yaml; \
@@ -27,4 +30,5 @@ test:
 	fi
 
 clean:
-	@rm -f packaged.yaml
+	@rm -f resource.zip
+	@rm -f macro.zip
