@@ -6,5 +6,5 @@ docker run --rm -it \
     -e GO111MODULE=on \
     -e GOOS=linux -e GOARCH=amd64 -e CGO_ENABLED=0 \
     -v cfn-mackerel-macro-cache:/go/pkg/mod \
-    -v cfn-mackerel-macro-cache:/go/src/github.com/shogo82148/cfn-mackerel-macro \
+    -v "$CURRENT":/go/src/github.com/shogo82148/cfn-mackerel-macro \
     -w /go/src/github.com/shogo82148/cfn-mackerel-macro golang:1.16.2 "$@"
