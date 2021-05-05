@@ -413,3 +413,79 @@ func TestCreateAWSIntegrationExternalID(t *testing.T) {
 		t.Errorf("want %q, got %q", "hogehoge", externalID)
 	}
 }
+
+func TestFindAWSIntegrationsExcludableMetrics(t *testing.T) {
+	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			t.Errorf("invalid method: want %s, got %s", http.MethodPost, r.Method)
+		}
+		if r.URL.Path != "/api/v0/aws-integrations-excludable-metrics" {
+			t.Errorf("invalid path: want %s, got %s", "/api/v0/aws-integrations-excludable-metrics", r.URL.Path)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, `{"S3": [
+				"s3.requests.all_requests",
+				"s3.requests.get_requests",
+				"s3.requests.put_requests",
+				"s3.requests.delete_requests",
+				"s3.requests.head_requests",
+				"s3.requests.post_requests",
+				"s3.requests.select_requests",
+				"s3.requests.list_requests",
+				"s3.select_bytes.scanned",
+				"s3.select_bytes.returned",
+				"s3.bytes.downloaded",
+				"s3.bytes.uploaded",
+				"s3.errors.4xx",
+				"s3.errors.5xx",
+				"s3.latency.#.minimum",
+				"s3.latency.#.average",
+				"s3.latency.#.maximum",
+				"s3.bucket_size.*",
+				"s3.number_of_objects.count"
+			]}`)
+	}))
+	defer ts.Close()
+
+	u, err := url.Parse(ts.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	c := &Client{
+		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
+		HTTPClient: ts.Client(),
+	}
+
+	got, err := c.FindAWSIntegrationsExcludableMetrics(context.Background())
+	if err != nil {
+		t.Error(err)
+	}
+	want := map[string][]string{
+		"S3": {
+			"s3.requests.all_requests",
+			"s3.requests.get_requests",
+			"s3.requests.put_requests",
+			"s3.requests.delete_requests",
+			"s3.requests.head_requests",
+			"s3.requests.post_requests",
+			"s3.requests.select_requests",
+			"s3.requests.list_requests",
+			"s3.select_bytes.scanned",
+			"s3.select_bytes.returned",
+			"s3.bytes.downloaded",
+			"s3.bytes.uploaded",
+			"s3.errors.4xx",
+			"s3.errors.5xx",
+			"s3.latency.#.minimum",
+			"s3.latency.#.average",
+			"s3.latency.#.maximum",
+			"s3.bucket_size.*",
+			"s3.number_of_objects.count",
+		},
+	}
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("(-want/+got):\n%s", diff)
+	}
+}

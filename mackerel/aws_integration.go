@@ -94,3 +94,13 @@ func (c *Client) CreateAWSIntegrationExternalID(ctx context.Context) (string, er
 	}
 	return resp.ExternalID, nil
 }
+
+// FindAWSIntegrationsExcludableMetrics list excludable metrics for AWS Integration.
+func (c *Client) FindAWSIntegrationsExcludableMetrics(ctx context.Context) (map[string][]string, error) {
+	var resp map[string][]string
+	_, err := c.do(ctx, http.MethodGet, "/api/v0/aws-integrations-excludable-metrics", nil, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
