@@ -380,3 +380,36 @@ func TestDeleteAWSIntegration(t *testing.T) {
 		t.Errorf("(-want/+got):\n%s", diff)
 	}
 }
+
+func TestCreateAWSIntegrationExternalID(t *testing.T) {
+	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			t.Errorf("invalid method: want %s, got %s", http.MethodPost, r.Method)
+		}
+		if r.URL.Path != "/api/v0/aws-integrations-external-id" {
+			t.Errorf("invalid path: want %s, got %s", "/api/v0/aws-integrations-external-id", r.URL.Path)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, `{"externalId": "hogehoge"}`)
+	}))
+	defer ts.Close()
+
+	u, err := url.Parse(ts.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	c := &Client{
+		BaseURL:    u,
+		APIKey:     "DUMMY-API-KEY",
+		HTTPClient: ts.Client(),
+	}
+
+	externalID, err := c.CreateAWSIntegrationExternalID(context.Background())
+	if err != nil {
+		t.Error(err)
+	}
+	if externalID != "hogehoge" {
+		t.Errorf("want %q, got %q", "hogehoge", externalID)
+	}
+}
