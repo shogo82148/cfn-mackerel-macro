@@ -10,15 +10,15 @@ import (
 // https://mackerel.io/api-docs/entry/aws-integration
 type AWSIntegration struct {
 	ID           string  `json:"id,omitempty"`
-	Name         string  `json:"name,omitempty"`
-	Memo         string  `json:"memo,omitempty"`
+	Name         string  `json:"name"`
+	Memo         string  `json:"memo"`
 	Key          *string `json:"key,omitempty"`
 	SecretKey    *string `json:"secretKey,omitempty"`
 	RoleArn      *string `json:"roleArn,omitempty"`
 	ExternalID   *string `json:"externalId,omitempty"`
-	Region       string  `json:"region,omitempty"`
-	IncludedTags string  `json:"includedTags,omitempty"`
-	ExcludedTags string  `json:"excludedTags,omitempty"`
+	Region       string  `json:"region"`
+	IncludedTags string  `json:"includedTags"`
+	ExcludedTags string  `json:"excludedTags"`
 
 	Services map[string]*AWSIntegrationService `json:"services,omitempty"`
 }
