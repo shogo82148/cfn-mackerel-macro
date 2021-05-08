@@ -109,7 +109,7 @@ func (r *awsIntegration) delete(ctx context.Context) (physicalResourceID string,
 	physicalResourceID = r.Event.PhysicalResourceID
 	id, err := r.Function.parseDowntimeID(ctx, physicalResourceID)
 	if err != nil {
-		log.Printf("failed to parse %q as aws intergration id: %s", physicalResourceID, err)
+		log.Printf("failed to parse %q as aws integration id: %s", physicalResourceID, err)
 		err = nil // ignore it
 		return
 	}
