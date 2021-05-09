@@ -97,7 +97,7 @@ func (*awsIntegration) escapeTagValue(s string) string {
 	if !hasDoubleQuote {
 		return "\"" + s + "\""
 	}
-	if hasDoubleQuote && !hasSingleQuote {
+	if !hasSingleQuote {
 		return "'" + s + "'"
 	}
 	// XXX: the string contains '"' and '\''. How should we handle it?
