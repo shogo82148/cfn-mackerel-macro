@@ -94,7 +94,7 @@ func (*awsIntegration) escapeTagValue(s string) string {
 	}
 	hasDoubleQuote := strings.ContainsRune(s, '"')
 	hasSingleQuote := strings.ContainsRune(s, '\'')
-	if !hasDoubleQuote && hasSingleQuote {
+	if !hasDoubleQuote {
 		return "\"" + s + "\""
 	}
 	if hasDoubleQuote && !hasSingleQuote {
