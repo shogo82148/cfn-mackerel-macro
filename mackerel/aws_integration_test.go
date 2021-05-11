@@ -2,6 +2,7 @@ package mackerel
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -72,7 +73,7 @@ func TestFindAWSIntegrations(t *testing.T) {
 			Services: map[string]*AWSIntegrationService{
 				"S3": {
 					Enable:          false,
-					Role:            "",
+					Role:            nil,
 					ExcludedMetrics: []string{},
 				},
 			},
@@ -140,7 +141,7 @@ func TestFindAWSIntegration(t *testing.T) {
 		Services: map[string]*AWSIntegrationService{
 			"S3": {
 				Enable:          false,
-				Role:            "",
+				Role:            nil,
 				ExcludedMetrics: []string{},
 			},
 		},
@@ -158,6 +159,31 @@ func TestCreateAWSIntegration(t *testing.T) {
 		if r.URL.Path != "/api/v0/aws-integrations" {
 			t.Errorf("invalid path: want %s, got %s", "/api/v0/aws-integrations", r.URL.Path)
 		}
+		dec := json.NewDecoder(r.Body)
+		var got interface{}
+		if err := dec.Decode(&got); err != nil {
+			t.Error(err)
+		}
+		want := map[string]interface{}{
+			"name":         "shogo82148",
+			"memo":         "",
+			"externalId":   "hogehoge",
+			"region":       "ap-northeast-1",
+			"includedTags": "",
+			"excludedTags": "",
+			"roleArn":      "arn:aws:iam::123456789012:role/foobar",
+			"services": map[string]interface{}{
+				"S3": map[string]interface{}{
+					"enable":          false,
+					"role":            nil,
+					"excludedMetrics": []interface{}{},
+				},
+			},
+		}
+		if diff := cmp.Diff(want, got); diff != "" {
+			t.Errorf("request body missmatch: (-want/+got)\n%s", diff)
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, `{
@@ -202,7 +228,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 		Services: map[string]*AWSIntegrationService{
 			"S3": {
 				Enable:          false,
-				Role:            "",
+				Role:            nil,
 				ExcludedMetrics: []string{},
 			},
 		},
@@ -222,7 +248,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 		Services: map[string]*AWSIntegrationService{
 			"S3": {
 				Enable:          false,
-				Role:            "",
+				Role:            nil,
 				ExcludedMetrics: []string{},
 			},
 		},
@@ -284,7 +310,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 		Services: map[string]*AWSIntegrationService{
 			"S3": {
 				Enable:          false,
-				Role:            "",
+				Role:            nil,
 				ExcludedMetrics: []string{},
 			},
 		},
@@ -304,7 +330,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 		Services: map[string]*AWSIntegrationService{
 			"S3": {
 				Enable:          false,
-				Role:            "",
+				Role:            nil,
 				ExcludedMetrics: []string{},
 			},
 		},
@@ -371,7 +397,7 @@ func TestDeleteAWSIntegration(t *testing.T) {
 		Services: map[string]*AWSIntegrationService{
 			"S3": {
 				Enable:          false,
-				Role:            "",
+				Role:            nil,
 				ExcludedMetrics: []string{},
 			},
 		},

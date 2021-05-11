@@ -25,9 +25,9 @@ type AWSIntegration struct {
 
 // AWSIntegrationService is an AWS service.
 type AWSIntegrationService struct {
-	Enable              bool     `json:"enable,omitempty"`
-	Role                string   `json:"role,omitempty"`
-	ExcludedMetrics     []string `json:"excludedMetrics,omitempty"`
+	Enable              bool     `json:"enable"`
+	Role                *string  `json:"role"`
+	ExcludedMetrics     []string `json:"excludedMetrics"`
 	RetireAutomatically bool     `json:"retireAutomatically,omitempty"`
 }
 
