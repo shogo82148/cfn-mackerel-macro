@@ -2,7 +2,12 @@
 
 # deploy the author's AWS Account for testing
 
+set -uex
+
 CURRENT=$(cd "$(dirname "$0")" && pwd)
+
+cd "$CURRENT"
+make all
 
 sam package \
     --region ap-northeast-1 \
