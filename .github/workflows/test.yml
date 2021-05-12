@@ -23,8 +23,3 @@ jobs:
         uses: shogo82148/actions-goveralls@v1
         with:
           path-to-profile: coverage.out
-
-      - name: cfn-lint
-        uses: scottbrenner/cfn-lint-action@master
-        with:
-          args: --override-spec cfn-resource-specification.json example.yaml

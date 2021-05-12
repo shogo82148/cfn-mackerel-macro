@@ -1,0 +1,22 @@
+name: test spec
+on:
+  push:
+  pull_request:
+    paths:
+      - .github/workflows/test-spec.yml
+      - cfn-resource-specification.json
+      - example.yaml
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: cfn-lint
+        uses: scottbrenner/cfn-lint-action@master
+        with:
+          args: --override-spec cfn-resource-specification.json example.yaml
