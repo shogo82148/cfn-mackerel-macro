@@ -64,6 +64,12 @@ func TestCreateAWSIntegration(t *testing.T) {
 					"Value": "Tag' Value",
 				},
 			},
+			"Services": []interface{}{
+				map[string]interface{}{
+					"ServiceId": "S3",
+					"Enable":    "true",
+				},
+			},
 		},
 	}
 	id, _, err := f.Handle(context.Background(), event)
