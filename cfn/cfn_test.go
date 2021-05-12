@@ -8,50 +8,57 @@ import (
 )
 
 type fakeMackerelClient struct {
-	getOrg                       func(ctx context.Context) (*mackerel.Org, error)
-	createHost                   func(ctx context.Context, param *mackerel.CreateHostParam) (string, error)
-	updateHost                   func(ctx context.Context, hostID string, param *mackerel.UpdateHostParam) (string, error)
-	retireHost                   func(ctx context.Context, id string) error
-	getHostMetaData              func(ctx context.Context, hostID, namespace string, v interface{}) (*mackerel.HostMetaMetaData, error)
-	getHostMetaDataNameSpaces    func(ctx context.Context, hostID string) ([]string, error)
-	putHostMetaData              func(ctx context.Context, hostID, namespace string, v interface{}) error
-	deleteHostMetaData           func(ctx context.Context, hostID, namespace string) error
-	createMonitor                func(ctx context.Context, param mackerel.Monitor) (mackerel.Monitor, error)
-	updateMonitor                func(ctx context.Context, monitorID string, param mackerel.Monitor) (mackerel.Monitor, error)
-	deleteMonitor                func(ctx context.Context, monitorID string) (mackerel.Monitor, error)
-	findDashboards               func(ctx context.Context) ([]*mackerel.Dashboard, error)
-	findDashboard                func(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error)
-	createDashboard              func(ctx context.Context, param *mackerel.Dashboard) (*mackerel.Dashboard, error)
-	updateDashboard              func(ctx context.Context, dashboardID string, param *mackerel.Dashboard) (*mackerel.Dashboard, error)
-	deleteDashboard              func(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error)
-	createRole                   func(ctx context.Context, serviceName string, param *mackerel.CreateRoleParam) (*mackerel.Role, error)
-	deleteRole                   func(ctx context.Context, serviceName, roleName string) (*mackerel.Role, error)
-	getRoleMetaData              func(ctx context.Context, serviceName, roleName, namespace string, v interface{}) (*mackerel.RoleMetaMetaData, error)
-	getRoleMetaDataNameSpaces    func(ctx context.Context, serviceName, roleName string) ([]string, error)
-	putRoleMetaData              func(ctx context.Context, serviceName, roleName, namespace string, v interface{}) error
-	deleteRoleMetaData           func(ctx context.Context, serviceName, roleName, namespace string) error
-	createService                func(ctx context.Context, param *mackerel.CreateServiceParam) (*mackerel.Service, error)
-	deleteService                func(ctx context.Context, serviceName string) (*mackerel.Service, error)
-	getServiceMetaData           func(ctx context.Context, serviceName, namespace string, v interface{}) (*mackerel.ServiceMetaMetaData, error)
-	getServiceMetaDataNameSpaces func(ctx context.Context, serviceName string) ([]string, error)
-	putServiceMetaData           func(ctx context.Context, serviceName, namespace string, v interface{}) error
-	deleteServiceMetaData        func(ctx context.Context, serviceName, namespace string) error
-	findNotificationChannels     func(ctx context.Context) ([]mackerel.NotificationChannel, error)
-	createNotificationChannel    func(ctx context.Context, ch mackerel.NotificationChannel) (mackerel.NotificationChannel, error)
-	deleteNotificationChannel    func(ctx context.Context, channelID string) (mackerel.NotificationChannel, error)
-	findNotificationGroups       func(ctx context.Context) ([]*mackerel.NotificationGroup, error)
-	createNotificationGroup      func(ctx context.Context, group *mackerel.NotificationGroup) (*mackerel.NotificationGroup, error)
-	updateNotificationGroup      func(ctx context.Context, groupID string, group *mackerel.NotificationGroup) (*mackerel.NotificationGroup, error)
-	deleteNotificationGroup      func(ctx context.Context, groupID string) (*mackerel.NotificationGroup, error)
-	findUsers                    func(ctx context.Context) ([]*mackerel.User, error)
-	deleteUser                   func(ctx context.Context, userID string) (*mackerel.User, error)
-	findInvitations              func(ctx context.Context) ([]*mackerel.Invitation, error)
-	createInvitation             func(ctx context.Context, email string, authority mackerel.UserAuthority) (*mackerel.Invitation, error)
-	revokeInvitation             func(ctx context.Context, email string) error
-	findDowntimes                func(ctx context.Context) ([]*mackerel.Downtime, error)
-	createDowntime               func(ctx context.Context, param *mackerel.Downtime) (*mackerel.Downtime, error)
-	updateDowntime               func(ctx context.Context, downtimeID string, param *mackerel.Downtime) (*mackerel.Downtime, error)
-	deleteDowntime               func(ctx context.Context, downtimeID string) (*mackerel.Downtime, error)
+	getOrg                               func(ctx context.Context) (*mackerel.Org, error)
+	createHost                           func(ctx context.Context, param *mackerel.CreateHostParam) (string, error)
+	updateHost                           func(ctx context.Context, hostID string, param *mackerel.UpdateHostParam) (string, error)
+	retireHost                           func(ctx context.Context, id string) error
+	getHostMetaData                      func(ctx context.Context, hostID, namespace string, v interface{}) (*mackerel.HostMetaMetaData, error)
+	getHostMetaDataNameSpaces            func(ctx context.Context, hostID string) ([]string, error)
+	putHostMetaData                      func(ctx context.Context, hostID, namespace string, v interface{}) error
+	deleteHostMetaData                   func(ctx context.Context, hostID, namespace string) error
+	createMonitor                        func(ctx context.Context, param mackerel.Monitor) (mackerel.Monitor, error)
+	updateMonitor                        func(ctx context.Context, monitorID string, param mackerel.Monitor) (mackerel.Monitor, error)
+	deleteMonitor                        func(ctx context.Context, monitorID string) (mackerel.Monitor, error)
+	findDashboards                       func(ctx context.Context) ([]*mackerel.Dashboard, error)
+	findDashboard                        func(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error)
+	createDashboard                      func(ctx context.Context, param *mackerel.Dashboard) (*mackerel.Dashboard, error)
+	updateDashboard                      func(ctx context.Context, dashboardID string, param *mackerel.Dashboard) (*mackerel.Dashboard, error)
+	deleteDashboard                      func(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error)
+	createRole                           func(ctx context.Context, serviceName string, param *mackerel.CreateRoleParam) (*mackerel.Role, error)
+	deleteRole                           func(ctx context.Context, serviceName, roleName string) (*mackerel.Role, error)
+	getRoleMetaData                      func(ctx context.Context, serviceName, roleName, namespace string, v interface{}) (*mackerel.RoleMetaMetaData, error)
+	getRoleMetaDataNameSpaces            func(ctx context.Context, serviceName, roleName string) ([]string, error)
+	putRoleMetaData                      func(ctx context.Context, serviceName, roleName, namespace string, v interface{}) error
+	deleteRoleMetaData                   func(ctx context.Context, serviceName, roleName, namespace string) error
+	createService                        func(ctx context.Context, param *mackerel.CreateServiceParam) (*mackerel.Service, error)
+	deleteService                        func(ctx context.Context, serviceName string) (*mackerel.Service, error)
+	getServiceMetaData                   func(ctx context.Context, serviceName, namespace string, v interface{}) (*mackerel.ServiceMetaMetaData, error)
+	getServiceMetaDataNameSpaces         func(ctx context.Context, serviceName string) ([]string, error)
+	putServiceMetaData                   func(ctx context.Context, serviceName, namespace string, v interface{}) error
+	deleteServiceMetaData                func(ctx context.Context, serviceName, namespace string) error
+	findNotificationChannels             func(ctx context.Context) ([]mackerel.NotificationChannel, error)
+	createNotificationChannel            func(ctx context.Context, ch mackerel.NotificationChannel) (mackerel.NotificationChannel, error)
+	deleteNotificationChannel            func(ctx context.Context, channelID string) (mackerel.NotificationChannel, error)
+	findNotificationGroups               func(ctx context.Context) ([]*mackerel.NotificationGroup, error)
+	createNotificationGroup              func(ctx context.Context, group *mackerel.NotificationGroup) (*mackerel.NotificationGroup, error)
+	updateNotificationGroup              func(ctx context.Context, groupID string, group *mackerel.NotificationGroup) (*mackerel.NotificationGroup, error)
+	deleteNotificationGroup              func(ctx context.Context, groupID string) (*mackerel.NotificationGroup, error)
+	findUsers                            func(ctx context.Context) ([]*mackerel.User, error)
+	deleteUser                           func(ctx context.Context, userID string) (*mackerel.User, error)
+	findInvitations                      func(ctx context.Context) ([]*mackerel.Invitation, error)
+	createInvitation                     func(ctx context.Context, email string, authority mackerel.UserAuthority) (*mackerel.Invitation, error)
+	revokeInvitation                     func(ctx context.Context, email string) error
+	findDowntimes                        func(ctx context.Context) ([]*mackerel.Downtime, error)
+	createDowntime                       func(ctx context.Context, param *mackerel.Downtime) (*mackerel.Downtime, error)
+	updateDowntime                       func(ctx context.Context, downtimeID string, param *mackerel.Downtime) (*mackerel.Downtime, error)
+	deleteDowntime                       func(ctx context.Context, downtimeID string) (*mackerel.Downtime, error)
+	findAWSIntegrations                  func(ctx context.Context) ([]*mackerel.AWSIntegration, error)
+	findAWSIntegration                   func(ctx context.Context, awsIntegrationID string) (*mackerel.AWSIntegration, error)
+	createAWSIntegration                 func(ctx context.Context, param *mackerel.AWSIntegration) (*mackerel.AWSIntegration, error)
+	updateAWSIntegration                 func(ctx context.Context, awsIntegrationID string, param *mackerel.AWSIntegration) (*mackerel.AWSIntegration, error)
+	deleteAWSIntegration                 func(ctx context.Context, awsIntegrationID string) (*mackerel.AWSIntegration, error)
+	createAWSIntegrationExternalID       func(ctx context.Context) (string, error)
+	findAWSIntegrationsExcludableMetrics func(ctx context.Context) (map[string][]string, error)
 }
 
 var _ makerelInterface = (*fakeMackerelClient)(nil)
@@ -104,7 +111,7 @@ func (c *fakeMackerelClient) FindDashboards(ctx context.Context) ([]*mackerel.Da
 }
 
 func (c *fakeMackerelClient) FindDashboard(ctx context.Context, dashboardID string) (*mackerel.Dashboard, error) {
-	return c.FindDashboard(ctx, dashboardID)
+	return c.findDashboard(ctx, dashboardID)
 }
 
 func (c *fakeMackerelClient) CreateDashboard(ctx context.Context, param *mackerel.Dashboard) (*mackerel.Dashboard, error) {
@@ -228,6 +235,34 @@ func (c *fakeMackerelClient) UpdateDowntime(ctx context.Context, downtimeID stri
 
 func (c *fakeMackerelClient) DeleteDowntime(ctx context.Context, downtimeID string) (*mackerel.Downtime, error) {
 	return c.deleteDowntime(ctx, downtimeID)
+}
+
+func (c *fakeMackerelClient) FindAWSIntegrations(ctx context.Context) ([]*mackerel.AWSIntegration, error) {
+	return c.findAWSIntegrations(ctx)
+}
+
+func (c *fakeMackerelClient) FindAWSIntegration(ctx context.Context, awsIntegrationID string) (*mackerel.AWSIntegration, error) {
+	return c.findAWSIntegration(ctx, awsIntegrationID)
+}
+
+func (c *fakeMackerelClient) CreateAWSIntegration(ctx context.Context, param *mackerel.AWSIntegration) (*mackerel.AWSIntegration, error) {
+	return c.createAWSIntegration(ctx, param)
+}
+
+func (c *fakeMackerelClient) UpdateAWSIntegration(ctx context.Context, awsIntegrationID string, param *mackerel.AWSIntegration) (*mackerel.AWSIntegration, error) {
+	return c.updateAWSIntegration(ctx, awsIntegrationID, param)
+}
+
+func (c *fakeMackerelClient) DeleteAWSIntegration(ctx context.Context, awsIntegrationID string) (*mackerel.AWSIntegration, error) {
+	return c.deleteAWSIntegration(ctx, awsIntegrationID)
+}
+
+func (c *fakeMackerelClient) CreateAWSIntegrationExternalID(ctx context.Context) (string, error) {
+	return c.createAWSIntegrationExternalID(ctx)
+}
+
+func (c *fakeMackerelClient) FindAWSIntegrationsExcludableMetrics(ctx context.Context) (map[string][]string, error) {
+	return c.findAWSIntegrationsExcludableMetrics(ctx)
 }
 
 type mkrError struct {
