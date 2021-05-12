@@ -65,6 +65,7 @@ func (r *awsIntegration) convertToParam(ctx context.Context, properties map[stri
 		Region:       d.String(in.M("Region")),
 		IncludedTags: r.convertTagList(&d, dproxy.Default(in.M("IncludedTags"), []interface{}{})),
 		ExcludedTags: r.convertTagList(&d, dproxy.Default(in.M("ExcludedTags"), []interface{}{})),
+		Services:     r.convertAWSServices(ctx, &d, in.M("Services")),
 	}
 
 	if err := d.CombineErrors(); err != nil {
@@ -102,6 +103,31 @@ func (*awsIntegration) escapeTagValue(s string) string {
 	}
 	// XXX: the string contains '"' and '\''. How should we handle it?
 	return s
+}
+
+func (r *awsIntegration) convertAWSServices(ctx context.Context, d *dproxy.Drain, properties dproxy.Proxy) map[string]*mackerel.AWSIntegrationService {
+	ret := map[string]*mackerel.AWSIntegrationService{}
+	for _, s := range d.ProxyArray(properties.ProxySet()) {
+		name := d.String(s.M("ServiceId"))
+		exclude := dproxy.Default(s.M("ExcludedMetrics"), []interface{}{})
+
+		var role *string
+		roleID := d.OptionalString(s.M("Role"))
+		if roleID != nil {
+			service, name, err := r.Function.parseRoleID(ctx, *roleID)
+			d.Put(err)
+			fullname := service + ":" + name
+			role = &fullname
+		}
+
+		ret[name] = &mackerel.AWSIntegrationService{
+			Enable:              d.Bool(s.M("Enable")),
+			Role:                role,
+			ExcludedMetrics:     d.StringArray(exclude.ProxySet()),
+			RetireAutomatically: d.Bool(dproxy.Default(s.M("RetireAutomatically"), false)),
+		}
+	}
+	return ret
 }
 
 func (r *awsIntegration) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
