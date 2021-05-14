@@ -80,3 +80,33 @@ func TestCreateAWSIntegration(t *testing.T) {
 		t.Errorf("unexpected aws integration id: want %s, got %s", "mkr:test-org:aws-integration:integration-id", id)
 	}
 }
+
+func TestCreateAWSIntegrationExternalID(t *testing.T) {
+	f := &Function{
+		org: &mackerel.Org{
+			Name: "test-org",
+		},
+		client: &fakeMackerelClient{
+			createAWSIntegrationExternalID: func(ctx context.Context) (string, error) {
+				return "external-id", nil
+			},
+		},
+	}
+
+	event := cfn.Event{
+		RequestType:        cfn.RequestCreate,
+		RequestID:          "request-id123",
+		ResponseURL:        "https://cloudformation-custom-resource-response-apnortheast1.s3-ap-northeast-1.amazonaws.com/xxxxx",
+		ResourceType:       "Custom::AWSIntegrationExternalId",
+		LogicalResourceID:  "AWSIntegrationExternalId",
+		StackID:            "arn:aws:cloudformation:ap-northeast-1:123456789012:stack/foobar/12345678-1234-1234-1234-123456789abc",
+		ResourceProperties: map[string]interface{}{},
+	}
+	id, _, err := f.Handle(context.Background(), event)
+	if err != nil {
+		t.Error(err)
+	}
+	if id != "mkr:test-org:aws-integration-external-id:external-id" {
+		t.Errorf("unexpected aws integration external id: want %s, got %s", "mkr:test-org:aws-integration-external-id:external-id", id)
+	}
+}

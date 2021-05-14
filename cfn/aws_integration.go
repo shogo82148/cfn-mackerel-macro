@@ -147,3 +147,52 @@ func (r *awsIntegration) delete(ctx context.Context) (physicalResourceID string,
 	}
 	return
 }
+
+type awsIntegrationExternalID struct {
+	Function *Function
+	Event    cfn.Event
+}
+
+func (r *awsIntegrationExternalID) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+	c := r.Function.getclient()
+	ret, err := c.CreateAWSIntegrationExternalID(ctx)
+	if err != nil {
+		return "", nil, err
+	}
+	id, err := r.Function.buildAWSIntegrationExternalID(ctx, ret)
+	if err != nil {
+		return "", nil, err
+	}
+	return id, map[string]interface{}{
+		"Id": ret,
+	}, nil
+}
+
+func (r *awsIntegrationExternalID) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+	c := r.Function.getclient()
+	ret, err := c.CreateAWSIntegrationExternalID(ctx)
+	if err != nil {
+		return "", nil, err
+	}
+	id, err := r.Function.buildAWSIntegrationExternalID(ctx, ret)
+	if err != nil {
+		return "", nil, err
+	}
+	return id, map[string]interface{}{
+		"Id": ret,
+	}, nil
+}
+
+func (r *awsIntegrationExternalID) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+	physicalResourceID = r.Event.PhysicalResourceID
+	_, err = r.Function.parseAWSIntegrationExternalID(ctx, physicalResourceID)
+	if err != nil {
+		log.Printf("failed to parse %q as aws integration id: %s", physicalResourceID, err)
+		err = nil // ignore it
+		return
+	}
+
+	// Mackerel doesn't provide to delete external ids.
+	// nothing to do.
+	return
+}
