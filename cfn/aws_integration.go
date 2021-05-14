@@ -187,7 +187,7 @@ func (r *awsIntegrationExternalID) delete(ctx context.Context) (physicalResource
 	physicalResourceID = r.Event.PhysicalResourceID
 	_, err = r.Function.parseAWSIntegrationExternalID(ctx, physicalResourceID)
 	if err != nil {
-		log.Printf("failed to parse %q as aws integration id: %s", physicalResourceID, err)
+		log.Printf("failed to parse %q as aws integration external id: %s", physicalResourceID, err)
 		err = nil // ignore it
 		return
 	}
