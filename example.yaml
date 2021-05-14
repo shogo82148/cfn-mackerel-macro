@@ -329,6 +329,62 @@ Resources:
     Properties:
       Email: john.doe@example.com
 
+  # Example for AWS Integrations using IAM Role (recommended)
+  AWSIntegrationExternalId:
+    Type: Mackerel::AWSIntegrationExternalId
+  MackerelRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::217452466226:root
+            Action:
+              - sts:AssumeRole
+            Condition:
+              StringEquals:
+                "sts:ExternalId": !GetAtt AWSIntegrationExternalId.Id
+  AWSIntegration1:
+    Type: Mackerel::AWSIntegration
+    Properties:
+      Name: shogo82148-test
+      RoleArn: !GetAtt MackerelRole.Arn
+      ExternalId: !Ref AWSIntegrationExternalId
+      Region: !Ref AWS::Region
+      Services:
+        - ServiceId: S3
+          Enable: true
+
+  # Example for AWS Integrations using IAM User (deprecated)
+  MackerelUser:
+    Type: AWS::IAM::User
+    Properties:
+      Policies:
+        - PolicyName: dashboard-deployment
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Deny
+                Action: "*"
+                Resource: "*"
+  MackerelAccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      Status: Active
+      UserName: !Ref MackerelUser
+  AWSIntegration2:
+    Type: Mackerel::AWSIntegration
+    Properties:
+      Name: shogo82148-test
+      Key: !Ref MackerelAccessKey
+      SecretKey: !GetAtt MackerelAccessKey.SecretAccessKey
+      Region: !Ref AWS::Region
+      Services:
+        - ServiceId: S3
+          Enable: true
+
 Outputs:
   OrgName:
     Value: !GetAtt Org.Name
