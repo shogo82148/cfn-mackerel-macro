@@ -747,7 +747,7 @@
                 },
                 "Services": {
                     "Type": "List",
-                    "PrimitiveType": "Service",
+                    "ItemType": "Service",
                     "Required": false,
                     "UpdateType": "Mutable"
                 }
