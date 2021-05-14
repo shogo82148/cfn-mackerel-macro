@@ -140,7 +140,7 @@ func (r *awsIntegration) convertAWSServices(ctx context.Context, d *dproxy.Drain
 func (r *awsIntegration) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
 	c := r.Function.getclient()
 	physicalResourceID = r.Event.PhysicalResourceID
-	id, err := r.Function.parseDowntimeID(ctx, physicalResourceID)
+	id, err := r.Function.parseAWSIntegrationID(ctx, physicalResourceID)
 	if err != nil {
 		log.Printf("failed to parse %q as aws integration id: %s", physicalResourceID, err)
 		err = nil // ignore it
