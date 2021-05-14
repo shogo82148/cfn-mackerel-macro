@@ -185,6 +185,11 @@ func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourc
 			Function: f,
 			Event:    event,
 		}
+	case "AWSIntegrationExternalId":
+		r = &awsIntegrationExternalID{
+			Function: f,
+			Event:    event,
+		}
 	default:
 		return "", nil, nil // fmt.Errorf("unknown type: %s", typ)
 	}
@@ -291,6 +296,10 @@ func (f *Function) buildDowntimeID(ctx context.Context, downtimeID string) (stri
 
 func (f *Function) buildAWSIntegrationID(ctx context.Context, awsIntegrationID string) (string, error) {
 	return f.buildID(ctx, "aws-integration", awsIntegrationID)
+}
+
+func (f *Function) buildAWSIntegrationExternalID(ctx context.Context, awsIntegrationExternalID string) (string, error) {
+	return f.buildID(ctx, "aws-integration-external-id", awsIntegrationExternalID)
 }
 
 // parseID parses ID of Mackerel resources.
@@ -419,6 +428,17 @@ func (f *Function) parseAWSIntegrationID(ctx context.Context, id string) (string
 	}
 	if typ != "aws-integration" {
 		return "", fmt.Errorf("invalid type %s, expected aws-integration", typ)
+	}
+	return parts[0], nil
+}
+
+func (f *Function) parseAWSIntegrationExternalID(ctx context.Context, id string) (string, error) {
+	typ, parts, err := f.parseID(ctx, id, 1)
+	if err != nil {
+		return "", err
+	}
+	if typ != "aws-integration-external-id" {
+		return "", fmt.Errorf("invalid type %s, expected aws-integration-external-id", typ)
 	}
 	return parts[0], nil
 }
