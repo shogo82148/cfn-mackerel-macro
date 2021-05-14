@@ -128,7 +128,7 @@ func (r *awsIntegration) convertAWSServices(ctx context.Context, d *dproxy.Drain
 		}
 
 		ret[name] = &mackerel.AWSIntegrationService{
-			Enable:              d.Bool(s.M("Enable")),
+			Enable:              d.Bool(dproxy.Default(s.M("Enable"), true)),
 			Role:                role,
 			ExcludedMetrics:     d.StringArray(exclude.ProxySet()),
 			RetireAutomatically: d.Bool(dproxy.Default(s.M("RetireAutomatically"), false)),

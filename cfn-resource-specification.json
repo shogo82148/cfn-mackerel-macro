@@ -222,6 +222,46 @@
                 "Required": false,
                 "UpdateType": "Mutable"
             }
+        },
+        "Mackerel::AWSIntegration.Tag": {
+            "Name": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Value": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            }
+        },
+        "Mackerel::AWSIntegration.Service": {
+            "ServiceId": {
+                "PrimitiveType": "String",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "Enable": {
+                "PrimitiveType": "Boolean",
+                "Required": true,
+                "UpdateType": "Mutable"
+            },
+            "ExcludedMetrics": {
+                "Type": "List",
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "Role": {
+                "PrimitiveType": "String",
+                "Required": false,
+                "UpdateType": "Mutable"
+            },
+            "RetireAutomatically": {
+                "PrimitiveType": "Boolean",
+                "Required": false,
+                "UpdateType": "Mutable"
+            }
         }
     },
     "ResourceTypes": {
@@ -642,6 +682,74 @@
                     "PrimitiveType": "String",
                     "Required": true,
                     "UpdateType": "Immutable"
+                }
+            }
+        },
+        "Mackerel::AWSIntegrationExternalId": {
+            "Documentation": "https://mackerel.io/api-docs/entry/aws-integration",
+            "Attributes": {
+                "Id": {
+                    "PrimitiveType": "String"
+                }
+            },
+            "Properties": {}
+        },
+        "Mackerel::AWSIntegration": {
+            "Documentation": "https://mackerel.io/api-docs/entry/aws-integration",
+            "Attributes": {},
+            "Properties": {
+                "Name": {
+                    "PrimitiveType": "String",
+                    "Required": true,
+                    "UpdateType": "Immutable"
+                },
+                "Memo": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Key": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "SecretKey": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "RoleArn": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ExternalId": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Region": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "IncludedTags": {
+                    "Type": "List",
+                    "ItemType": "Tag",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "ExcludedTags": {
+                    "Type": "List",
+                    "ItemType": "Tag",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
+                "Services": {
+                    "Type": "List",
+                    "ItemType": "Service",
+                    "Required": false,
+                    "UpdateType": "Mutable"
                 }
             }
         }
