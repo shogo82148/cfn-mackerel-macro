@@ -55,13 +55,20 @@ func (r *awsIntegration) convertToParam(ctx context.Context, properties map[stri
 	var d dproxy.Drain
 	in := dproxy.New(properties)
 
+	var externalID *string
+	if v := d.OptionalString(in.M("ExternalId")); v != nil {
+		id, err := r.Function.parseAWSIntegrationExternalID(ctx, *v)
+		d.Put(err)
+		externalID = &id
+	}
+
 	param := &mackerel.AWSIntegration{
 		Name:         d.String(in.M("Name")),
 		Memo:         d.String(dproxy.Default(in.M("Memo"), "")),
 		Key:          d.OptionalString(in.M("Key")),
 		SecretKey:    d.OptionalString(in.M("SecretKey")),
 		RoleArn:      d.OptionalString(in.M("RoleArn")),
-		ExternalID:   d.OptionalString(in.M("ExternalID")),
+		ExternalID:   externalID,
 		Region:       d.String(in.M("Region")),
 		IncludedTags: r.convertTagList(&d, dproxy.Default(in.M("IncludedTags"), []interface{}{})),
 		ExcludedTags: r.convertTagList(&d, dproxy.Default(in.M("ExcludedTags"), []interface{}{})),
