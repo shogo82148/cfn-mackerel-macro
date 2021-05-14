@@ -735,7 +735,7 @@
                 },
                 "IncludedTags": {
                     "Type": "List",
-                    "PrimitiveType": "Tag",
+                    "ItemType": "Tag",
                     "Required": false,
                     "UpdateType": "Mutable"
                 },
