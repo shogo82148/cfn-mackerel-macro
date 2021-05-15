@@ -28,6 +28,39 @@ const (
 
 	// NotificationChannelTypeWebHook is web hook type.
 	NotificationChannelTypeWebHook NotificationChannelType = "webhook"
+
+	// NotificationChannelTypeLine is LINE type.
+	NotificationChannelTypeLine NotificationChannelType = "line"
+
+	// NotificationChannelTypeWebHook is Chatwork type.
+	NotificationChannelTypeChatwork NotificationChannelType = "chatwork"
+
+	// NotificationChannelTypeTypetalk is Typetalk type.
+	NotificationChannelTypeTypetalk NotificationChannelType = "typetalk"
+
+	// NotificationChannelTypeHipchat is Hipchat type.
+	NotificationChannelTypeHipchat NotificationChannelType = "hipchat"
+
+	// NotificationChannelTypeHipchat is twilio type.
+	NotificationChannelTypeTwilio NotificationChannelType = "twilio"
+
+	// NotificationChannelTypeReactio is Hipchat type.
+	NotificationChannelTypeReactio NotificationChannelType = "reactio"
+
+	// NotificationChannelTypePagerduty is Hipchat type.
+	NotificationChannelTypePagerduty NotificationChannelType = "pagerduty"
+
+	// NotificationChannelTypeOpsgenie is Opsgenie type.
+	NotificationChannelTypeOpsgenie NotificationChannelType = "opsgenie"
+
+	// NotificationChannelTypeYammer is Yammer type.
+	NotificationChannelTypeYammer NotificationChannelType = "yammer"
+
+	// NotificationChannelTypeMicrosoftTeams is Hipchat type.
+	NotificationChannelTypeMicrosoftTeams NotificationChannelType = "microsoft-teams"
+
+	// NotificationChannelTypeAmazonEventBridge is Amazon Event Bridge type.
+	NotificationChannelTypeAmazonEventBridge NotificationChannelType = "amazon-event-bridge"
 )
 
 func (t NotificationChannelType) String() string {
