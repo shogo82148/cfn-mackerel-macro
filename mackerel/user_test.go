@@ -61,7 +61,7 @@ func TestFindUsers(t *testing.T) {
 			ID:         "2cdkEV8JB5d",
 			ScreenName: "shogo82148@gmail.com",
 			Email:      "shogo82148@gmail.com",
-			Authority:  "owner",
+			Authority:  UserAuthorityOwner,
 			AuthenticationMethods: []UserAuthenticationMethod{
 				"password", "github", "google",
 			},
@@ -118,7 +118,7 @@ func TestDeleteUser(t *testing.T) {
 		ID:         "2cdkEV8JB5d",
 		ScreenName: "shogo82148@gmail.com",
 		Email:      "shogo82148@gmail.com",
-		Authority:  "owner",
+		Authority:  UserAuthorityOwner,
 		AuthenticationMethods: []UserAuthenticationMethod{
 			"password", "github", "google",
 		},

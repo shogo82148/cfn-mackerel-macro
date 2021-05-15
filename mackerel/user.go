@@ -18,8 +18,26 @@ type User struct {
 	JoinedAt                Timestamp                  `json:"joinedAt"`
 }
 
-// UserAuthority is authority type for user.
+// UserAuthority is the authority type for user.
 type UserAuthority string
+
+const (
+	// UserAuthorityOwner is the owner authority type
+	UserAuthorityOwner UserAuthority = "owner"
+
+	// UserAuthorityManager is the manager authority type
+	UserAuthorityManager UserAuthority = "manager"
+
+	// UserAuthorityCollaborator is the collaborator authority type
+	UserAuthorityCollaborator UserAuthority = "collaborator"
+
+	// UserAuthorityViewer is the viewer authority type
+	UserAuthorityViewer UserAuthority = "viewer"
+)
+
+func (t UserAuthority) String() string {
+	return string(t)
+}
 
 // UserAuthenticationMethod is a method of authentication
 type UserAuthenticationMethod string
