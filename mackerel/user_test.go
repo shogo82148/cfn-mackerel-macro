@@ -63,7 +63,9 @@ func TestFindUsers(t *testing.T) {
 			Email:      "shogo82148@gmail.com",
 			Authority:  UserAuthorityOwner,
 			AuthenticationMethods: []UserAuthenticationMethod{
-				"password", "github", "google",
+				UserAuthenticationMethodPassword,
+				UserAuthenticationMethodGitHub,
+				UserAuthenticationMethodGoogle,
 			},
 			JoinedAt: 1411403412,
 		},
@@ -120,7 +122,9 @@ func TestDeleteUser(t *testing.T) {
 		Email:      "shogo82148@gmail.com",
 		Authority:  UserAuthorityOwner,
 		AuthenticationMethods: []UserAuthenticationMethod{
-			"password", "github", "google",
+			UserAuthenticationMethodPassword,
+			UserAuthenticationMethodGitHub,
+			UserAuthenticationMethodGoogle,
 		},
 		JoinedAt: 1411403412,
 	}

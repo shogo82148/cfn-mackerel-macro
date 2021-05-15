@@ -42,6 +42,33 @@ func (t UserAuthority) String() string {
 // UserAuthenticationMethod is a method of authentication
 type UserAuthenticationMethod string
 
+const (
+	// UserAuthenticationMethodPassword is the password authentication.
+	UserAuthenticationMethodPassword UserAuthenticationMethod = "password"
+
+	// UserAuthenticationMethodGitHub is the GitHub authentication.
+	UserAuthenticationMethodGitHub UserAuthenticationMethod = "github"
+
+	// UserAuthenticationMethodIDCF is the IDCF authentication.
+	UserAuthenticationMethodIDCF UserAuthenticationMethod = "idcf"
+
+	// UserAuthenticationMethodGoogle is the Google authentication.
+	UserAuthenticationMethodGoogle UserAuthenticationMethod = "google"
+
+	// UserAuthenticationMethodNifty is the nifty authentication.
+	UserAuthenticationMethodNifty UserAuthenticationMethod = "nifty"
+
+	// UserAuthenticationMethodYammer is the Yammer authentication.
+	UserAuthenticationMethodYammer UserAuthenticationMethod = "yammer"
+
+	// UserAuthenticationMethodKDDI is the KDDI authentication.
+	UserAuthenticationMethodKDDI UserAuthenticationMethod = "kddi"
+)
+
+func (t UserAuthenticationMethod) String() string {
+	return string(t)
+}
+
 // FindUsers returns a list of users.
 func (c *Client) FindUsers(ctx context.Context) ([]*User, error) {
 	var users struct {
