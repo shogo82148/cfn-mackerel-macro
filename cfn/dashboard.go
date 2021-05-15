@@ -17,9 +17,9 @@ type dashboard struct {
 	Event    cfn.Event
 }
 
-func (d *dashboard) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	c := d.Function.getclient()
-	param, err := d.convertToParam(ctx, d.Event.ResourceProperties)
+func (r *dashboard) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+	c := r.Function.getclient()
+	param, err := r.convertToParam(ctx, r.Event.ResourceProperties)
 	if err != nil {
 		return "", nil, err
 	}
@@ -28,38 +28,38 @@ func (d *dashboard) create(ctx context.Context) (physicalResourceID string, data
 		return "", nil, err
 	}
 
-	id, err := d.Function.buildDashboardID(ctx, ret.ID)
+	id, err := r.Function.buildDashboardID(ctx, ret.ID)
 	if err != nil {
 		return "", nil, err
 	}
 	return id, map[string]interface{}{}, nil
 }
 
-func (d *dashboard) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	c := d.Function.getclient()
-	param, err := d.convertToParam(ctx, d.Event.ResourceProperties)
+func (r *dashboard) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+	c := r.Function.getclient()
+	param, err := r.convertToParam(ctx, r.Event.ResourceProperties)
 	if err != nil {
-		return d.Event.PhysicalResourceID, nil, err
+		return r.Event.PhysicalResourceID, nil, err
 	}
-	id, err := d.Function.parseDashboardID(ctx, d.Event.PhysicalResourceID)
+	id, err := r.Function.parseDashboardID(ctx, r.Event.PhysicalResourceID)
 	if err != nil {
-		return d.Event.PhysicalResourceID, nil, err
+		return r.Event.PhysicalResourceID, nil, err
 	}
 	_, err = c.UpdateDashboard(ctx, id, param)
 	if err != nil {
-		return d.Event.PhysicalResourceID, nil, err
+		return r.Event.PhysicalResourceID, nil, err
 	}
 
-	return d.Event.PhysicalResourceID, map[string]interface{}{}, nil
+	return r.Event.PhysicalResourceID, map[string]interface{}{}, nil
 }
 
-func (d *dashboard) convertToParam(ctx context.Context, properties map[string]interface{}) (*mackerel.Dashboard, error) {
+func (r *dashboard) convertToParam(ctx context.Context, properties map[string]interface{}) (*mackerel.Dashboard, error) {
 	var dp dproxy.Drain
 	in := dproxy.New(properties)
 
 	widgets := []mackerel.Widget{}
 	for _, w := range dp.ProxyArray(in.M("Widgets").ProxySet()) {
-		widgets = append(widgets, d.convertWidget(ctx, &dp, w))
+		widgets = append(widgets, r.convertWidget(ctx, &dp, w))
 	}
 
 	param := &mackerel.Dashboard{
@@ -74,7 +74,7 @@ func (d *dashboard) convertToParam(ctx context.Context, properties map[string]in
 	return param, nil
 }
 
-func (d *dashboard) convertWidget(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.Widget {
+func (r *dashboard) convertWidget(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.Widget {
 	typ, err := properties.M("Type").String()
 	if err != nil {
 		dp.Put(err)
@@ -84,39 +84,39 @@ func (d *dashboard) convertWidget(ctx context.Context, dp *dproxy.Drain, propert
 	case mackerel.WidgetTypeGraph.String():
 		return &mackerel.WidgetGraph{
 			Title:  dp.String(dproxy.Default(properties.M("Title"), "")),
-			Graph:  d.convertGraph(ctx, dp, properties.M("Graph")),
-			Range:  d.convertRange(ctx, dp, properties.M("Range")),
-			Layout: d.convertLayout(dp, properties.M("Layout")),
+			Graph:  r.convertGraph(ctx, dp, properties.M("Graph")),
+			Range:  r.convertRange(ctx, dp, properties.M("Range")),
+			Layout: r.convertLayout(dp, properties.M("Layout")),
 		}
 	case mackerel.WidgetTypeValue.String():
 		return &mackerel.WidgetValue{
 			Title:  dp.String(dproxy.Default(properties.M("Title"), "")),
-			Metric: d.convertMetric(ctx, dp, properties.M("Metric")),
-			Layout: d.convertLayout(dp, properties.M("Layout")),
+			Metric: r.convertMetric(ctx, dp, properties.M("Metric")),
+			Layout: r.convertLayout(dp, properties.M("Layout")),
 		}
 	case mackerel.WidgetTypeMarkdown.String():
 		return &mackerel.WidgetMarkdown{
 			Title:    dp.String(dproxy.Default(properties.M("Title"), "")),
 			Markdown: dp.String(dproxy.Default(properties.M("Markdown"), "")),
-			Layout:   d.convertLayout(dp, properties.M("Layout")),
+			Layout:   r.convertLayout(dp, properties.M("Layout")),
 		}
 	case mackerel.WidgetTypeAlertStatus.String():
 		id, err := properties.M("Role").String()
 		dp.Put(err)
-		serviceName, roleName, err := d.Function.parseRoleID(ctx, id)
+		serviceName, roleName, err := r.Function.parseRoleID(ctx, id)
 		dp.Put(err)
 		roleFullname := serviceName + ":" + roleName
 		return &mackerel.WidgetAlertStatus{
 			Title:        dp.String(dproxy.Default(properties.M("Title"), "")),
 			RoleFullname: &roleFullname,
-			Layout:       d.convertLayout(dp, properties.M("Layout")),
+			Layout:       r.convertLayout(dp, properties.M("Layout")),
 		}
 	}
 	dp.Put(fmt.Errorf("unknown widget type: %s", typ))
 	return nil
 }
 
-func (d *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.Graph {
+func (r *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.Graph {
 	typ, err := properties.M("Type").String()
 	if err != nil {
 		dp.Put(err)
@@ -126,7 +126,7 @@ func (d *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properti
 	case mackerel.GraphTypeHost.String():
 		id, err := properties.M("Host").String()
 		dp.Put(err)
-		hostID, err := d.Function.parseHostID(ctx, id)
+		hostID, err := r.Function.parseHostID(ctx, id)
 		dp.Put(err)
 		return &mackerel.GraphHost{
 			HostID: hostID,
@@ -135,7 +135,7 @@ func (d *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properti
 	case mackerel.GraphTypeRole.String():
 		id, err := properties.M("Role").String()
 		dp.Put(err)
-		serviceName, roleName, err := d.Function.parseRoleID(ctx, id)
+		serviceName, roleName, err := r.Function.parseRoleID(ctx, id)
 		dp.Put(err)
 		return &mackerel.GraphRole{
 			RoleFullname: serviceName + ":" + roleName,
@@ -145,7 +145,7 @@ func (d *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properti
 	case mackerel.GraphTypeService.String():
 		id, err := properties.M("Service").String()
 		dp.Put(err)
-		serviceName, err := d.Function.parseServiceID(ctx, id)
+		serviceName, err := r.Function.parseServiceID(ctx, id)
 		dp.Put(err)
 		return &mackerel.GraphService{
 			ServiceName: serviceName,
@@ -160,7 +160,7 @@ func (d *dashboard) convertGraph(ctx context.Context, dp *dproxy.Drain, properti
 	return nil
 }
 
-func (d *dashboard) convertMetric(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.Metric {
+func (r *dashboard) convertMetric(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.Metric {
 	typ, err := properties.M("Type").String()
 	if err != nil {
 		dp.Put(err)
@@ -170,7 +170,7 @@ func (d *dashboard) convertMetric(ctx context.Context, dp *dproxy.Drain, propert
 	case mackerel.MetricTypeHost.String():
 		id, err := properties.M("Host").String()
 		dp.Put(err)
-		hostID, err := d.Function.parseHostID(ctx, id)
+		hostID, err := r.Function.parseHostID(ctx, id)
 		dp.Put(err)
 		return &mackerel.MetricHost{
 			HostID: hostID,
@@ -179,7 +179,7 @@ func (d *dashboard) convertMetric(ctx context.Context, dp *dproxy.Drain, propert
 	case mackerel.MetricTypeService.String():
 		id, err := properties.M("Service").String()
 		dp.Put(err)
-		serviceName, err := d.Function.parseServiceID(ctx, id)
+		serviceName, err := r.Function.parseServiceID(ctx, id)
 		dp.Put(err)
 		return &mackerel.MetricService{
 			ServiceName: serviceName,
@@ -194,7 +194,7 @@ func (d *dashboard) convertMetric(ctx context.Context, dp *dproxy.Drain, propert
 	return nil
 }
 
-func (d *dashboard) convertRange(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.GraphRange {
+func (r *dashboard) convertRange(ctx context.Context, dp *dproxy.Drain, properties dproxy.Proxy) mackerel.GraphRange {
 	if dproxy.IsError(properties, dproxy.ErrorCodeNotFound) {
 		return nil
 	}
@@ -219,7 +219,7 @@ func (d *dashboard) convertRange(ctx context.Context, dp *dproxy.Drain, properti
 	return nil
 }
 
-func (d *dashboard) convertLayout(dp *dproxy.Drain, properties dproxy.Proxy) *mackerel.Layout {
+func (r *dashboard) convertLayout(dp *dproxy.Drain, properties dproxy.Proxy) *mackerel.Layout {
 	return &mackerel.Layout{
 		X:      dp.Uint64(properties.M("X")),
 		Y:      dp.Uint64(properties.M("Y")),
@@ -228,16 +228,16 @@ func (d *dashboard) convertLayout(dp *dproxy.Drain, properties dproxy.Proxy) *ma
 	}
 }
 
-func (d *dashboard) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
-	physicalResourceID = d.Event.PhysicalResourceID
-	id, err := d.Function.parseDashboardID(ctx, physicalResourceID)
+func (r *dashboard) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+	physicalResourceID = r.Event.PhysicalResourceID
+	id, err := r.Function.parseDashboardID(ctx, physicalResourceID)
 	if err != nil {
 		log.Printf("failed to parse %q as dashboard id: %s", physicalResourceID, err)
 		err = nil
 		return
 	}
 
-	c := d.Function.getclient()
+	c := r.Function.getclient()
 	_, err = c.DeleteDashboard(ctx, id)
 	var merr mackerel.Error
 	if errors.As(err, &merr) && merr.StatusCode() == http.StatusNotFound {
