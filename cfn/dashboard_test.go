@@ -411,3 +411,48 @@ func TestUpdateDashboard(t *testing.T) {
 		t.Errorf("unexpected dashboard id: want %s, got %s", "mkr:test-org:dashboard:dashboard-id", id)
 	}
 }
+
+func TestDeleteDashboard(t *testing.T) {
+	f := &Function{
+		org: &mackerel.Org{
+			Name: "test-org",
+		},
+		client: &fakeMackerelClient{
+			deleteDashboard: func(ctx context.Context, id string) (*mackerel.Dashboard, error) {
+				if id != "dashboard-id" {
+					t.Errorf("unexpected dashboard id: want %s, got %s", "dashboard-id", id)
+				}
+				return &mackerel.Dashboard{
+					ID:      "dashboard-id",
+					Title:   "dashboard-foobar",
+					Memo:    "memo",
+					URLPath: "my-dashboard",
+					Widgets: []mackerel.Widget{},
+				}, nil
+			},
+		},
+	}
+	event := cfn.Event{
+		RequestType:        cfn.RequestDelete,
+		RequestID:          "",
+		ResponseURL:        "https://cloudformation-custom-resource-response-apnortheast1.s3-ap-northeast-1.amazonaws.com/xxxxx",
+		ResourceType:       "Custom::Dashboard",
+		LogicalResourceID:  "Dashboard",
+		PhysicalResourceID: "mkr:test-org:dashboard:dashboard-id",
+		StackID:            "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
+		OldResourceProperties: map[string]interface{}{
+			"Title":   "dashboard-foobar",
+			"Memo":    "memo",
+			"UrlPath": "my-dashboard",
+			"Widgets": []interface{}{},
+			"Roles":   []interface{}{},
+		},
+	}
+	id, _, err := f.Handle(context.Background(), event)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if id != "mkr:test-org:dashboard:dashboard-id" {
+		t.Errorf("unexpected dashboard id: want %s, got %s", "mkr:test-org:dashboard:dashboard-id", id)
+	}
+}
