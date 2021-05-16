@@ -22,6 +22,131 @@ func TestCreateDashboard(t *testing.T) {
 					Memo:    "memo",
 					URLPath: "my-dashboard",
 					Widgets: []mackerel.Widget{
+
+						&mackerel.WidgetGraph{
+							Title: "Host Graph",
+							Graph: &mackerel.GraphHost{
+								HostID: "host-id",
+								Name:   "some.metric",
+							},
+							Range: &mackerel.GraphRangeRelative{
+								Period: 3600,
+								Offset: 0,
+							},
+							Layout: &mackerel.Layout{
+								X:      0,
+								Y:      0,
+								Width:  24,
+								Height: 32,
+							},
+						},
+
+						&mackerel.WidgetGraph{
+							Title: "Role Graph",
+							Graph: &mackerel.GraphRole{
+								RoleFullname: "awesome-service:role-hogehoge",
+								Name:         "some.metric",
+								IsStacked:    true,
+							},
+							Range: &mackerel.GraphRangeAbsolute{
+								Start: 1234567890,
+								End:   1234567890,
+							},
+							Layout: &mackerel.Layout{
+								X:      0,
+								Y:      0,
+								Width:  24,
+								Height: 32,
+							},
+						},
+
+						&mackerel.WidgetGraph{
+							Title: "Service Graph",
+							Graph: &mackerel.GraphService{
+								ServiceName: "awesome-service",
+								Name:        "some.metric",
+							},
+							Range: &mackerel.GraphRangeRelative{
+								Period: 3600,
+								Offset: 0,
+							},
+							Layout: &mackerel.Layout{
+								X:      0,
+								Y:      0,
+								Width:  24,
+								Height: 32,
+							},
+						},
+
+						&mackerel.WidgetGraph{
+							Title: "Expression Graph",
+							Graph: &mackerel.GraphExpression{
+								Expression: `avg(roleSlots("server:role","loadavg5"))`,
+							},
+							Range: &mackerel.GraphRangeRelative{
+								Period: 3600,
+								Offset: 0,
+							},
+							Layout: &mackerel.Layout{
+								X:      0,
+								Y:      0,
+								Width:  24,
+								Height: 32,
+							},
+						},
+
+						&mackerel.WidgetValue{
+							Title: "Host Value",
+							Metric: &mackerel.MetricHost{
+								HostID: "host-id",
+								Name:   "some.metric",
+							},
+							Layout: &mackerel.Layout{
+								X:      0,
+								Y:      0,
+								Width:  24,
+								Height: 32,
+							},
+						},
+
+						&mackerel.WidgetValue{
+							Title: "Service Value",
+							Metric: &mackerel.MetricService{
+								ServiceName: "awesome-service",
+								Name:        "some.metric",
+							},
+							Layout: &mackerel.Layout{
+								X:      0,
+								Y:      0,
+								Width:  24,
+								Height: 32,
+							},
+						},
+
+						&mackerel.WidgetValue{
+							Title: "Expression Value",
+							Metric: &mackerel.MetricExpression{
+								Expression: `avg(roleSlots("server:role","loadavg5"))`,
+							},
+							Layout: &mackerel.Layout{
+								X:      0,
+								Y:      0,
+								Width:  24,
+								Height: 32,
+							},
+						},
+
+						&mackerel.WidgetMarkdown{
+							Title:    "Markdown",
+							Markdown: "# Some Awesome Service\n- Markdown Text Here",
+							Layout: &mackerel.Layout{
+								X:      0,
+								Y:      0,
+								Width:  24,
+								Height: 32,
+							},
+						},
+
 						&mackerel.WidgetAlertStatus{
 							Title:        "alert status",
 							RoleFullname: pointer.String("awesome-service:role-hogehoge"),
@@ -55,6 +180,157 @@ func TestCreateDashboard(t *testing.T) {
 			"Memo":    "memo",
 			"UrlPath": "my-dashboard",
 			"Widgets": []interface{}{
+				// Host Graph
+				map[string]interface{}{
+					"Type":  "graph",
+					"Title": "Host Graph",
+					"Graph": map[string]interface{}{
+						"Type": "host",
+						"Name": "some.metric",
+						"Host": "mkr:test-org:host:host-id",
+					},
+					"Range": map[string]interface{}{
+						"Type":   "relative",
+						"Period": "3600",
+						"Offset": "0",
+					},
+					"Layout": map[string]interface{}{
+						"X":      "0",
+						"Y":      "0",
+						"Width":  "24",
+						"Height": "32",
+					},
+				},
+
+				// Role Graph
+				map[string]interface{}{
+					"Type":  "graph",
+					"Title": "Role Graph",
+					"Graph": map[string]interface{}{
+						"Type":      "role",
+						"Role":      "mkr:test-org:role:awesome-service:role-hogehoge",
+						"Name":      "some.metric",
+						"IsStacked": "true",
+					},
+					"Range": map[string]interface{}{
+						"Type":  "absolute",
+						"Start": "1234567890",
+						"End":   "1234567890",
+					},
+					"Layout": map[string]interface{}{
+						"X":      "0",
+						"Y":      "0",
+						"Width":  "24",
+						"Height": "32",
+					},
+				},
+
+				// Service Graph
+				map[string]interface{}{
+					"Type":  "graph",
+					"Title": "Service Graph",
+					"Graph": map[string]interface{}{
+						"Type":    "service",
+						"Service": "mkr:test-org:service:awesome-service",
+						"Name":    "some.metric",
+					},
+					"Range": map[string]interface{}{
+						"Type":   "relative",
+						"Period": "3600",
+						"Offset": "0",
+					},
+					"Layout": map[string]interface{}{
+						"X":      "0",
+						"Y":      "0",
+						"Width":  "24",
+						"Height": "32",
+					},
+				},
+
+				// Expression Graph
+				map[string]interface{}{
+					"Type":  "graph",
+					"Title": "Expression Graph",
+					"Graph": map[string]interface{}{
+						"Type":       "expression",
+						"Expression": `avg(roleSlots("server:role","loadavg5"))`,
+					},
+					"Range": map[string]interface{}{
+						"Type":   "relative",
+						"Period": "3600",
+						"Offset": "0",
+					},
+					"Layout": map[string]interface{}{
+						"X":      "0",
+						"Y":      "0",
+						"Width":  "24",
+						"Height": "32",
+					},
+				},
+
+				// Host Value
+				map[string]interface{}{
+					"Type":  "value",
+					"Title": "Host Value",
+					"Metric": map[string]interface{}{
+						"Type": "host",
+						"Host": "mkr:test-org:host:host-id",
+						"Name": "some.metric",
+					},
+					"Layout": map[string]interface{}{
+						"X":      "0",
+						"Y":      "0",
+						"Width":  "24",
+						"Height": "32",
+					},
+				},
+
+				// Service Value
+				map[string]interface{}{
+					"Type":  "value",
+					"Title": "Service Value",
+					"Metric": map[string]interface{}{
+						"Type":    "service",
+						"Service": "mkr:test-org:service:awesome-service",
+						"Name":    "some.metric",
+					},
+					"Layout": map[string]interface{}{
+						"X":      "0",
+						"Y":      "0",
+						"Width":  "24",
+						"Height": "32",
+					},
+				},
+
+				// Expression Value
+				map[string]interface{}{
+					"Type":  "value",
+					"Title": "Expression Value",
+					"Metric": map[string]interface{}{
+						"Type":       "expression",
+						"Expression": `avg(roleSlots("server:role","loadavg5"))`,
+					},
+					"Layout": map[string]interface{}{
+						"X":      "0",
+						"Y":      "0",
+						"Width":  "24",
+						"Height": "32",
+					},
+				},
+
+				// Markdown
+				map[string]interface{}{
+					"Type":     "markdown",
+					"Title":    "Markdown",
+					"Markdown": "# Some Awesome Service\n- Markdown Text Here",
+					"Layout": map[string]interface{}{
+						"X":      "0",
+						"Y":      "0",
+						"Width":  "24",
+						"Height": "32",
+					},
+				},
+
 				// Alert Status Widget
 				map[string]interface{}{
 					"Type":  "alertStatus",
