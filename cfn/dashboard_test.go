@@ -344,7 +344,6 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			"Roles": []interface{}{},
 		},
 	}
 	id, _, err := f.Handle(context.Background(), event)
@@ -352,6 +351,63 @@ func TestCreateDashboard(t *testing.T) {
 		t.Fatal(err)
 	}
 	if id != "mkr:test-org:dashboard:dashboard-id" {
-		t.Errorf("unexpected dashboard id: want %s, got %s", "mkr:test-org:host:3yAYEDLXKL5", id)
+		t.Errorf("unexpected dashboard id: want %s, got %s", "mkr:test-org:dashboard:dashboard-id", id)
+	}
+}
+
+func TestUpdateDashboard(t *testing.T) {
+	f := &Function{
+		org: &mackerel.Org{
+			Name: "test-org",
+		},
+		client: &fakeMackerelClient{
+			updateDashboard: func(ctx context.Context, id string, param *mackerel.Dashboard) (*mackerel.Dashboard, error) {
+				if id != "dashboard-id" {
+					t.Errorf("unexpected dashboard id: want %s, got %s", "dashboard-id", id)
+				}
+				want := &mackerel.Dashboard{
+					Title:   "dashboard-foobar",
+					Memo:    "memo",
+					URLPath: "my-dashboard",
+					Widgets: []mackerel.Widget{},
+				}
+				if diff := cmp.Diff(param, want); diff != "" {
+					t.Errorf("param differs: (-got +want)\n%s", diff)
+				}
+				ret := *param
+				ret.ID = "dashboard-id"
+				return &ret, nil
+			},
+		},
+	}
+	event := cfn.Event{
+		RequestType:        cfn.RequestUpdate,
+		RequestID:          "",
+		ResponseURL:        "https://cloudformation-custom-resource-response-apnortheast1.s3-ap-northeast-1.amazonaws.com/xxxxx",
+		ResourceType:       "Custom::Dashboard",
+		LogicalResourceID:  "Dashboard",
+		PhysicalResourceID: "mkr:test-org:dashboard:dashboard-id",
+		StackID:            "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
+		OldResourceProperties: map[string]interface{}{
+			"Title":   "dashboard-foobar",
+			"Memo":    "memo",
+			"UrlPath": "my-dashboard",
+			"Widgets": []interface{}{},
+			"Roles":   []interface{}{},
+		},
+		ResourceProperties: map[string]interface{}{
+			"Title":   "dashboard-foobar",
+			"Memo":    "memo",
+			"UrlPath": "my-dashboard",
+			"Widgets": []interface{}{},
+			"Roles":   []interface{}{},
+		},
+	}
+	id, _, err := f.Handle(context.Background(), event)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if id != "mkr:test-org:dashboard:dashboard-id" {
+		t.Errorf("unexpected dashboard id: want %s, got %s", "mkr:test-org:dashboard:dashboard-id", id)
 	}
 }
