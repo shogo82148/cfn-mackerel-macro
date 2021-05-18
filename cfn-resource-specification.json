@@ -410,6 +410,11 @@
                     "Required": false,
                     "UpdateType": "Mutable"
                 },
+                "RequestBody": {
+                    "PrimitiveType": "String",
+                    "Required": false,
+                    "UpdateType": "Mutable"
+                },
                 "Service": {
                     "PrimitiveType": "String",
                     "Required": false,
