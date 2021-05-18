@@ -64,6 +64,7 @@ Resources:
       Name: external
       Method: GET
       Url: https://example.com
+      RequestBody: ""
       Service: !Ref Service
       NotificationInterval: 60
       ResponseTimeWarning: 5000
