@@ -6,7 +6,7 @@ Metadata:
   AWS::ServerlessRepo::Application:
     Name: cfn-mackerel-macro
     Description: provide a CloudFormation macro for creating Mackerel resources
-    Author: Shogo Ichinose
+    Author: Ichinose Shogo
     SpdxLicenseId: MIT
     LicenseUrl: LICENSE
     ReadmeUrl: README.md
@@ -28,6 +28,22 @@ Parameters:
     Type: String
     Default: "https://api.mackerelio.com/"
     Description: base url for the Mackerel API
+  MacroFunctionName:
+    Type: String
+    Description: |
+      The function name that handles cloudformation macros.
+      If it is empty, the name is auto generated.
+    Default: ""
+  ResourceFunctionName:
+    Type: String
+    Description: |
+      the function name that handles cloudformation custom resources.
+      If it is empty, the name is auto generated.
+    Default: ""
+
+Conditions:
+  HasMacroFunctionName: !Not [!Equals [!Ref MacroFunctionName, ""]]
+  HasResourceFunctionName: !Not [!Equals [!Ref MacroFunctionName, ""]]
 
 Resources:
   ResourceFunction:
@@ -36,6 +52,10 @@ Resources:
       Runtime: provided.al2
       CodeUri: ./resource.zip
       Handler: main
+      FunctionName: !If
+        - HasResourceFunctionName
+        - !Ref ResourceFunctionName
+        - !Ref AWS::NoValue
       Policies:
         - SSMParameterReadPolicy:
             # HACK: trim "/" prefix. See https://github.com/aws/serverless-application-model/issues/1112
@@ -55,6 +75,10 @@ Resources:
       Runtime: python3.8
       CodeUri: ./macro.zip
       Handler: app.handler
+      FunctionName: !If
+        - HasMacroFunctionName
+        - !Ref MacroFunctionName
+        - !Ref AWS::NoValue
       Environment:
         Variables:
           LAMBDA_ARN: !GetAtt ResourceFunction.Arn
