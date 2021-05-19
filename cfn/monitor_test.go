@@ -535,3 +535,46 @@ func TestUpdateMonitor_updateImmutable(t *testing.T) {
 		t.Errorf("unexpected type, want %s, got %s", "connectivity", param["Type"].(string))
 	}
 }
+
+func TestDeleteMonitor(t *testing.T) {
+	var deleted bool
+	f := &Function{
+		org: &mackerel.Org{
+			Name: "test-org",
+		},
+		client: &fakeMackerelClient{
+			deleteMonitor: func(ctx context.Context, id string) (mackerel.Monitor, error) {
+				if id != "delete-monitor" {
+					t.Errorf("unexpected monitor id: want %s, got %s", "delete-monitor", id)
+				}
+				deleted = true
+				return &mackerel.MonitorConnectivity{
+					Name: "foo-bar",
+				}, nil
+			},
+		},
+	}
+
+	event := cfn.Event{
+		RequestType:        cfn.RequestDelete,
+		RequestID:          "request-id123",
+		ResponseURL:        "https://cloudformation-custom-resource-response-apnortheast1.s3-ap-northeast-1.amazonaws.com/xxxxx",
+		ResourceType:       "Custom::Monitor",
+		LogicalResourceID:  "Monitor",
+		PhysicalResourceID: "mkr:test-org:monitor:delete-monitor",
+		StackID:            "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
+		OldResourceProperties: map[string]interface{}{
+			"Type": "host",
+		},
+	}
+	id, _, err := f.Handle(context.Background(), event)
+	if err != nil {
+		t.Error(err)
+	}
+	if id != "mkr:test-org:monitor:delete-monitor" {
+		t.Errorf("unexpected aws integration id: want %s, got %s", "mkr:test-org:monitor:delete-monitor", id)
+	}
+	if !deleted {
+		t.Error("want deleted, but not")
+	}
+}
