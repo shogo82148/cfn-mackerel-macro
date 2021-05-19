@@ -259,7 +259,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 
 func (m *monitor) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
 	physicalResourceID = m.Event.PhysicalResourceID
-	id, err := m.Function.parseHostID(ctx, physicalResourceID)
+	id, err := m.Function.parseMonitorID(ctx, physicalResourceID)
 	if err != nil {
 		log.Printf("failed to parse %q as monitor id: %s", physicalResourceID, err)
 		err = nil
