@@ -28,6 +28,11 @@ Parameters:
     Type: String
     Default: "https://api.mackerelio.com/"
     Description: base url for the Mackerel API
+  MacroName:
+    Type: String
+    Description: |
+      The name of the cloudformation macro.
+    Default: "Mackerel"
   MacroFunctionName:
     Type: String
     Description: |
@@ -88,5 +93,5 @@ Resources:
   Macro:
     Type: AWS::CloudFormation::Macro
     Properties:
-      Name: Mackerel
+      Name: !Ref MacroName
       FunctionName: !GetAtt MacroFunction.Arn
