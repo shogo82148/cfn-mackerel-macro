@@ -48,7 +48,7 @@ Parameters:
 
 Conditions:
   HasMacroFunctionName: !Not [!Equals [!Ref MacroFunctionName, ""]]
-  HasResourceFunctionName: !Not [!Equals [!Ref MacroFunctionName, ""]]
+  HasResourceFunctionName: !Not [!Equals [!Ref ResourceFunctionName, ""]]
 
 Resources:
   ResourceFunction:
