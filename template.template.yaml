@@ -45,10 +45,24 @@ Parameters:
       the function name that handles cloudformation custom resources.
       If it is empty, the name is auto generated.
     Default: ""
+  MacroFunctionDescription:
+    Type: String
+    Description: |
+      The description of the macro function.
+    Default: ""
+  ResourceFunctionDescription:
+    Type: String
+    Description: |
+      The description of the resource function.
+    Default: ""
 
 Conditions:
   HasMacroFunctionName: !Not [!Equals [!Ref MacroFunctionName, ""]]
   HasResourceFunctionName: !Not [!Equals [!Ref ResourceFunctionName, ""]]
+  HasMacroFunctionDescription:
+    !Not [!Equals [!Ref MacroFunctionDescription, ""]]
+  HasResourceFunctionDescription:
+    !Not [!Equals [!Ref ResourceFunctionDescription, ""]]
 
 Resources:
   ResourceFunction:
@@ -60,6 +74,10 @@ Resources:
       FunctionName: !If
         - HasResourceFunctionName
         - !Ref ResourceFunctionName
+        - !Ref AWS::NoValue
+      Description: !If
+        - HasResourceFunctionDescription
+        - !Ref ResourceFunctionDescription
         - !Ref AWS::NoValue
       Policies:
         - SSMParameterReadPolicy:
@@ -83,6 +101,10 @@ Resources:
       FunctionName: !If
         - HasMacroFunctionName
         - !Ref MacroFunctionName
+        - !Ref AWS::NoValue
+      Description: !If
+        - HasMacroFunctionDescription
+        - !Ref MacroFunctionDescription
         - !Ref AWS::NoValue
       Environment:
         Variables:
