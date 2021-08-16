@@ -45,6 +45,16 @@ Parameters:
       the function name that handles cloudformation custom resources.
       If it is empty, the name is auto generated.
     Default: ""
+  MacroFunctionDescription:
+    Type: String
+    Description: |
+      The description of the macro function.
+    Default: ""
+  ResourceFunctionDescription:
+    Type: String
+    Description: |
+      The description of the resource function.
+    Default: ""
 
 Conditions:
   HasMacroFunctionName: !Not [!Equals [!Ref MacroFunctionName, ""]]
@@ -61,6 +71,7 @@ Resources:
         - HasResourceFunctionName
         - !Ref ResourceFunctionName
         - !Ref AWS::NoValue
+      Description: !Ref ResourceFunctionDescription
       Policies:
         - SSMParameterReadPolicy:
             # HACK: trim "/" prefix. See https://github.com/aws/serverless-application-model/issues/1112
@@ -84,6 +95,7 @@ Resources:
         - HasMacroFunctionName
         - !Ref MacroFunctionName
         - !Ref AWS::NoValue
+      Description: !Ref MacroFunctionDescription
       Environment:
         Variables:
           LAMBDA_ARN: !GetAtt ResourceFunction.Arn
