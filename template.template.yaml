@@ -59,10 +59,6 @@ Parameters:
 Conditions:
   HasMacroFunctionName: !Not [!Equals [!Ref MacroFunctionName, ""]]
   HasResourceFunctionName: !Not [!Equals [!Ref ResourceFunctionName, ""]]
-  HasMacroFunctionDescription:
-    !Not [!Equals [!Ref MacroFunctionDescription, ""]]
-  HasResourceFunctionDescription:
-    !Not [!Equals [!Ref ResourceFunctionDescription, ""]]
 
 Resources:
   ResourceFunction:
@@ -75,10 +71,7 @@ Resources:
         - HasResourceFunctionName
         - !Ref ResourceFunctionName
         - !Ref AWS::NoValue
-      Description: !If
-        - HasResourceFunctionDescription
-        - !Ref ResourceFunctionDescription
-        - !Ref AWS::NoValue
+      Description: !Ref ResourceFunctionDescription
       Policies:
         - SSMParameterReadPolicy:
             # HACK: trim "/" prefix. See https://github.com/aws/serverless-application-model/issues/1112
@@ -102,10 +95,7 @@ Resources:
         - HasMacroFunctionName
         - !Ref MacroFunctionName
         - !Ref AWS::NoValue
-      Description: !If
-        - HasMacroFunctionDescription
-        - !Ref MacroFunctionDescription
-        - !Ref AWS::NoValue
+      Description: !Ref MacroFunctionDescription
       Environment:
         Variables:
           LAMBDA_ARN: !GetAtt ResourceFunction.Arn
