@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/aws/aws-lambda-go v1.28.0
-	github.com/aws/aws-sdk-go-v2 v1.12.0
+	github.com/aws/aws-sdk-go-v2 v1.13.0
 	github.com/aws/aws-sdk-go-v2/config v1.12.0
 	github.com/aws/aws-sdk-go-v2/service/kms v1.13.0
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.19.0
@@ -24,7 +24,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.6.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.8.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.13.0 // indirect
-	github.com/aws/smithy-go v1.9.1 // indirect
+	github.com/aws/smithy-go v1.10.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
