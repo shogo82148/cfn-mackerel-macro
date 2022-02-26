@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.14.0
 	github.com/aws/aws-sdk-go-v2/config v1.13.1
 	github.com/aws/aws-sdk-go-v2/service/kms v1.15.0
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.20.0
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.21.0
 	github.com/google/go-cmp v0.5.7
 	github.com/shogo82148/pointer v1.0.0
 	github.com/sirupsen/logrus v1.8.1
