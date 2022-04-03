@@ -22,7 +22,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 					Region:       "ap-northeast-1",
 					Key:          pointer.String("AKIAIOSFODNN7EXAMPLE"),
 					SecretKey:    pointer.String("wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"),
-					IncludedTags: "TagName:TagValue,\"Tag:Name\":\"Tag,Value\",'Tag\"Name':\"Tag' Value\"",
+					IncludedTags: "TagKey:TagValue,\"Tag:Key\":\"Tag,Value\",'Tag\"Key':\"Tag' Value\"",
 					Services: map[string]*mackerel.AWSIntegrationService{
 						"Billing": {
 							Enable:          false,
@@ -58,15 +58,15 @@ func TestCreateAWSIntegration(t *testing.T) {
 			"SecretKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
 			"IncludedTags": []interface{}{
 				map[string]interface{}{
-					"Name":  "TagName",
+					"Key":   "TagKey",
 					"Value": "TagValue",
 				},
 				map[string]interface{}{
-					"Name":  "Tag:Name",
+					"Key":   "Tag:Key",
 					"Value": "Tag,Value",
 				},
 				map[string]interface{}{
-					"Name":  "Tag\"Name",
+					"Key":   "Tag\"Key",
 					"Value": "Tag' Value",
 				},
 			},
