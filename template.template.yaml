@@ -6,7 +6,7 @@ Metadata:
   AWS::ServerlessRepo::Application:
     Name: cfn-mackerel-macro
     Description: provide a CloudFormation macro for creating Mackerel resources
-    Author: Ichinose Shogo
+    Author: ICHINOSE Shogo
     SpdxLicenseId: MIT
     LicenseUrl: LICENSE
     ReadmeUrl: README.md
