@@ -86,7 +86,7 @@ func (r *awsIntegration) convertToParam(ctx context.Context, properties map[stri
 func (r *awsIntegration) convertTagList(d *dproxy.Drain, properties dproxy.Proxy) string {
 	var tags []string
 	for _, tag := range d.ProxyArray(properties.ProxySet()) {
-		name := d.String(tag.M("Name"))
+		name := d.String(tag.M("Key"))
 		value := d.String(tag.M("Value"))
 		tags = append(tags, r.escapeTagValue(name)+":"+r.escapeTagValue(value))
 	}

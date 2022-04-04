@@ -357,6 +357,9 @@ Resources:
       Services:
         - ServiceId: S3
           Enable: true
+      IncludedTags:
+        - Key: Included
+          Value: true
 
   # Example for AWS Integrations using IAM User (deprecated)
   MackerelUser:
@@ -385,6 +388,9 @@ Resources:
       Services:
         - ServiceId: S3
           Enable: true
+      ExcludedTags:
+        - Key: Excluded
+          Value: true
 
 Outputs:
   OrgName:
