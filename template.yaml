@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: "cfn-mackerel-macro v0.0.13 - provide a CloudFormation macro for creating Mackerel resources."
+Description: "cfn-mackerel-macro v0.0.14 - provide a CloudFormation macro for creating Mackerel resources."
 
 Metadata:
   AWS::ServerlessRepo::Application:
@@ -12,7 +12,7 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ["macro", "mackerelio"]
     HomePageUrl: https://github.com/shogo82148/cfn-mackerel-macro
-    SemanticVersion: "0.0.13"
+    SemanticVersion: "0.0.14"
     SourceCodeUrl: https://github.com/shogo82148/cfn-mackerel-macro
 
 Parameters:
@@ -83,7 +83,7 @@ Resources:
           MACKEREL_APIURL: !Ref BaseUrl
           MACKEREL_LOG_LEVEL: !Ref LogLevel
       Tags:
-        Version: 0.0.13
+        Version: 0.0.14
 
   MacroFunction:
     Type: AWS::Serverless::Function
@@ -100,7 +100,7 @@ Resources:
         Variables:
           LAMBDA_ARN: !GetAtt ResourceFunction.Arn
       Tags:
-        Version: 0.0.13
+        Version: 0.0.14
 
   Macro:
     Type: AWS::CloudFormation::Macro
