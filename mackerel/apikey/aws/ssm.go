@@ -24,7 +24,7 @@ func (p *SSM) MackerelAPIKey(ctx context.Context) (string, error) {
 	svc := ssm.NewFromConfig(p.Config)
 	resp, err := svc.GetParameter(ctx, &ssm.GetParameterInput{
 		Name:           aws.String(apikey),
-		WithDecryption: p.WithDecryption,
+		WithDecryption: aws.Bool(p.WithDecryption),
 	})
 	if err != nil {
 		return "", err
