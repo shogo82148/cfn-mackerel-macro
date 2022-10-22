@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-lambda-go v1.34.1
 	github.com/aws/aws-sdk-go-v2 v1.17.0
 	github.com/aws/aws-sdk-go-v2/config v1.17.8
-	github.com/aws/aws-sdk-go-v2/service/kms v1.18.13
+	github.com/aws/aws-sdk-go-v2/service/kms v1.18.14
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.31.2
 	github.com/google/go-cmp v0.5.9
 	github.com/shogo82148/pointer v1.2.0
