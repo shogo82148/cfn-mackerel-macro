@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/aws/aws-lambda-go v1.35.0
-	github.com/aws/aws-sdk-go-v2 v1.17.1
+	github.com/aws/aws-sdk-go-v2 v1.17.2
 	github.com/aws/aws-sdk-go-v2/config v1.18.3
 	github.com/aws/aws-sdk-go-v2/service/kms v1.19.0
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.33.1
@@ -25,7 +25,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.25 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.17.5 // indirect
-	github.com/aws/smithy-go v1.13.4 // indirect
+	github.com/aws/smithy-go v1.13.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
