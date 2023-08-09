@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/kms v1.24.2
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.2
 	github.com/google/go-cmp v0.5.9
-	github.com/shogo82148/pointer v1.2.0
+	github.com/shogo82148/pointer v1.3.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/xeipuuv/gojsonschema v1.2.0
 	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
