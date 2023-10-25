@@ -5,9 +5,9 @@ go 1.19
 require (
 	github.com/aws/aws-lambda-go v1.41.0
 	github.com/aws/aws-sdk-go-v2 v1.21.2
-	github.com/aws/aws-sdk-go-v2/config v1.19.0
+	github.com/aws/aws-sdk-go-v2/config v1.19.1
 	github.com/aws/aws-sdk-go-v2/service/kms v1.24.7
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.39.0
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.40.0
 	github.com/google/go-cmp v0.6.0
 	github.com/shogo82148/pointer v1.3.0
 	github.com/sirupsen/logrus v1.9.3
