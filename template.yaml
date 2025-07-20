@@ -64,7 +64,7 @@ Resources:
   ResourceFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: provided.al2
+      Runtime: provided.al2023
       CodeUri: ./resource.zip
       Handler: main
       FunctionName: !If
