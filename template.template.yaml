@@ -49,12 +49,12 @@ Parameters:
     Type: String
     Description: |
       The description of the macro function.
-    Default: ""
+    Default: "macro function for cfn-mackerel-macro"
   ResourceFunctionDescription:
     Type: String
     Description: |
       The description of the resource function.
-    Default: ""
+    Default: "resource function for cfn-mackerel-macro"
 
 Conditions:
   HasMacroFunctionName: !Not [!Equals [!Ref MacroFunctionName, ""]]
@@ -64,7 +64,7 @@ Resources:
   ResourceFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: provided.al2
+      Runtime: provided.al2023
       CodeUri: ./resource.zip
       Handler: main
       FunctionName: !If
@@ -88,7 +88,7 @@ Resources:
   MacroFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: python3.9
+      Runtime: python3.13
       CodeUri: ./macro.zip
       Handler: app.handler
       FunctionName: !If
