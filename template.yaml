@@ -49,12 +49,12 @@ Parameters:
     Type: String
     Description: |
       The description of the macro function.
-    Default: ""
+    Default: "macro function for cfn-mackerel-macro"
   ResourceFunctionDescription:
     Type: String
     Description: |
       The description of the resource function.
-    Default: ""
+    Default: "resource function for cfn-mackerel-macro"
 
 Conditions:
   HasMacroFunctionName: !Not [!Equals [!Ref MacroFunctionName, ""]]
