@@ -3,7 +3,7 @@ module github.com/shogo82148/cfn-mackerel-macro
 go 1.24.6
 
 require (
-	github.com/aws/aws-lambda-go v1.50.0
+	github.com/aws/aws-lambda-go v1.51.0
 	github.com/aws/aws-sdk-go-v2 v1.38.1
 	github.com/aws/aws-sdk-go-v2/config v1.31.2
 	github.com/aws/aws-sdk-go-v2/service/kms v1.44.2
