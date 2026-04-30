@@ -23,6 +23,7 @@ func TestCreateMonitor_MonitorConnectivity(t *testing.T) {
 					NotificationInterval: 60,
 					Scopes:               []string{"my-service"},
 					ExcludeScopes:        []string{"my-service:my-role"},
+					IsMute:               true,
 				}
 				if diff := cmp.Diff(param, want); diff != "" {
 					t.Errorf("monitor differs: (-got +want)\n%s", diff)
@@ -46,6 +47,7 @@ func TestCreateMonitor_MonitorConnectivity(t *testing.T) {
 			"Scopes":               []interface{}{"mkr:test-org:service:my-service"},
 			"ExcludeScopes":        []interface{}{"mkr:test-org:role:my-service:my-role"},
 			"NotificationInterval": 60,
+			"IsMute":               true,
 		},
 	}
 	id, param, err := f.Handle(context.Background(), event)
@@ -85,6 +87,7 @@ func TestCreateMonitor_MonitorHostMetric(t *testing.T) {
 					Scopes:               []string{"Hatena-Blog"},
 					ExcludeScopes:        []string{"Hatena-Bookmark:db-master"},
 					NotificationInterval: 60,
+					IsMute:               true,
 				}
 				if diff := cmp.Diff(param, want); diff != "" {
 					t.Errorf("monitor differs: (-got +want)\n%s", diff)
@@ -114,6 +117,7 @@ func TestCreateMonitor_MonitorHostMetric(t *testing.T) {
 			"Scopes":               []interface{}{"mkr:test-org:service:Hatena-Blog"},
 			"ExcludeScopes":        []interface{}{"mkr:test-org:role:Hatena-Bookmark:db-master"},
 			"NotificationInterval": 60,
+			"IsMute":               true,
 		},
 	}
 	id, param, err := f.Handle(context.Background(), event)
@@ -154,6 +158,7 @@ func TestCreateMonitor_MonitorServiceMetric(t *testing.T) {
 					NotificationInterval:    60,
 					MissingDurationWarning:  pointer.Uint64(360),
 					MissingDurationCritical: pointer.Uint64(720),
+					IsMute:                  true,
 				}
 				if diff := cmp.Diff(param, want); diff != "" {
 					t.Errorf("monitor differs: (-got +want)\n%s", diff)
@@ -184,6 +189,7 @@ func TestCreateMonitor_MonitorServiceMetric(t *testing.T) {
 			"MissingDurationWarning":  360,
 			"MissingDurationCritical": 720,
 			"NotificationInterval":    60,
+			"IsMute":                  true,
 		},
 	}
 	id, param, err := f.Handle(context.Background(), event)
@@ -232,6 +238,7 @@ func TestCreateMonitor_MonitorExternalHTTP(t *testing.T) {
 							Value: "no-cache",
 						},
 					},
+					IsMute: true,
 				}
 				if diff := cmp.Diff(param, want); diff != "" {
 					t.Errorf("monitor differs: (-got +want)\n%s", diff)
@@ -269,6 +276,7 @@ func TestCreateMonitor_MonitorExternalHTTP(t *testing.T) {
 					"Value": "no-cache",
 				},
 			},
+			"IsMute": true,
 		},
 	}
 	id, param, err := f.Handle(context.Background(), event)
@@ -305,6 +313,7 @@ func TestCreateMonitor_MonitorExpression(t *testing.T) {
 					Operator:   ">",
 					Warning:    pointer.Float64(5.0),
 					Critical:   pointer.Float64(10.0),
+					IsMute:     true,
 				}
 				if diff := cmp.Diff(param, want); diff != "" {
 					t.Errorf("monitor differs: (-got +want)\n%s", diff)
@@ -330,6 +339,7 @@ func TestCreateMonitor_MonitorExpression(t *testing.T) {
 			"Warning":              5.0,
 			"Critical":             10.0,
 			"NotificationInterval": 60.0,
+			"IsMute":               true,
 		},
 	}
 	id, param, err := f.Handle(context.Background(), event)
@@ -362,6 +372,7 @@ func TestCreateMonitor_MonitorAnomalyDetection(t *testing.T) {
 					Memo:               "my anomaly detection for roles",
 					Scopes:             []string{"myService", "myService:myRole"},
 					WarningSensitivity: mackerel.AnomalyDetectionSensitivityInsensitive,
+					IsMute:             true,
 				}
 				if diff := cmp.Diff(param, want); diff != "" {
 					t.Errorf("monitor differs: (-got +want)\n%s", diff)
@@ -387,6 +398,7 @@ func TestCreateMonitor_MonitorAnomalyDetection(t *testing.T) {
 				"mkr:test-org:role:myService:myRole",
 			},
 			"WarningSensitivity": "insensitive",
+			"IsMute":             true,
 		},
 	}
 	id, param, err := f.Handle(context.Background(), event)

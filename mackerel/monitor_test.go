@@ -44,6 +44,7 @@ func TestFindMonitors(t *testing.T) {
 				"notificationInterval": 60,
 				"scopes":               []interface{}{"Hatena-Blog"},
 				"excludeScopes":        []interface{}{"Hatena-Bookmark:db-master"},
+				"isMute":               true,
 			},
 			want: &MonitorHostMetric{
 				ID:                   "2cSZzK3XfmG",
@@ -61,6 +62,7 @@ func TestFindMonitors(t *testing.T) {
 
 				Scopes:        []string{"Hatena-Blog"},
 				ExcludeScopes: []string{"Hatena-Bookmark:db-master"},
+				IsMute:        true,
 			},
 		},
 		{
@@ -71,6 +73,7 @@ func TestFindMonitors(t *testing.T) {
 				"memo":          "A monitor that checks connectivity.",
 				"scopes":        []interface{}{"service1"},
 				"excludeScopes": []interface{}{"service1:role3"},
+				"isMute":        true,
 			},
 			want: &MonitorConnectivity{
 				ID:            "2cSZzK3XfmG",
@@ -79,6 +82,7 @@ func TestFindMonitors(t *testing.T) {
 				Type:          MonitorTypeConnectivity,
 				Scopes:        []string{"service1"},
 				ExcludeScopes: []string{"service1:role3"},
+				IsMute:        true,
 			},
 		},
 		{
@@ -97,6 +101,7 @@ func TestFindMonitors(t *testing.T) {
 				"missingDurationWarning":  360,
 				"missingDurationCritical": 720,
 				"notificationInterval":    60,
+				"isMute":                  true,
 			},
 			want: &MonitorServiceMetric{
 				ID:                   "2cSZzK3XfmG",
@@ -115,6 +120,7 @@ func TestFindMonitors(t *testing.T) {
 
 				MissingDurationWarning:  ptrUint64(360),
 				MissingDurationCritical: ptrUint64(720),
+				IsMute:                  true,
 			},
 		},
 		{
@@ -342,6 +348,8 @@ func TestCreateMonitor(t *testing.T) {
 
 				Scopes:        []string{"Hatena-Blog"},
 				ExcludeScopes: []string{"Hatena-Bookmark:db-master"},
+
+				IsMute: true,
 			},
 			want: map[string]interface{}{
 				"type":                 "host",
@@ -356,6 +364,7 @@ func TestCreateMonitor(t *testing.T) {
 				"notificationInterval": 60.0,
 				"scopes":               []interface{}{"Hatena-Blog"},
 				"excludeScopes":        []interface{}{"Hatena-Bookmark:db-master"},
+				"isMute":               true,
 			},
 		},
 		{
@@ -389,6 +398,8 @@ func TestCreateMonitor(t *testing.T) {
 
 				MissingDurationWarning:  ptrUint64(360),
 				MissingDurationCritical: ptrUint64(720),
+
+				IsMute: true,
 			},
 			want: map[string]interface{}{
 				"type":                    "service",
@@ -404,6 +415,7 @@ func TestCreateMonitor(t *testing.T) {
 				"missingDurationWarning":  360.0,
 				"missingDurationCritical": 720.0,
 				"notificationInterval":    60.0,
+				"isMute":                  true,
 			},
 		},
 		{

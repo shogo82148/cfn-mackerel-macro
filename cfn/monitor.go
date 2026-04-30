@@ -121,6 +121,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			Scopes:               scopes,
 			ExcludeScopes:        excludeScopes,
 			NotificationInterval: uint64(d.Int64(dproxy.Default(in.M("NotificationInterval"), 0))),
+			IsMute:               d.Bool(dproxy.Default(in.M("IsMute"), false)),
 		}
 	case mackerel.MonitorTypeHostMetric.String():
 		var scopes, excludeScopes []string
@@ -156,6 +157,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			Scopes:               scopes,
 			ExcludeScopes:        excludeScopes,
 			NotificationInterval: uint64(d.Int64(dproxy.Default(in.M("NotificationInterval"), 0))),
+			IsMute:               d.Bool(dproxy.Default(in.M("IsMute"), false)),
 		}
 	case mackerel.MonitorTypeServiceMetric.String():
 		serviceName, err := m.Function.parseServiceID(ctx, d.String(in.M("Service")))
@@ -175,6 +177,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			NotificationInterval:    d.Uint64(dproxy.Default(in.M("NotificationInterval"), 0)),
 			MissingDurationWarning:  d.OptionalUint64(in.M("MissingDurationWarning")),
 			MissingDurationCritical: d.OptionalUint64(in.M("MissingDurationCritical")),
+			IsMute:                  d.Bool(dproxy.Default(in.M("IsMute"), false)),
 		}
 	case mackerel.MonitorTypeExternalHTTP.String():
 		var serviceName string
@@ -215,6 +218,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			CertificationExpirationCritical: d.OptionalUint64(in.M("CertificationExpirationCritical")),
 			SkipCertificateVerification:     d.Bool(dproxy.Default(in.M("SkipCertificateVerification"), false)),
 			Headers:                         headers,
+			IsMute:                          d.Bool(dproxy.Default(in.M("IsMute"), false)),
 		}
 	case mackerel.MonitorTypeExpression.String():
 		mm = &mackerel.MonitorExpression{
@@ -225,6 +229,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			Warning:              d.OptionalFloat64(in.M("Warning")),
 			Critical:             d.OptionalFloat64(in.M("Critical")),
 			NotificationInterval: d.Uint64(dproxy.Default(in.M("NotificationInterval"), 0)),
+			IsMute:               d.Bool(dproxy.Default(in.M("IsMute"), false)),
 		}
 	case mackerel.MonitorTypeAnomalyDetection.String():
 		var scopes []string
@@ -247,6 +252,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 			WarningSensitivity:   mackerel.AnomalyDetectionSensitivityType(d.String(dproxy.Default(in.M("WarningSensitivity"), ""))),
 			CriticalSensitivity:  mackerel.AnomalyDetectionSensitivityType(d.String(dproxy.Default(in.M("CriticalSensitivity"), ""))),
 			TrainingPeriodFrom:   mackerel.Timestamp(d.Int64(dproxy.Default(in.M("TrainingPeriodFrom"), 0))),
+			IsMute:               d.Bool(dproxy.Default(in.M("IsMute"), false)),
 		}
 	default:
 		return nil, fmt.Errorf("unknown monitor type: %s", typ)
