@@ -490,6 +490,11 @@
                     "PrimitiveType": "Integer",
                     "Required": false,
                     "UpdateType": "Mutable"
+                },
+                "IsMute": {
+                    "PrimitiveType": "Boolean",
+                    "Required": false,
+                    "UpdateType": "Mutable"
                 }
             }
         },
