@@ -19,7 +19,10 @@ func TestDo(t *testing.T) {
 			t.Errorf("unexpected api key, want %s, got %s", apiKey, r.Header.Get("X-Api-Key"))
 		}
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, `{}`)
+		_, err := fmt.Fprintln(w, `{}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -80,7 +83,10 @@ func TestDo(t *testing.T) {
 func TestError(t *testing.T) {
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, `{"error": {"message": "ERROR MESSAGE HERE"}}`)
+		_, err := fmt.Fprintln(w, `{"error": {"message": "ERROR MESSAGE HERE"}}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 

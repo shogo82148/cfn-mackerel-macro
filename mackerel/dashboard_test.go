@@ -628,7 +628,9 @@ func TestFindDashboard(t *testing.T) {
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusOK)
 				enc := json.NewEncoder(w)
-				enc.Encode(tc.resp)
+				if err := enc.Encode(tc.resp); err != nil {
+					t.Error(err)
+				}
 			}))
 			defer ts.Close()
 
@@ -1055,7 +1057,10 @@ func TestCreateDashboard(t *testing.T) {
 				}
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusOK)
-				fmt.Fprint(w, "{}")
+				_, err := fmt.Fprint(w, "{}")
+				if err != nil {
+					t.Error(err)
+				}
 			}))
 			defer ts.Close()
 

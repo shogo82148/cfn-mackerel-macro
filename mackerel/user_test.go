@@ -21,7 +21,7 @@ func TestFindUsers(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{
+		_, err := fmt.Fprint(w, `{
 			"users": [
 			{
 				"id": "2cdkEV8JB5d",
@@ -39,6 +39,9 @@ func TestFindUsers(t *testing.T) {
 			}
 			]
 		}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -85,7 +88,7 @@ func TestDeleteUser(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{
+		_, err := fmt.Fprint(w, `{
 				"id": "2cdkEV8JB5d",
 				"screenName": "shogo82148@gmail.com",
 				"email": "shogo82148@gmail.com",
@@ -99,6 +102,9 @@ func TestDeleteUser(t *testing.T) {
 				],
 				"joinedAt": 1411403412
 			}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 

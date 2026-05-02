@@ -13,7 +13,10 @@ func TestGetOrg(t *testing.T) {
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"name": "org-name"}`)
+		_, err := fmt.Fprint(w, `{"name": "org-name"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
