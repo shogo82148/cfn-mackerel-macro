@@ -151,7 +151,7 @@ func (c *Client) do(ctx context.Context, method, path string, in, out any) (http
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck // ignore error because we can't do anything about it.
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return resp.Header, handleError(resp)
@@ -159,7 +159,7 @@ func (c *Client) do(ctx context.Context, method, path string, in, out any) (http
 
 	if out == nil {
 		// ignore the body
-		io.Copy(io.Discard, resp.Body)
+		_, _ = io.Copy(io.Discard, resp.Body)
 	} else {
 		dec := json.NewDecoder(resp.Body)
 		if err := dec.Decode(out); err != nil {

@@ -21,7 +21,10 @@ func TestCreateRole(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"name":"application","memo":"the application of awesome service"}`)
+		_, err := fmt.Fprint(w, `{"name":"application","memo":"the application of awesome service"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -61,7 +64,10 @@ func TestDeleteRole(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"name":"application","memo":"the application of awesome service"}`)
+		_, err := fmt.Fprint(w, `{"name":"application","memo":"the application of awesome service"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 

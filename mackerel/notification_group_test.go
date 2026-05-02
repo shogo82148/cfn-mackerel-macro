@@ -22,7 +22,7 @@ func TestFindNotificationGroups(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"notificationGroups":[{
+		_, err := fmt.Fprint(w, `{"notificationGroups":[{
 			"id": "2oWY1xPXrco",
 			"name": "Example notification group",
 			"notificationLevel": "all",
@@ -45,6 +45,9 @@ func TestFindNotificationGroups(t *testing.T) {
 			  }
 			]
 		  }]}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -114,7 +117,7 @@ func TestCreateNotificationGroups(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{
+		if _, err := fmt.Fprint(w, `{
 			"id": "2oWY1xPXrco",
 			"name": "Example notification group",
 			"notificationLevel": "all",
@@ -122,7 +125,9 @@ func TestCreateNotificationGroups(t *testing.T) {
 			"childChannelIds": [],
 			"monitors": [],
 			"services": []
-		}`)
+		}`); err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -182,7 +187,7 @@ func TestUpdateNotificationGroups(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{
+		_, err := fmt.Fprint(w, `{
 			"id": "2oWY1xPXrco",
 			"name": "Example notification group",
 			"notificationLevel": "all",
@@ -191,6 +196,9 @@ func TestUpdateNotificationGroups(t *testing.T) {
 			"monitors": [],
 			"services": []
 		}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -236,7 +244,7 @@ func TestDeleteNotificationGroups(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{
+		_, err := fmt.Fprint(w, `{
 			"id": "2oWY1xPXrco",
 			"name": "Example notification group",
 			"notificationLevel": "all",
@@ -245,6 +253,9 @@ func TestDeleteNotificationGroups(t *testing.T) {
 			"monitors": [],
 			"services": []
 		}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 

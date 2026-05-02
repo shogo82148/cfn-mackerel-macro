@@ -22,7 +22,7 @@ func TestFindAWSIntegrations(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"aws_integrations": [
+		_, err := fmt.Fprint(w, `{"aws_integrations": [
 {
 	"id": "46vGJ7uUsp3",
 	"name": "shogo82148",
@@ -42,6 +42,9 @@ func TestFindAWSIntegrations(t *testing.T) {
 	}
 }
 ]}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -93,7 +96,7 @@ func TestFindAWSIntegration(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{
+		_, err := fmt.Fprint(w, `{
 	"id": "46vGJ7uUsp3",
 	"name": "shogo82148",
 	"memo": "",
@@ -111,6 +114,9 @@ func TestFindAWSIntegration(t *testing.T) {
 		}
 	}
 }`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -185,7 +191,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{
+		_, err := fmt.Fprint(w, `{
 	"id": "46vGJ7uUsp3",
 	"name": "shogo82148",
 	"memo": "",
@@ -203,6 +209,9 @@ func TestCreateAWSIntegration(t *testing.T) {
 		}
 	}
 }`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -267,7 +276,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{
+		_, err := fmt.Fprint(w, `{
 	"id": "46vGJ7uUsp3",
 	"name": "shogo82148",
 	"memo": "",
@@ -285,6 +294,9 @@ func TestUpdateAWSIntegration(t *testing.T) {
 		}
 	}
 }`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -349,7 +361,7 @@ func TestDeleteAWSIntegration(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{
+		_, err := fmt.Fprint(w, `{
 	"id": "46vGJ7uUsp3",
 	"name": "shogo82148",
 	"memo": "",
@@ -367,6 +379,9 @@ func TestDeleteAWSIntegration(t *testing.T) {
 		}
 	}
 }`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -416,7 +431,10 @@ func TestCreateAWSIntegrationExternalID(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"externalId": "hogehoge"}`)
+		_, err := fmt.Fprint(w, `{"externalId": "hogehoge"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -449,7 +467,7 @@ func TestFindAWSIntegrationsExcludableMetrics(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"S3": [
+		_, err := fmt.Fprint(w, `{"S3": [
 				"s3.requests.all_requests",
 				"s3.requests.get_requests",
 				"s3.requests.put_requests",
@@ -470,6 +488,9 @@ func TestFindAWSIntegrationsExcludableMetrics(t *testing.T) {
 				"s3.bucket_size.*",
 				"s3.number_of_objects.count"
 			]}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 

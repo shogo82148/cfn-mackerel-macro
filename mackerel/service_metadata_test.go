@@ -25,7 +25,10 @@ func TestGetServiceMetaData(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Last-Modified", lastModified.Format(http.TimeFormat))
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"type":12345,"region":"jp","env":"staging","instance_type":"c4.xlarge"}`)
+		_, err := fmt.Fprint(w, `{"type":12345,"region":"jp","env":"staging","instance_type":"c4.xlarge"}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -69,7 +72,10 @@ func TestGetServiceMetaDataNameSpaces(t *testing.T) {
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"metadata":[{"namespace": "test"}]}`)
+		_, err := fmt.Fprint(w, `{"metadata":[{"namespace": "test"}]}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -119,7 +125,10 @@ func TestPutServiceMetaData(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"success":true}`)
+		_, err := fmt.Fprint(w, `{"success":true}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
@@ -157,7 +166,10 @@ func TestDeleteServiceMetaData(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `{"success":true}`)
+		_, err := fmt.Fprint(w, `{"success":true}`)
+		if err != nil {
+			t.Error(err)
+		}
 	}))
 	defer ts.Close()
 
