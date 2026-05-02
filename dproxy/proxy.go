@@ -7,7 +7,7 @@ type Proxy interface {
 
 	// Value returns a proxied value.  If there are no values, it returns
 	// error.
-	Value() (interface{}, error)
+	Value() (any, error)
 
 	// Bool returns its value.  If value isn't the type, it returns error.
 	Bool() (bool, error)
@@ -40,10 +40,10 @@ type Proxy interface {
 	OptionalString() (*string, error)
 
 	// Array returns its value.  If value isn't the type, it returns error.
-	Array() ([]interface{}, error)
+	Array() ([]any, error)
 
 	// Map returns its value.  If value isn't the type, it returns error.
-	Map() (map[string]interface{}, error)
+	Map() (map[string]any, error)
 
 	// A returns an item from value treated as the array.
 	A(n int) Proxy
@@ -88,10 +88,10 @@ type ProxySet interface {
 	StringArray() ([]string, error)
 
 	// ArrayArray returns [][]interface{} which converted from the set.
-	ArrayArray() ([][]interface{}, error)
+	ArrayArray() ([][]any, error)
 
 	// MapArray returns []map[string]interface{} which converted from the set.
-	MapArray() ([]map[string]interface{}, error)
+	MapArray() ([]map[string]any, error)
 
 	// ProxyArray returns []Proxy which wrap each items.
 	ProxyArray() ([]Proxy, error)
@@ -110,11 +110,11 @@ type ProxySet interface {
 }
 
 // New creates a new Proxy instance for v.
-func New(v interface{}) Proxy {
+func New(v any) Proxy {
 	return &valueProxy{value: v}
 }
 
 // NewSet create a new ProxySet instance for v.
-func NewSet(v []interface{}) ProxySet {
+func NewSet(v []any) ProxySet {
 	return &setProxy{values: v}
 }

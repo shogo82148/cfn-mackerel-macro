@@ -7,7 +7,7 @@ import (
 
 func TestValueProxy_Bool(t *testing.T) {
 	tests := []struct {
-		in  interface{}
+		in  any
 		out bool
 		err ErrorCode
 	}{
@@ -146,7 +146,7 @@ func TestValueProxy_Bool(t *testing.T) {
 
 func TestValueProxy_Int64(t *testing.T) {
 	tests := []struct {
-		in  interface{}
+		in  any
 		out int64
 		err ErrorCode
 	}{
@@ -281,7 +281,7 @@ func TestValueProxy_Int64(t *testing.T) {
 
 func TestValueProxy_Uint64(t *testing.T) {
 	tests := []struct {
-		in  interface{}
+		in  any
 		out uint64
 		err ErrorCode
 	}{

@@ -6,7 +6,7 @@ import (
 )
 
 type valueProxy struct {
-	value  interface{}
+	value  any
 	parent frame
 	label  string
 }
@@ -18,7 +18,7 @@ func (p *valueProxy) Nil() bool {
 	return p.value == nil
 }
 
-func (p *valueProxy) Value() (interface{}, error) {
+func (p *valueProxy) Value() (any, error) {
 	return p.value, nil
 }
 
@@ -369,18 +369,18 @@ func (p *valueProxy) OptionalString() (*string, error) {
 	return &v, nil
 }
 
-func (p *valueProxy) Array() ([]interface{}, error) {
+func (p *valueProxy) Array() ([]any, error) {
 	switch v := p.value.(type) {
-	case []interface{}:
+	case []any:
 		return v, nil
 	default:
 		return nil, typeError(p, Tarray, v)
 	}
 }
 
-func (p *valueProxy) Map() (map[string]interface{}, error) {
+func (p *valueProxy) Map() (map[string]any, error) {
 	switch v := p.value.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		return v, nil
 	default:
 		return nil, typeError(p, Tmap, v)
@@ -389,7 +389,7 @@ func (p *valueProxy) Map() (map[string]interface{}, error) {
 
 func (p *valueProxy) A(n int) Proxy {
 	switch v := p.value.(type) {
-	case []interface{}:
+	case []any:
 		a := "[" + strconv.Itoa(n) + "]"
 		if n < 0 || n >= len(v) {
 			return notfoundError(p, a)
@@ -406,7 +406,7 @@ func (p *valueProxy) A(n int) Proxy {
 
 func (p *valueProxy) M(k string) Proxy {
 	switch v := p.value.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		a := "." + k
 		w, ok := v[k]
 		if !ok {
@@ -428,7 +428,7 @@ func (p *valueProxy) P(q string) Proxy {
 
 func (p *valueProxy) ProxySet() ProxySet {
 	switch v := p.value.(type) {
-	case []interface{}:
+	case []any:
 		return &setProxy{
 			values: v,
 			parent: p,
@@ -449,9 +449,9 @@ func (p *valueProxy) Q(k string) ProxySet {
 
 func (p *valueProxy) findJPT(t string) Proxy {
 	switch v := p.value.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		return p.M(t)
-	case []interface{}:
+	case []any:
 		n, err := strconv.ParseUint(t, 10, 0)
 		if err != nil {
 			return &errorProxy{
@@ -479,7 +479,7 @@ func (p *valueProxy) frameLabel() string {
 }
 
 // Default return the v as default value, if p is not found error.
-func Default(p Proxy, v interface{}) Proxy {
+func Default(p Proxy, v any) Proxy {
 	if err, ok := p.(Error); ok && err.ErrorCode() == ErrorCodeNotFound {
 		return New(v)
 	}

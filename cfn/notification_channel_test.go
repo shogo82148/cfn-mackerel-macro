@@ -35,15 +35,15 @@ func TestCreateNotificationChannel(t *testing.T) {
 			ResourceType:      "Custom::NotificationChannel",
 			LogicalResourceID: "Channel",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Type": "slack",
 				"Name": "channel-foobar",
 				"Url":  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
-				"Mentions": map[string]interface{}{
+				"Mentions": map[string]any{
 					"Ok":      "ok message",
 					"Warning": "warning message",
 				},
-				"Events": []interface{}{"alert"},
+				"Events": []any{"alert"},
 			},
 		},
 	}

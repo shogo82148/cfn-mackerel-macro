@@ -2,8 +2,8 @@ package cfn
 
 import (
 	"context"
-	"log"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/cfn"
@@ -16,7 +16,7 @@ type service struct {
 	Event    cfn.Event
 }
 
-func (s *service) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (s *service) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	in := dproxy.New(s.Event.ResourceProperties)
 	name, err := in.M("Name").String()
 	if err != nil {
@@ -54,12 +54,12 @@ func (s *service) create(ctx context.Context) (physicalResourceID string, data m
 		return id, nil, err
 	}
 
-	return id, map[string]interface{}{
+	return id, map[string]any{
 		"Name": name,
 	}, nil
 }
 
-func (s *service) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (s *service) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	var d dproxy.Drain
 	in := dproxy.New(s.Event.ResourceProperties)
 	old := dproxy.New(s.Event.OldResourceProperties)
@@ -72,7 +72,7 @@ func (s *service) update(ctx context.Context) (physicalResourceID string, data m
 
 	if name == oldName {
 		// No update is needed.
-		return s.Event.PhysicalResourceID, map[string]interface{}{
+		return s.Event.PhysicalResourceID, map[string]any{
 			"Name": name,
 		}, nil
 	}
@@ -81,7 +81,7 @@ func (s *service) update(ctx context.Context) (physicalResourceID string, data m
 	return s.create(ctx)
 }
 
-func (s *service) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (s *service) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	physicalResourceID = s.Event.PhysicalResourceID
 	serviceName, err := s.Function.parseServiceID(ctx, physicalResourceID)
 	if err != nil {

@@ -2,10 +2,10 @@ package cfn
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
-	"errors"
 
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/shogo82148/cfn-mackerel-macro/dproxy"
@@ -17,7 +17,7 @@ type notificationChannel struct {
 	Event    cfn.Event
 }
 
-func (ch *notificationChannel) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (ch *notificationChannel) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := ch.Function.getclient()
 	param, err := ch.convertToParam(ctx, ch.Event.ResourceProperties)
 	if err != nil {
@@ -32,16 +32,16 @@ func (ch *notificationChannel) create(ctx context.Context) (physicalResourceID s
 	if err != nil {
 		return "", nil, err
 	}
-	return id, map[string]interface{}{
+	return id, map[string]any{
 		"Name": ret.NotificationChannelName(),
 	}, nil
 }
 
-func (ch *notificationChannel) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (ch *notificationChannel) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	return ch.create(ctx) // create new one and replace
 }
 
-func (ch *notificationChannel) convertToParam(ctx context.Context, properties map[string]interface{}) (mackerel.NotificationChannel, error) {
+func (ch *notificationChannel) convertToParam(ctx context.Context, properties map[string]any) (mackerel.NotificationChannel, error) {
 	var ret mackerel.NotificationChannel
 	var d dproxy.Drain
 	in := dproxy.New(properties)
@@ -90,7 +90,7 @@ func (ch *notificationChannel) convertEvents(d *dproxy.Drain, in dproxy.Proxy) [
 	return ret
 }
 
-func (ch *notificationChannel) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (ch *notificationChannel) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	physicalResourceID = ch.Event.PhysicalResourceID
 	id, err := ch.Function.parseNotificationChannelID(ctx, physicalResourceID)
 	if err != nil {

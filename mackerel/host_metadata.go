@@ -16,7 +16,7 @@ type HostMetaMetaData struct {
 // GetHostMetaData gets host metadata and stores the result in the value pointed to by v.
 // GetHostMetaData uses the json package for storing the result, see https://golang.org/pkg/encoding/json/#Unmarshal for decoding rules.
 // https://mackerel.io/api-docs/entry/metadata#get
-func (c *Client) GetHostMetaData(ctx context.Context, hostID, namespace string, v interface{}) (*HostMetaMetaData, error) {
+func (c *Client) GetHostMetaData(ctx context.Context, hostID, namespace string, v any) (*HostMetaMetaData, error) {
 	h, err := c.do(ctx, http.MethodGet, fmt.Sprintf("/api/v0/hosts/%s/metadata/%s", hostID, namespace), nil, v)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (c *Client) GetHostMetaDataNameSpaces(ctx context.Context, hostID string) (
 // PutHostMetaData creates or updates host metadata by the value of v.
 // PutHostMetaData uses the json package for putting the metadata, see https://golang.org/pkg/encoding/json/#Marshal for encoding roles.
 // https://mackerel.io/api-docs/entry/metadata#serviceput
-func (c *Client) PutHostMetaData(ctx context.Context, hostID, namespace string, v interface{}) error {
+func (c *Client) PutHostMetaData(ctx context.Context, hostID, namespace string, v any) error {
 	var data struct {
 		Success bool `json:"success"`
 	}

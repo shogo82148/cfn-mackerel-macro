@@ -23,7 +23,7 @@ func TestCreateHost(t *testing.T) {
 					}
 					return "3yAYEDLXKL5", nil
 				},
-				putHostMetaData: func(ctx context.Context, hostID, namespace string, v interface{}) error {
+				putHostMetaData: func(ctx context.Context, hostID, namespace string, v any) error {
 					if namespace != "cloudformation" {
 						t.Errorf("unexpected namespace: want cloudformation, got %s", namespace)
 					}
@@ -50,9 +50,9 @@ func TestCreateHost(t *testing.T) {
 			ResourceType:      "Custom:Host",
 			LogicalResourceID: "Host",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Name":  "host-foobar",
-				"Roles": []interface{}{"mkr:test-org:role:awesome-service:role-hogehoge"},
+				"Roles": []any{"mkr:test-org:role:awesome-service:role-hogehoge"},
 			},
 		},
 	}
@@ -92,9 +92,9 @@ func TestDeleteHost(t *testing.T) {
 			ResourceType:      "Custom:Host",
 			LogicalResourceID: "Host",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Name":  "host-foobar",
-				"Roles": []interface{}{"mkr:test-org:role:awesome-service:role-hogehoge"},
+				"Roles": []any{"mkr:test-org:role:awesome-service:role-hogehoge"},
 			},
 			PhysicalResourceID: "mkr:test-org:host:3yAYEDLXKL5",
 		},
@@ -134,9 +134,9 @@ func TestDeleteHost_hotNotFound(t *testing.T) {
 			ResourceType:      "Custom:Host",
 			LogicalResourceID: "Host",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Name":  "host-foobar",
-				"Roles": []interface{}{"mkr:test-org:role:awesome-service:role-hogehoge"},
+				"Roles": []any{"mkr:test-org:role:awesome-service:role-hogehoge"},
 			},
 			PhysicalResourceID: "mkr:test-org:host:3yAYEDLXKL5",
 		},

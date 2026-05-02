@@ -34,9 +34,9 @@ type makerelInterface interface {
 	RetireHost(ctx context.Context, id string) error
 
 	// host metadata
-	GetHostMetaData(ctx context.Context, hostID, namespace string, v interface{}) (*mackerel.HostMetaMetaData, error)
+	GetHostMetaData(ctx context.Context, hostID, namespace string, v any) (*mackerel.HostMetaMetaData, error)
 	GetHostMetaDataNameSpaces(ctx context.Context, hostID string) ([]string, error)
-	PutHostMetaData(ctx context.Context, hostID, namespace string, v interface{}) error
+	PutHostMetaData(ctx context.Context, hostID, namespace string, v any) error
 	DeleteHostMetaData(ctx context.Context, hostID, namespace string) error
 
 	// monitor
@@ -56,9 +56,9 @@ type makerelInterface interface {
 	DeleteRole(ctx context.Context, serviceName, roleName string) (*mackerel.Role, error)
 
 	// role metadata
-	GetRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v interface{}) (*mackerel.RoleMetaMetaData, error)
+	GetRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v any) (*mackerel.RoleMetaMetaData, error)
 	GetRoleMetaDataNameSpaces(ctx context.Context, serviceName, roleName string) ([]string, error)
-	PutRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v interface{}) error
+	PutRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v any) error
 	DeleteRoleMetaData(ctx context.Context, serviceName, roleName, namespace string) error
 
 	// service
@@ -66,9 +66,9 @@ type makerelInterface interface {
 	DeleteService(ctx context.Context, serviceName string) (*mackerel.Service, error)
 
 	// service metadata
-	GetServiceMetaData(ctx context.Context, serviceName, namespace string, v interface{}) (*mackerel.ServiceMetaMetaData, error)
+	GetServiceMetaData(ctx context.Context, serviceName, namespace string, v any) (*mackerel.ServiceMetaMetaData, error)
 	GetServiceMetaDataNameSpaces(ctx context.Context, serviceName string) ([]string, error)
-	PutServiceMetaData(ctx context.Context, serviceName, namespace string, v interface{}) error
+	PutServiceMetaData(ctx context.Context, serviceName, namespace string, v any) error
 	DeleteServiceMetaData(ctx context.Context, serviceName, namespace string) error
 
 	// notification channels
@@ -108,13 +108,13 @@ type makerelInterface interface {
 }
 
 type resource interface {
-	create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error)
-	update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error)
-	delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error)
+	create(ctx context.Context) (physicalResourceID string, data map[string]any, err error)
+	update(ctx context.Context) (physicalResourceID string, data map[string]any, err error)
+	delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error)
 }
 
 // Handle handles custom resource events of CloudForamtion.
-func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourceID string, data map[string]interface{}, err error) {
+func (f *Function) Handle(ctx context.Context, event cfn.Event) (physicalResourceID string, data map[string]any, err error) {
 	if strings.HasPrefix(event.PhysicalResourceID, "mkr::error:") {
 		// it is dummy resource, just ignore it
 		return event.PhysicalResourceID, nil, nil

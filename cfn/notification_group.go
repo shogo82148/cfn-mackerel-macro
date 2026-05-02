@@ -16,7 +16,7 @@ type notificationGroup struct {
 	Event    cfn.Event
 }
 
-func (g *notificationGroup) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (g *notificationGroup) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := g.Function.getclient()
 	param, err := g.convertToParam(ctx, g.Event.ResourceProperties)
 	if err != nil {
@@ -26,14 +26,14 @@ func (g *notificationGroup) create(ctx context.Context) (physicalResourceID stri
 	if err != nil {
 		return
 	}
-	data = map[string]interface{}{
+	data = map[string]any{
 		"Name": ret.Name,
 	}
 	physicalResourceID, err = g.Function.buildNotificationGroupID(ctx, ret.ID)
 	return
 }
 
-func (g *notificationGroup) convertToParam(ctx context.Context, properties map[string]interface{}) (*mackerel.NotificationGroup, error) {
+func (g *notificationGroup) convertToParam(ctx context.Context, properties map[string]any) (*mackerel.NotificationGroup, error) {
 	var d dproxy.Drain
 	in := dproxy.New(properties)
 	param := &mackerel.NotificationGroup{
@@ -42,7 +42,7 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 			d.String(dproxy.Default(in.M("NotificationLevel"), mackerel.NotificationLevelAll.String())),
 		),
 	}
-	for _, id := range d.StringArray(dproxy.Default(in.M("ChildNotificationGroupIds"), []interface{}{}).ProxySet()) {
+	for _, id := range d.StringArray(dproxy.Default(in.M("ChildNotificationGroupIds"), []any{}).ProxySet()) {
 		groupID, err := g.Function.parseNotificationGroupID(ctx, id)
 		d.Put(err)
 		if err != nil {
@@ -50,7 +50,7 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 		}
 		param.ChildNotificationGroupIDs = append(param.ChildNotificationGroupIDs, groupID)
 	}
-	for _, id := range d.StringArray(dproxy.Default(in.M("ChildChannelIds"), []interface{}{}).ProxySet()) {
+	for _, id := range d.StringArray(dproxy.Default(in.M("ChildChannelIds"), []any{}).ProxySet()) {
 		channelID, err := g.Function.parseNotificationChannelID(ctx, id)
 		d.Put(err)
 		if err != nil {
@@ -58,7 +58,7 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 		}
 		param.ChildChannelIDs = append(param.ChildChannelIDs, channelID)
 	}
-	for _, m := range d.ProxyArray(dproxy.Default(in.M("Services"), []interface{}{}).ProxySet()) {
+	for _, m := range d.ProxyArray(dproxy.Default(in.M("Services"), []any{}).ProxySet()) {
 		var serviceName string
 		id, err := m.M("Id").String()
 		d.Put(err)
@@ -70,7 +70,7 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 			Name: serviceName,
 		})
 	}
-	for _, m := range d.ProxyArray(dproxy.Default(in.M("Monitors"), []interface{}{}).ProxySet()) {
+	for _, m := range d.ProxyArray(dproxy.Default(in.M("Monitors"), []any{}).ProxySet()) {
 		var monitorID string
 		id, err := m.M("Id").String()
 		d.Put(err)
@@ -89,7 +89,7 @@ func (g *notificationGroup) convertToParam(ctx context.Context, properties map[s
 	return param, nil
 }
 
-func (g *notificationGroup) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (g *notificationGroup) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	physicalResourceID = g.Event.PhysicalResourceID
 	groupID, err := g.Function.parseNotificationGroupID(ctx, physicalResourceID)
 	if err != nil {
@@ -104,13 +104,13 @@ func (g *notificationGroup) update(ctx context.Context) (physicalResourceID stri
 	if err != nil {
 		return
 	}
-	data = map[string]interface{}{
+	data = map[string]any{
 		"Name": ret.Name,
 	}
 	return
 }
 
-func (g *notificationGroup) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (g *notificationGroup) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	physicalResourceID = g.Event.PhysicalResourceID
 	groupID, err := g.Function.parseNotificationGroupID(ctx, physicalResourceID)
 	if err != nil {

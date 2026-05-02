@@ -16,7 +16,7 @@ type ServiceMetaMetaData struct {
 // GetServiceMetaData gets Service metadata and stores the result in the value pointed to by v.
 // GetServiceMetaData uses the json package for storing the result, see https://golang.org/pkg/encoding/json/#Unmarshal for decoding rules.
 // https://mackerel.io/api-docs/entry/metadata#get
-func (c *Client) GetServiceMetaData(ctx context.Context, serviceName, namespace string, v interface{}) (*ServiceMetaMetaData, error) {
+func (c *Client) GetServiceMetaData(ctx context.Context, serviceName, namespace string, v any) (*ServiceMetaMetaData, error) {
 	h, err := c.do(ctx, http.MethodGet, fmt.Sprintf("/api/v0/services/%s/metadata/%s", serviceName, namespace), nil, v)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (c *Client) GetServiceMetaDataNameSpaces(ctx context.Context, serviceName s
 // PutServiceMetaData creates or updates Service metadata by the value of v.
 // PutServiceMetaData uses the json package for putting the metadata, see https://golang.org/pkg/encoding/json/#Marshal for encoding roles.
 // https://mackerel.io/api-docs/entry/metadata#serviceput
-func (c *Client) PutServiceMetaData(ctx context.Context, serviceName, namespace string, v interface{}) error {
+func (c *Client) PutServiceMetaData(ctx context.Context, serviceName, namespace string, v any) error {
 	var data struct {
 		Success bool `json:"success"`
 	}

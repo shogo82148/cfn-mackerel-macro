@@ -14,20 +14,20 @@ import (
 
 func TestFindNotificationChannels(t *testing.T) {
 	tests := []struct {
-		resp map[string]interface{} // the response of the mackerel api
+		resp map[string]any // the response of the mackerel api
 		want []NotificationChannel
 	}{
 		// email type
 		{
-			resp: map[string]interface{}{
-				"channels": []interface{}{
-					map[string]interface{}{
+			resp: map[string]any{
+				"channels": []any{
+					map[string]any{
 						"id":      "ch-foobar",
 						"name":    "notification-test",
 						"type":    "email",
-						"emails":  []interface{}{"john.doe@example.com"},
-						"userIds": []interface{}{"user-john-doe"},
-						"events":  []interface{}{"alert", "alertGroup"},
+						"emails":  []any{"john.doe@example.com"},
+						"userIds": []any{"user-john-doe"},
+						"events":  []any{"alert", "alertGroup"},
 					},
 				},
 			},
@@ -45,15 +45,15 @@ func TestFindNotificationChannels(t *testing.T) {
 
 		// slack
 		{
-			resp: map[string]interface{}{
-				"channels": []interface{}{
-					map[string]interface{}{
+			resp: map[string]any{
+				"channels": []any{
+					map[string]any{
 						"id":                "ch-foobar",
 						"name":              "notification-test",
 						"type":              "slack",
 						"url":               "http://example.com",
 						"enabledGraphImage": true,
-						"events":            []interface{}{"alert", "alertGroup", "hostStatus", "hostRegister", "hostRetire", "monitor"},
+						"events":            []any{"alert", "alertGroup", "hostStatus", "hostRegister", "hostRetire", "monitor"},
 					},
 				},
 			},
@@ -73,14 +73,14 @@ func TestFindNotificationChannels(t *testing.T) {
 
 		// webhook
 		{
-			resp: map[string]interface{}{
-				"channels": []interface{}{
-					map[string]interface{}{
+			resp: map[string]any{
+				"channels": []any{
+					map[string]any{
 						"id":     "ch-foobar",
 						"name":   "notification-test",
 						"type":   "webhook",
 						"url":    "http://example.com",
-						"events": []interface{}{"alert", "alertGroup", "hostStatus", "hostRegister", "hostRetire", "monitor"},
+						"events": []any{"alert", "alertGroup", "hostStatus", "hostRegister", "hostRetire", "monitor"},
 					},
 				},
 			},
@@ -99,9 +99,9 @@ func TestFindNotificationChannels(t *testing.T) {
 
 		// other notification channel types
 		{
-			resp: map[string]interface{}{
-				"channels": []interface{}{
-					map[string]interface{}{
+			resp: map[string]any{
+				"channels": []any{
+					map[string]any{
 						"id":   "ch-foobar",
 						"name": "notification-test",
 						"type": "line",
@@ -158,7 +158,7 @@ func TestFindNotificationChannels(t *testing.T) {
 func TestCreateNotificationChannel(t *testing.T) {
 	tests := []struct {
 		in   NotificationChannel
-		want map[string]interface{}
+		want map[string]any
 	}{
 		{
 			in: &NotificationChannelEmail{
@@ -167,12 +167,12 @@ func TestCreateNotificationChannel(t *testing.T) {
 				UserIDs: []string{"userId"},
 				Events:  []NotificationEvent{NotificationEventAlert},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"name":    "notification-test",
 				"type":    "email",
-				"emails":  []interface{}{"my.address@example.com"},
-				"userIds": []interface{}{"userId"},
-				"events":  []interface{}{"alert"},
+				"emails":  []any{"my.address@example.com"},
+				"userIds": []any{"userId"},
+				"events":  []any{"alert"},
 			},
 		},
 		{
@@ -186,16 +186,16 @@ func TestCreateNotificationChannel(t *testing.T) {
 				EnabledGraphImage: true,
 				Events:            []NotificationEvent{NotificationEventAlert},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"name": "notification-test",
 				"type": "slack",
 				"url":  "https://hooks.slack.com/services/TAAAA/BBBB/XXXXX",
-				"mentions": map[string]interface{}{
+				"mentions": map[string]any{
 					"ok":      "ok message",
 					"warning": "warning message",
 				},
 				"enabledGraphImage": true,
-				"events":            []interface{}{"alert"},
+				"events":            []any{"alert"},
 			},
 		},
 		{
@@ -204,11 +204,11 @@ func TestCreateNotificationChannel(t *testing.T) {
 				URL:    "https://example.com/webhook",
 				Events: []NotificationEvent{NotificationEventAlert},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"name":   "notification-test",
 				"type":   "webhook",
 				"url":    "https://example.com/webhook",
-				"events": []interface{}{"alert"},
+				"events": []any{"alert"},
 			},
 		},
 	}
@@ -219,7 +219,7 @@ func TestCreateNotificationChannel(t *testing.T) {
 				if r.Method != http.MethodPost {
 					t.Errorf("unexpected method, want %s, got %s", http.MethodPost, r.Method)
 				}
-				var data map[string]interface{}
+				var data map[string]any
 				dec := json.NewDecoder(r.Body)
 				if err := dec.Decode(&data); err != nil {
 					t.Error(err)

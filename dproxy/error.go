@@ -78,7 +78,7 @@ func (p *errorProxy) Nil() bool {
 	return false
 }
 
-func (p *errorProxy) Value() (interface{}, error) {
+func (p *errorProxy) Value() (any, error) {
 	return nil, p
 }
 
@@ -136,11 +136,11 @@ func (p *errorProxy) OptionalString() (*string, error) {
 	return nil, p
 }
 
-func (p *errorProxy) Array() ([]interface{}, error) {
+func (p *errorProxy) Array() ([]any, error) {
 	return nil, p
 }
 
-func (p *errorProxy) Map() (map[string]interface{}, error) {
+func (p *errorProxy) Map() (map[string]any, error) {
 	return nil, p
 }
 
@@ -180,11 +180,11 @@ func (p *errorProxy) StringArray() ([]string, error) {
 	return nil, p
 }
 
-func (p *errorProxy) ArrayArray() ([][]interface{}, error) {
+func (p *errorProxy) ArrayArray() ([][]any, error) {
 	return nil, p
 }
 
-func (p *errorProxy) MapArray() ([]map[string]interface{}, error) {
+func (p *errorProxy) MapArray() ([]map[string]any, error) {
 	return nil, p
 }
 
@@ -248,7 +248,7 @@ func (p *errorProxy) FullAddress() string {
 	return fullAddress(p)
 }
 
-func typeError(p frame, expected Type, actual interface{}) *errorProxy {
+func typeError(p frame, expected Type, actual any) *errorProxy {
 	return &errorProxy{
 		errorCode: ErrorCodeType,
 		parent:    p,
@@ -257,7 +257,7 @@ func typeError(p frame, expected Type, actual interface{}) *errorProxy {
 	}
 }
 
-func elementTypeError(p frame, index int, expected Type, actual interface{}) *errorProxy {
+func elementTypeError(p frame, index int, expected Type, actual any) *errorProxy {
 	q := &simpleFrame{
 		parent: p,
 		label:  "[" + strconv.Itoa(index) + "]",

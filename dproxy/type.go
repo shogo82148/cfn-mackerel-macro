@@ -30,7 +30,7 @@ const (
 )
 
 // detectType returns type of a value.
-func detectType(v interface{}) Type {
+func detectType(v any) Type {
 	if v == nil {
 		return Tnil
 	}
@@ -43,9 +43,9 @@ func detectType(v interface{}) Type {
 		return Tfloat64
 	case string:
 		return Tstring
-	case []interface{}:
+	case []any:
 		return Tarray
-	case map[string]interface{}:
+	case map[string]any:
 		return Tmap
 	default:
 		return Tunknown

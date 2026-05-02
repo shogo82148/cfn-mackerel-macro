@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/google/go-cmp/cmp"
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel"
-	"github.com/shogo82148/pointer"
 )
 
 func TestCreateDashboard(t *testing.T) {
@@ -149,7 +148,7 @@ func TestCreateDashboard(t *testing.T) {
 
 						&mackerel.WidgetAlertStatus{
 							Title:        "alert status",
-							RoleFullname: pointer.String("awesome-service:role-hogehoge"),
+							RoleFullname: new("awesome-service:role-hogehoge"),
 							Layout: &mackerel.Layout{
 								X:      0,
 								Y:      0,
@@ -175,26 +174,26 @@ func TestCreateDashboard(t *testing.T) {
 		ResourceType:      "Custom::Dashboard",
 		LogicalResourceID: "Dashboard",
 		StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Title":   "dashboard-foobar",
 			"Memo":    "memo",
 			"UrlPath": "my-dashboard",
-			"Widgets": []interface{}{
+			"Widgets": []any{
 				// Host Graph
-				map[string]interface{}{
+				map[string]any{
 					"Type":  "graph",
 					"Title": "Host Graph",
-					"Graph": map[string]interface{}{
+					"Graph": map[string]any{
 						"Type": "host",
 						"Name": "some.metric",
 						"Host": "mkr:test-org:host:host-id",
 					},
-					"Range": map[string]interface{}{
+					"Range": map[string]any{
 						"Type":   "relative",
 						"Period": "3600",
 						"Offset": "0",
 					},
-					"Layout": map[string]interface{}{
+					"Layout": map[string]any{
 						"X":      "0",
 						"Y":      "0",
 						"Width":  "24",
@@ -203,21 +202,21 @@ func TestCreateDashboard(t *testing.T) {
 				},
 
 				// Role Graph
-				map[string]interface{}{
+				map[string]any{
 					"Type":  "graph",
 					"Title": "Role Graph",
-					"Graph": map[string]interface{}{
+					"Graph": map[string]any{
 						"Type":      "role",
 						"Role":      "mkr:test-org:role:awesome-service:role-hogehoge",
 						"Name":      "some.metric",
 						"IsStacked": "true",
 					},
-					"Range": map[string]interface{}{
+					"Range": map[string]any{
 						"Type":  "absolute",
 						"Start": "1234567890",
 						"End":   "1234567890",
 					},
-					"Layout": map[string]interface{}{
+					"Layout": map[string]any{
 						"X":      "0",
 						"Y":      "0",
 						"Width":  "24",
@@ -226,20 +225,20 @@ func TestCreateDashboard(t *testing.T) {
 				},
 
 				// Service Graph
-				map[string]interface{}{
+				map[string]any{
 					"Type":  "graph",
 					"Title": "Service Graph",
-					"Graph": map[string]interface{}{
+					"Graph": map[string]any{
 						"Type":    "service",
 						"Service": "mkr:test-org:service:awesome-service",
 						"Name":    "some.metric",
 					},
-					"Range": map[string]interface{}{
+					"Range": map[string]any{
 						"Type":   "relative",
 						"Period": "3600",
 						"Offset": "0",
 					},
-					"Layout": map[string]interface{}{
+					"Layout": map[string]any{
 						"X":      "0",
 						"Y":      "0",
 						"Width":  "24",
@@ -248,19 +247,19 @@ func TestCreateDashboard(t *testing.T) {
 				},
 
 				// Expression Graph
-				map[string]interface{}{
+				map[string]any{
 					"Type":  "graph",
 					"Title": "Expression Graph",
-					"Graph": map[string]interface{}{
+					"Graph": map[string]any{
 						"Type":       "expression",
 						"Expression": `avg(roleSlots("server:role","loadavg5"))`,
 					},
-					"Range": map[string]interface{}{
+					"Range": map[string]any{
 						"Type":   "relative",
 						"Period": "3600",
 						"Offset": "0",
 					},
-					"Layout": map[string]interface{}{
+					"Layout": map[string]any{
 						"X":      "0",
 						"Y":      "0",
 						"Width":  "24",
@@ -269,15 +268,15 @@ func TestCreateDashboard(t *testing.T) {
 				},
 
 				// Host Value
-				map[string]interface{}{
+				map[string]any{
 					"Type":  "value",
 					"Title": "Host Value",
-					"Metric": map[string]interface{}{
+					"Metric": map[string]any{
 						"Type": "host",
 						"Host": "mkr:test-org:host:host-id",
 						"Name": "some.metric",
 					},
-					"Layout": map[string]interface{}{
+					"Layout": map[string]any{
 						"X":      "0",
 						"Y":      "0",
 						"Width":  "24",
@@ -286,15 +285,15 @@ func TestCreateDashboard(t *testing.T) {
 				},
 
 				// Service Value
-				map[string]interface{}{
+				map[string]any{
 					"Type":  "value",
 					"Title": "Service Value",
-					"Metric": map[string]interface{}{
+					"Metric": map[string]any{
 						"Type":    "service",
 						"Service": "mkr:test-org:service:awesome-service",
 						"Name":    "some.metric",
 					},
-					"Layout": map[string]interface{}{
+					"Layout": map[string]any{
 						"X":      "0",
 						"Y":      "0",
 						"Width":  "24",
@@ -303,14 +302,14 @@ func TestCreateDashboard(t *testing.T) {
 				},
 
 				// Expression Value
-				map[string]interface{}{
+				map[string]any{
 					"Type":  "value",
 					"Title": "Expression Value",
-					"Metric": map[string]interface{}{
+					"Metric": map[string]any{
 						"Type":       "expression",
 						"Expression": `avg(roleSlots("server:role","loadavg5"))`,
 					},
-					"Layout": map[string]interface{}{
+					"Layout": map[string]any{
 						"X":      "0",
 						"Y":      "0",
 						"Width":  "24",
@@ -319,11 +318,11 @@ func TestCreateDashboard(t *testing.T) {
 				},
 
 				// Markdown
-				map[string]interface{}{
+				map[string]any{
 					"Type":     "markdown",
 					"Title":    "Markdown",
 					"Markdown": "# Some Awesome Service\n- Markdown Text Here",
-					"Layout": map[string]interface{}{
+					"Layout": map[string]any{
 						"X":      "0",
 						"Y":      "0",
 						"Width":  "24",
@@ -332,11 +331,11 @@ func TestCreateDashboard(t *testing.T) {
 				},
 
 				// Alert Status Widget
-				map[string]interface{}{
+				map[string]any{
 					"Type":  "alertStatus",
 					"Title": "alert status",
 					"Role":  "mkr:test-org:role:awesome-service:role-hogehoge",
-					"Layout": map[string]interface{}{
+					"Layout": map[string]any{
 						"X":      "0",
 						"Y":      "0",
 						"Width":  "24",
@@ -388,19 +387,19 @@ func TestUpdateDashboard(t *testing.T) {
 		LogicalResourceID:  "Dashboard",
 		PhysicalResourceID: "mkr:test-org:dashboard:dashboard-id",
 		StackID:            "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		OldResourceProperties: map[string]interface{}{
+		OldResourceProperties: map[string]any{
 			"Title":   "dashboard-foobar",
 			"Memo":    "memo",
 			"UrlPath": "my-dashboard",
-			"Widgets": []interface{}{},
-			"Roles":   []interface{}{},
+			"Widgets": []any{},
+			"Roles":   []any{},
 		},
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Title":   "dashboard-foobar",
 			"Memo":    "memo",
 			"UrlPath": "my-dashboard",
-			"Widgets": []interface{}{},
-			"Roles":   []interface{}{},
+			"Widgets": []any{},
+			"Roles":   []any{},
 		},
 	}
 	id, _, err := f.Handle(context.Background(), event)
@@ -440,12 +439,12 @@ func TestDeleteDashboard(t *testing.T) {
 		LogicalResourceID:  "Dashboard",
 		PhysicalResourceID: "mkr:test-org:dashboard:dashboard-id",
 		StackID:            "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		OldResourceProperties: map[string]interface{}{
+		OldResourceProperties: map[string]any{
 			"Title":   "dashboard-foobar",
 			"Memo":    "memo",
 			"UrlPath": "my-dashboard",
-			"Widgets": []interface{}{},
-			"Roles":   []interface{}{},
+			"Widgets": []any{},
+			"Roles":   []any{},
 		},
 	}
 	id, _, err := f.Handle(context.Background(), event)

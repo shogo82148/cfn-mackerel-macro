@@ -51,21 +51,21 @@ func TestCreateNotificationGroup(t *testing.T) {
 		ResourceType:      "Custom::NotificationGroup",
 		LogicalResourceID: "NotificationGroup",
 		StackID:           "arn:aws:cloudformation:ap-northeast-1:123456789012:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Name": "NotificationGroup",
-			"ChildNotificationGroupIds": []interface{}{
+			"ChildNotificationGroupIds": []any{
 				"mkr:test-org:notification-group:child-group",
 			},
-			"ChildChannelIds": []interface{}{
+			"ChildChannelIds": []any{
 				"mkr:test-org:notification-channel:child-channel",
 			},
-			"Services": []interface{}{
-				map[string]interface{}{
+			"Services": []any{
+				map[string]any{
 					"Id": "mkr:test-org:service:service",
 				},
 			},
-			"Monitors": []interface{}{
-				map[string]interface{}{
+			"Monitors": []any{
+				map[string]any{
 					"Id": "mkr:test-org:monitor:monitor",
 				},
 			},
@@ -130,24 +130,24 @@ func TestUpdateNotificationGroup(t *testing.T) {
 		PhysicalResourceID: "mkr:test-org:notification-group:group-id",
 		LogicalResourceID:  "NotificationGroup",
 		StackID:            "arn:aws:cloudformation:ap-northeast-1:123456789012:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		OldResourceProperties: map[string]interface{}{
+		OldResourceProperties: map[string]any{
 			"Name": "NotificationGroup",
 		},
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Name": "NotificationGroup",
-			"ChildNotificationGroupIds": []interface{}{
+			"ChildNotificationGroupIds": []any{
 				"mkr:test-org:notification-group:child-group",
 			},
-			"ChildChannelIds": []interface{}{
+			"ChildChannelIds": []any{
 				"mkr:test-org:notification-channel:child-channel",
 			},
-			"Services": []interface{}{
-				map[string]interface{}{
+			"Services": []any{
+				map[string]any{
 					"Id": "mkr:test-org:service:service",
 				},
 			},
-			"Monitors": []interface{}{
-				map[string]interface{}{
+			"Monitors": []any{
+				map[string]any{
 					"Id": "mkr:test-org:monitor:monitor",
 				},
 			},
@@ -192,10 +192,10 @@ func TestDeleteNotificationGroup(t *testing.T) {
 		PhysicalResourceID: "mkr:test-org:notification-group:group-id",
 		LogicalResourceID:  "NotificationGroup",
 		StackID:            "arn:aws:cloudformation:ap-northeast-1:123456789012:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		OldResourceProperties: map[string]interface{}{
+		OldResourceProperties: map[string]any{
 			"Name": "NotificationGroup",
 		},
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Name": "NotificationGroup",
 		},
 	}

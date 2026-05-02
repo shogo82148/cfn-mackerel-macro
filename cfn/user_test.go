@@ -39,7 +39,7 @@ func TestCreateUser(t *testing.T) {
 			ResourceType:      "Custom:User",
 			LogicalResourceID: "User",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Email": "john.doe@example.com",
 			},
 		},
@@ -96,7 +96,7 @@ func TestCreateUser_alreadyInvited(t *testing.T) {
 			ResourceType:      "Custom:User",
 			LogicalResourceID: "User",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Email": "john.doe@example.com",
 			},
 		},
@@ -157,7 +157,7 @@ func TestCreateUser_alreadyExists(t *testing.T) {
 			ResourceType:      "Custom:User",
 			LogicalResourceID: "User",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Email": "john.doe@example.com",
 			},
 		},

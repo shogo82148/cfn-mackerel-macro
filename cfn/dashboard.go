@@ -17,7 +17,7 @@ type dashboard struct {
 	Event    cfn.Event
 }
 
-func (r *dashboard) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *dashboard) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := r.Function.getclient()
 	param, err := r.convertToParam(ctx, r.Event.ResourceProperties)
 	if err != nil {
@@ -32,10 +32,10 @@ func (r *dashboard) create(ctx context.Context) (physicalResourceID string, data
 	if err != nil {
 		return "", nil, err
 	}
-	return id, map[string]interface{}{}, nil
+	return id, map[string]any{}, nil
 }
 
-func (r *dashboard) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *dashboard) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := r.Function.getclient()
 	param, err := r.convertToParam(ctx, r.Event.ResourceProperties)
 	if err != nil {
@@ -50,10 +50,10 @@ func (r *dashboard) update(ctx context.Context) (physicalResourceID string, data
 		return r.Event.PhysicalResourceID, nil, err
 	}
 
-	return r.Event.PhysicalResourceID, map[string]interface{}{}, nil
+	return r.Event.PhysicalResourceID, map[string]any{}, nil
 }
 
-func (r *dashboard) convertToParam(ctx context.Context, properties map[string]interface{}) (*mackerel.Dashboard, error) {
+func (r *dashboard) convertToParam(ctx context.Context, properties map[string]any) (*mackerel.Dashboard, error) {
 	var d dproxy.Drain
 	in := dproxy.New(properties)
 
@@ -228,7 +228,7 @@ func (r *dashboard) convertLayout(d *dproxy.Drain, properties dproxy.Proxy) *mac
 	}
 }
 
-func (r *dashboard) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *dashboard) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	physicalResourceID = r.Event.PhysicalResourceID
 	id, err := r.Function.parseDashboardID(ctx, physicalResourceID)
 	if err != nil {

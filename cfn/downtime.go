@@ -17,7 +17,7 @@ type downtime struct {
 	Event    cfn.Event
 }
 
-func (r *downtime) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *downtime) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := r.Function.getclient()
 	param, err := r.convertToParam(ctx, r.Event.ResourceProperties)
 	if err != nil {
@@ -32,7 +32,7 @@ func (r *downtime) create(ctx context.Context) (physicalResourceID string, data 
 	return
 }
 
-func (r *downtime) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *downtime) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := r.Function.getclient()
 	physicalResourceID = r.Event.PhysicalResourceID
 	param, err := r.convertToParam(ctx, r.Event.ResourceProperties)
@@ -47,7 +47,7 @@ func (r *downtime) update(ctx context.Context) (physicalResourceID string, data 
 	return
 }
 
-func (r *downtime) convertToParam(ctx context.Context, properties map[string]interface{}) (*mackerel.Downtime, error) {
+func (r *downtime) convertToParam(ctx context.Context, properties map[string]any) (*mackerel.Downtime, error) {
 	var param mackerel.Downtime
 	var d dproxy.Drain
 	in := dproxy.New(properties)
@@ -186,7 +186,7 @@ func (r *downtime) convertToParam(ctx context.Context, properties map[string]int
 	return &param, nil
 }
 
-func (r *downtime) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *downtime) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := r.Function.getclient()
 	physicalResourceID = r.Event.PhysicalResourceID
 	id, err := r.Function.parseDowntimeID(ctx, physicalResourceID)

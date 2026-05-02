@@ -97,16 +97,16 @@ func TestCreateNotificationGroups(t *testing.T) {
 		if r.URL.Path != "/api/v0/notification-groups" {
 			t.Errorf("unexpected path: want %s, got %s", "/api/v0/notification-groups", r.URL.Path)
 		}
-		var got interface{}
+		var got any
 		dec := json.NewDecoder(r.Body)
 		if err := dec.Decode(&got); err != nil {
 			t.Error(err)
 		}
-		want := map[string]interface{}{
+		want := map[string]any{
 			"name":                      "Example notification group",
 			"notificationLevel":         "all",
-			"childChannelIds":           []interface{}{},
-			"childNotificationGroupIds": []interface{}{},
+			"childChannelIds":           []any{},
+			"childNotificationGroupIds": []any{},
 		}
 		if diff := cmp.Diff(got, want); diff != "" {
 			t.Errorf("notification group missmatch (-got +want):\n%s", diff)
@@ -165,16 +165,16 @@ func TestUpdateNotificationGroups(t *testing.T) {
 		if r.URL.Path != "/api/v0/notification-groups/2oWY1xPXrco" {
 			t.Errorf("unexpected path: want %s, got %s", "/api/v0/notification-groups/2oWY1xPXrco", r.URL.Path)
 		}
-		var got interface{}
+		var got any
 		dec := json.NewDecoder(r.Body)
 		if err := dec.Decode(&got); err != nil {
 			t.Error(err)
 		}
-		want := map[string]interface{}{
+		want := map[string]any{
 			"name":                      "Example notification group",
 			"notificationLevel":         "all",
-			"childChannelIds":           []interface{}{},
-			"childNotificationGroupIds": []interface{}{},
+			"childChannelIds":           []any{},
+			"childNotificationGroupIds": []any{},
 		}
 		if diff := cmp.Diff(got, want); diff != "" {
 			t.Errorf("notification group missmatch (-got +want):\n%s", diff)

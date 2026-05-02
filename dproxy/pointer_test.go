@@ -32,7 +32,7 @@ func TestPointerInvalidQuery(t *testing.T) {
 }
 
 func TestPointer(t *testing.T) {
-	f := func(q string, d, expected interface{}) {
+	f := func(q string, d, expected any) {
 		p := Pointer(d, q)
 		v, err := p.Value()
 		if err != nil {

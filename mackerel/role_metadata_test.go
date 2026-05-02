@@ -124,13 +124,13 @@ func TestPutRoleMetaData(t *testing.T) {
 		if r.Method != http.MethodPut {
 			t.Errorf("unexpected method: got %s, want %s", http.MethodPut, r.Method)
 		}
-		var got map[string]interface{}
+		var got map[string]any
 		dec := json.NewDecoder(r.Body)
 		if err := dec.Decode(&got); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		want := map[string]interface{}{
+		want := map[string]any{
 			"type":          12345.0,
 			"region":        "jp",
 			"env":           "staging",

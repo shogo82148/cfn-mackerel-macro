@@ -15,16 +15,16 @@ import (
 func TestFindDashboard(t *testing.T) {
 	ptrString := func(v string) *string { return &v }
 	tests := []struct {
-		resp map[string]interface{} // the response of the mackerel api
+		resp map[string]any // the response of the mackerel api
 		want *Dashboard
 	}{
 		/////////// Alert Status Widgets
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":         "alertStatus",
 						"title":        "status title",
@@ -50,11 +50,11 @@ func TestFindDashboard(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":         "alertStatus",
 						"title":        "status title",
@@ -81,11 +81,11 @@ func TestFindDashboard(t *testing.T) {
 		},
 		/////////// Graph Widgets
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":  "graph",
 						"title": "graph title",
@@ -119,15 +119,15 @@ func TestFindDashboard(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":  "graph",
 						"title": "graph title",
-						"graph": map[string]interface{}{
+						"graph": map[string]any{
 							"type":         "role",
 							"roleFullname": "service-foo:role-bar",
 							"name":         "host-graph",
@@ -159,11 +159,11 @@ func TestFindDashboard(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":  "graph",
 						"title": "graph title",
@@ -197,11 +197,11 @@ func TestFindDashboard(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":  "graph",
 						"title": "graph title",
@@ -233,11 +233,11 @@ func TestFindDashboard(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":  "graph",
 						"title": "graph title",
@@ -269,11 +269,11 @@ func TestFindDashboard(t *testing.T) {
 
 		/////////// Metric Widgets
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":  "value",
 						"title": "metric title",
@@ -307,11 +307,11 @@ func TestFindDashboard(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":  "value",
 						"title": "metric title",
@@ -345,11 +345,11 @@ func TestFindDashboard(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":  "value",
 						"title": "metric title",
@@ -381,11 +381,11 @@ func TestFindDashboard(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":  "value",
 						"title": "metric title",
@@ -415,11 +415,11 @@ func TestFindDashboard(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":     "markdown",
 						"title":    "markdown title",
@@ -447,15 +447,15 @@ func TestFindDashboard(t *testing.T) {
 
 		////////// Graph ranges
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":  "graph",
 						"title": "graph title",
-						"range": map[string]interface{}{
+						"range": map[string]any{
 							"type":   "relative",
 							"period": 3600,
 							"offset": -3600,
@@ -495,15 +495,15 @@ func TestFindDashboard(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":      "foobar",
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []map[string]interface{}{
+				"widgets": []map[string]any{
 					{
 						"type":  "graph",
 						"title": "graph title",
-						"range": map[string]interface{}{
+						"range": map[string]any{
 							"type":  "absolute",
 							"start": -1234567890,
 							"end":   1234567890,
@@ -556,7 +556,7 @@ func TestFindDashboard(t *testing.T) {
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusOK)
 				enc := json.NewEncoder(w)
-				enc.Encode([]interface{}{tc.resp})
+				enc.Encode([]any{tc.resp})
 			}))
 			defer ts.Close()
 
@@ -653,7 +653,7 @@ func TestCreateDashboard(t *testing.T) {
 	ptrString := func(v string) *string { return &v }
 	tests := []struct {
 		in   *Dashboard
-		want map[string]interface{}
+		want map[string]any
 	}{
 		/////////// Alert Status Widgets
 		{
@@ -669,11 +669,11 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []interface{}{
-					map[string]interface{}{
+				"widgets": []any{
+					map[string]any{
 						"type":         "alertStatus",
 						"title":        "status title",
 						"roleFullname": "service:role",
@@ -700,14 +700,14 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []interface{}{
-					map[string]interface{}{
+				"widgets": []any{
+					map[string]any{
 						"type":  "graph",
 						"title": "graph title",
-						"graph": map[string]interface{}{
+						"graph": map[string]any{
 							"type":   "host",
 							"hostId": "host-foobar",
 							"name":   "host-graph",
@@ -735,14 +735,14 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []interface{}{
-					map[string]interface{}{
+				"widgets": []any{
+					map[string]any{
 						"type":  "graph",
 						"title": "graph title",
-						"graph": map[string]interface{}{
+						"graph": map[string]any{
 							"type":         "role",
 							"roleFullname": "service-foo:role-bar",
 							"name":         "host-graph",
@@ -770,14 +770,14 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []interface{}{
-					map[string]interface{}{
+				"widgets": []any{
+					map[string]any{
 						"type":  "graph",
 						"title": "graph title",
-						"graph": map[string]interface{}{
+						"graph": map[string]any{
 							"type":        "service",
 							"serviceName": "service-name",
 							"name":        "host-graph",
@@ -803,14 +803,14 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []interface{}{
-					map[string]interface{}{
+				"widgets": []any{
+					map[string]any{
 						"type":  "graph",
 						"title": "graph title",
-						"graph": map[string]interface{}{
+						"graph": map[string]any{
 							"type":       "expression",
 							"expression": "host(22CXRB3pZmu, memory.*)",
 						},
@@ -836,14 +836,14 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []interface{}{
-					map[string]interface{}{
+				"widgets": []any{
+					map[string]any{
 						"type":  "value",
 						"title": "metric title",
-						"metric": map[string]interface{}{
+						"metric": map[string]any{
 							"type":   "host",
 							"hostId": "host-foobar",
 							"name":   "host-metric",
@@ -870,14 +870,14 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []interface{}{
-					map[string]interface{}{
+				"widgets": []any{
+					map[string]any{
 						"type":  "value",
 						"title": "metric title",
-						"metric": map[string]interface{}{
+						"metric": map[string]any{
 							"type":        "service",
 							"serviceName": "service-foobar",
 							"name":        "service-metric",
@@ -903,14 +903,14 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []interface{}{
-					map[string]interface{}{
+				"widgets": []any{
+					map[string]any{
 						"type":  "value",
 						"title": "metric title",
-						"metric": map[string]interface{}{
+						"metric": map[string]any{
 							"type":       "expression",
 							"expression": "host(22CXRB3pZmu, memory.*)",
 						},
@@ -931,11 +931,11 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []interface{}{
-					map[string]interface{}{
+				"widgets": []any{
+					map[string]any{
 						"type":     "markdown",
 						"title":    "markdown title",
 						"markdown": "*FOOBAR*",
@@ -969,19 +969,19 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []interface{}{
-					map[string]interface{}{
+				"widgets": []any{
+					map[string]any{
 						"type":  "graph",
 						"title": "graph title",
-						"range": map[string]interface{}{
+						"range": map[string]any{
 							"type":   "relative",
 							"period": 3600.0,
 							"offset": -3600.0,
 						},
-						"graph": map[string]interface{}{
+						"graph": map[string]any{
 							"type":   "host",
 							"hostId": "host-foobar",
 							"name":   "host-graph",
@@ -1014,19 +1014,19 @@ func TestCreateDashboard(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"title":   "title",
 				"urlPath": "url path",
-				"widgets": []interface{}{
-					map[string]interface{}{
+				"widgets": []any{
+					map[string]any{
 						"type":  "graph",
 						"title": "graph title",
-						"range": map[string]interface{}{
+						"range": map[string]any{
 							"type":  "absolute",
 							"start": -1234567890.0,
 							"end":   1234567890.0,
 						},
-						"graph": map[string]interface{}{
+						"graph": map[string]any{
 							"type":   "host",
 							"hostId": "host-foobar",
 							"name":   "host-graph",
@@ -1040,7 +1040,7 @@ func TestCreateDashboard(t *testing.T) {
 	for i, tc := range tests {
 		t.Run(fmt.Sprintf("CreateDashboard-%d", i), func(t *testing.T) {
 			ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				var data map[string]interface{}
+				var data map[string]any
 				dec := json.NewDecoder(r.Body)
 				if err := dec.Decode(&data); err != nil {
 					t.Error(err)
