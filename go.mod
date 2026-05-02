@@ -1,6 +1,6 @@
 module github.com/shogo82148/cfn-mackerel-macro
 
-go 1.24.6
+go 1.26.0
 
 require (
 	github.com/aws/aws-lambda-go v1.54.0
