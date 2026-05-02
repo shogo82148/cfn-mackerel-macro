@@ -1,6 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: "cfn-mackerel-macro v0.0.15 - provide a CloudFormation macro for creating Mackerel resources."
+Description: "cfn-mackerel-macro v0.0.16 - provide a CloudFormation macro
+  for creating Mackerel resources."
 
 Metadata:
   AWS::ServerlessRepo::Application:
@@ -10,9 +11,9 @@ Metadata:
     SpdxLicenseId: MIT
     LicenseUrl: LICENSE
     ReadmeUrl: README.md
-    Labels: ["macro", "mackerelio"]
+    Labels: [ "macro", "mackerelio" ]
     HomePageUrl: https://github.com/shogo82148/cfn-mackerel-macro
-    SemanticVersion: "0.0.15"
+    SemanticVersion: "0.0.16"
     SourceCodeUrl: https://github.com/shogo82148/cfn-mackerel-macro
 
 Parameters:
@@ -22,7 +23,7 @@ Parameters:
   LogLevel:
     Type: String
     Default: warning
-    AllowedValues: [panic, fatal, error, warn, warning, info, debug, trace]
+    AllowedValues: [ panic, fatal, error, warn, warning, info, debug, trace ]
     Description: log level(panic, fatal, error, warn, warning, info, debug, trace)
   BaseUrl:
     Type: String
@@ -57,8 +58,8 @@ Parameters:
     Default: "resource function for cfn-mackerel-macro"
 
 Conditions:
-  HasMacroFunctionName: !Not [!Equals [!Ref MacroFunctionName, ""]]
-  HasResourceFunctionName: !Not [!Equals [!Ref ResourceFunctionName, ""]]
+  HasMacroFunctionName: !Not [ !Equals [ !Ref MacroFunctionName, "" ] ]
+  HasResourceFunctionName: !Not [ !Equals [ !Ref ResourceFunctionName, "" ] ]
 
 Resources:
   ResourceFunction:
@@ -75,7 +76,7 @@ Resources:
       Policies:
         - SSMParameterReadPolicy:
             # HACK: trim "/" prefix. See https://github.com/aws/serverless-application-model/issues/1112
-            ParameterName: !Join ["", !Split ["^/", !Sub "^${ParameterName}"]]
+            ParameterName: !Join [ "", !Split [ "^/", !Sub "^${ParameterName}" ] ]
       Environment:
         Variables:
           MACKEREL_APIKEY_PARAMETER: !Ref ParameterName
@@ -83,12 +84,12 @@ Resources:
           MACKEREL_APIURL: !Ref BaseUrl
           MACKEREL_LOG_LEVEL: !Ref LogLevel
       Tags:
-        Version: 0.0.15
+        Version: 0.0.16
 
   MacroFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: python3.13
+      Runtime: python3.14
       CodeUri: ./macro.zip
       Handler: app.handler
       FunctionName: !If
@@ -100,7 +101,7 @@ Resources:
         Variables:
           LAMBDA_ARN: !GetAtt ResourceFunction.Arn
       Tags:
-        Version: 0.0.15
+        Version: 0.0.16
 
   Macro:
     Type: AWS::CloudFormation::Macro
