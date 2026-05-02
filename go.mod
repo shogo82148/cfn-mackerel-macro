@@ -1,6 +1,6 @@
 module github.com/shogo82148/cfn-mackerel-macro
 
-go 1.24.6
+go 1.26.0
 
 require (
 	github.com/aws/aws-lambda-go v1.54.0
@@ -9,7 +9,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/kms v1.51.1
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.68.6
 	github.com/google/go-cmp v0.7.0
-	github.com/shogo82148/pointer v1.4.0
 	github.com/sirupsen/logrus v1.9.4
 	github.com/xeipuuv/gojsonschema v1.2.0
 	golang.org/x/sys v0.13.0 // indirect

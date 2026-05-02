@@ -17,7 +17,7 @@ type user struct {
 	Event    cfn.Event
 }
 
-func (u *user) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (u *user) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	var d dproxy.Drain
 	in := dproxy.New(u.Event.ResourceProperties)
 
@@ -32,7 +32,7 @@ func (u *user) create(ctx context.Context) (physicalResourceID string, data map[
 	if err != nil {
 		return
 	}
-	data = map[string]interface{}{
+	data = map[string]any{
 		"Email": email,
 	}
 
@@ -94,7 +94,7 @@ func (u *user) getUserID(ctx context.Context, email string) (string, error) {
 	return "", nil
 }
 
-func (u *user) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (u *user) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	var d dproxy.Drain
 	in := dproxy.New(u.Event.ResourceProperties)
 	old := dproxy.New(u.Event.OldResourceProperties)
@@ -108,7 +108,7 @@ func (u *user) update(ctx context.Context) (physicalResourceID string, data map[
 	if email == oldEmail {
 		// no need to update.
 		// updating authority is not supported.
-		return u.Event.PhysicalResourceID, map[string]interface{}{
+		return u.Event.PhysicalResourceID, map[string]any{
 			"Email": email,
 		}, nil
 	}
@@ -117,7 +117,7 @@ func (u *user) update(ctx context.Context) (physicalResourceID string, data map[
 	return u.create(ctx)
 }
 
-func (u *user) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (u *user) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	physicalResourceID = u.Event.PhysicalResourceID
 	email, err := u.Function.parseUserID(ctx, physicalResourceID)
 	if err != nil {

@@ -20,22 +20,22 @@ func TestFindDowntimes(t *testing.T) {
 		if r.Method != http.MethodGet {
 			t.Errorf("unexpected request method: want %s, got %s", "GET", r.Method)
 		}
-		ret := map[string]interface{}{
-			"downtimes": []interface{}{
-				map[string]interface{}{
+		ret := map[string]any{
+			"downtimes": []any{
+				map[string]any{
 					"id":       "abcde0",
 					"name":     "Maintenance #0",
 					"memo":     "Memo #0",
 					"start":    1563600000,
 					"duration": 120,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"id":       "abcde1",
 					"name":     "Maintenance #1",
 					"memo":     "Memo #1",
 					"start":    1563700000,
 					"duration": 60,
-					"recurrence": map[string]interface{}{
+					"recurrence": map[string]any{
 						"interval": 3,
 						"type":     "weekly",
 						"weekdays": []string{
@@ -149,11 +149,11 @@ func TestCreateDowntime(t *testing.T) {
 			t.Errorf("unexpected request method: want %s, got %s", "POST", r.Method)
 		}
 		w.Header().Set("Content-Type", "application/json")
-		var data interface{}
+		var data any
 		if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-		want := map[string]interface{}{
+		want := map[string]any{
 			"name":     "downtime name",
 			"memo":     "memo",
 			"start":    1234567890.0,
@@ -210,11 +210,11 @@ func TestUpdateDowntime(t *testing.T) {
 			t.Errorf("unexpected request method: want %s, got %s", "PUT", r.Method)
 		}
 		w.Header().Set("Content-Type", "application/json")
-		var data interface{}
+		var data any
 		if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-		want := map[string]interface{}{
+		want := map[string]any{
 			"id":       downtimeID,
 			"name":     "downtime name",
 			"memo":     "memo",
@@ -273,7 +273,7 @@ func TestDeleteDowntime(t *testing.T) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		ret := map[string]interface{}{
+		ret := map[string]any{
 			"id":       downtimeID,
 			"name":     "downtime name",
 			"memo":     "memo",

@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func parseJSON(s string) interface{} {
-	var v interface{}
+func parseJSON(s string) any {
+	var v any
 	if err := json.Unmarshal([]byte(s), &v); err != nil {
 		panic(err)
 	}

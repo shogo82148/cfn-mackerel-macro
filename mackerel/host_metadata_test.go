@@ -99,13 +99,13 @@ func TestPutHostMetaData(t *testing.T) {
 	)
 
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var got map[string]interface{}
+		var got map[string]any
 		dec := json.NewDecoder(r.Body)
 		if err := dec.Decode(&got); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		want := map[string]interface{}{
+		want := map[string]any{
 			"type":          12345.0,
 			"region":        "jp",
 			"env":           "staging",

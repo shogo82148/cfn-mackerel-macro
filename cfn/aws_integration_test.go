@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/google/go-cmp/cmp"
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel"
-	"github.com/shogo82148/pointer"
 )
 
 func TestCreateAWSIntegration(t *testing.T) {
@@ -20,8 +19,8 @@ func TestCreateAWSIntegration(t *testing.T) {
 				want := &mackerel.AWSIntegration{
 					Name:         "AWSIntegration",
 					Region:       "ap-northeast-1",
-					Key:          pointer.String("AKIAIOSFODNN7EXAMPLE"),
-					SecretKey:    pointer.String("wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"),
+					Key:          new("AKIAIOSFODNN7EXAMPLE"),
+					SecretKey:    new("wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"),
 					IncludedTags: "TagKey:TagValue,\"Tag:Key\":\"Tag,Value\",'Tag\"Key':\"Tag' Value\"",
 					Services: map[string]*mackerel.AWSIntegrationService{
 						"Billing": {
@@ -51,33 +50,33 @@ func TestCreateAWSIntegration(t *testing.T) {
 		ResourceType:      "Custom::AWSIntegration",
 		LogicalResourceID: "AWSIntegration",
 		StackID:           "arn:aws:cloudformation:ap-northeast-1:123456789012:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Name":      "AWSIntegration",
 			"Region":    "ap-northeast-1",
 			"Key":       "AKIAIOSFODNN7EXAMPLE",
 			"SecretKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-			"IncludedTags": []interface{}{
-				map[string]interface{}{
+			"IncludedTags": []any{
+				map[string]any{
 					"Key":   "TagKey",
 					"Value": "TagValue",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"Key":   "Tag:Key",
 					"Value": "Tag,Value",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"Key":   "Tag\"Key",
 					"Value": "Tag' Value",
 				},
 			},
-			"Services": []interface{}{
-				map[string]interface{}{
+			"Services": []any{
+				map[string]any{
 					"ServiceId": "S3",
-					"ExcludedMetrics": []interface{}{
+					"ExcludedMetrics": []any{
 						"s3.some-metric",
 					},
 				},
-				map[string]interface{}{
+				map[string]any{
 					"ServiceId": "Billing",
 					"Enable":    "false",
 				},
@@ -112,7 +111,7 @@ func TestCreateAWSIntegrationExternalID(t *testing.T) {
 		ResourceType:       "Custom::AWSIntegrationExternalId",
 		LogicalResourceID:  "AWSIntegrationExternalId",
 		StackID:            "arn:aws:cloudformation:ap-northeast-1:123456789012:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{},
+		ResourceProperties: map[string]any{},
 	}
 	id, _, err := f.Handle(context.Background(), event)
 	if err != nil {

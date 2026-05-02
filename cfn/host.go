@@ -2,8 +2,8 @@ package cfn
 
 import (
 	"context"
-	"log"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/cfn"
@@ -16,7 +16,7 @@ type host struct {
 	Event    cfn.Event
 }
 
-func (h *host) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (h *host) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := h.Function.getclient()
 	param, err := h.convertToParam(ctx, h.Event.ResourceProperties)
 	if err != nil {
@@ -36,12 +36,12 @@ func (h *host) create(ctx context.Context) (physicalResourceID string, data map[
 	if err != nil {
 		return "", nil, err
 	}
-	return id, map[string]interface{}{
+	return id, map[string]any{
 		"Name": param.Name,
 	}, nil
 }
 
-func (h *host) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (h *host) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := h.Function.getclient()
 	param, err := h.convertToParam(ctx, h.Event.ResourceProperties)
 	if err != nil {
@@ -56,12 +56,12 @@ func (h *host) update(ctx context.Context) (physicalResourceID string, data map[
 		return h.Event.PhysicalResourceID, nil, err
 	}
 
-	return h.Event.PhysicalResourceID, map[string]interface{}{
+	return h.Event.PhysicalResourceID, map[string]any{
 		"Name": param.Name,
 	}, nil
 }
 
-func (h *host) convertToParam(ctx context.Context, properties map[string]interface{}) (*mackerel.CreateHostParam, error) {
+func (h *host) convertToParam(ctx context.Context, properties map[string]any) (*mackerel.CreateHostParam, error) {
 	var param mackerel.CreateHostParam
 	var d dproxy.Drain
 	in := dproxy.New(properties)
@@ -86,7 +86,7 @@ func (h *host) convertToParam(ctx context.Context, properties map[string]interfa
 	return &param, nil
 }
 
-func (h *host) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (h *host) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	physicalResourceID = h.Event.PhysicalResourceID
 	id, err := h.Function.parseHostID(ctx, physicalResourceID)
 	if err != nil {

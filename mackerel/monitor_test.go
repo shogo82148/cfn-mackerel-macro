@@ -26,11 +26,11 @@ func TestFindMonitors(t *testing.T) {
 	ptrFloat64 := func(v float64) *float64 { return &v }
 	ptrUint64 := func(v uint64) *uint64 { return &v }
 	tests := []struct {
-		resp map[string]interface{} // the response of the mackerel api
+		resp map[string]any // the response of the mackerel api
 		want Monitor
 	}{
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":                   "2cSZzK3XfmG",
 				"type":                 "host",
 				"name":                 "disk.aa-00.writes.delta",
@@ -42,8 +42,8 @@ func TestFindMonitors(t *testing.T) {
 				"critical":             400000.0,
 				"maxCheckAttempts":     3,
 				"notificationInterval": 60,
-				"scopes":               []interface{}{"Hatena-Blog"},
-				"excludeScopes":        []interface{}{"Hatena-Bookmark:db-master"},
+				"scopes":               []any{"Hatena-Blog"},
+				"excludeScopes":        []any{"Hatena-Bookmark:db-master"},
 				"isMute":               true,
 			},
 			want: &MonitorHostMetric{
@@ -66,13 +66,13 @@ func TestFindMonitors(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":            "2cSZzK3XfmG",
 				"type":          "connectivity",
 				"name":          "connectivity service1",
 				"memo":          "A monitor that checks connectivity.",
-				"scopes":        []interface{}{"service1"},
-				"excludeScopes": []interface{}{"service1:role3"},
+				"scopes":        []any{"service1"},
+				"excludeScopes": []any{"service1:role3"},
 				"isMute":        true,
 			},
 			want: &MonitorConnectivity{
@@ -86,7 +86,7 @@ func TestFindMonitors(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":                      "2cSZzK3XfmG",
 				"type":                    "service",
 				"name":                    "Hatena-Blog - access_num.4xx_count",
@@ -124,7 +124,7 @@ func TestFindMonitors(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":                              "2cSZzK3XfmG",
 				"type":                            "external",
 				"name":                            "Example Domain",
@@ -141,8 +141,8 @@ func TestFindMonitors(t *testing.T) {
 				"certificationExpirationWarning":  90,
 				"certificationExpirationCritical": 30,
 				"isMute":                          false,
-				"headers": []interface{}{
-					map[string]interface{}{
+				"headers": []any{
+					map[string]any{
 						"name":  "Cache-Control",
 						"value": "no-cache",
 					},
@@ -174,7 +174,7 @@ func TestFindMonitors(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":                   "2cSZzK3XfmG",
 				"type":                 "expression",
 				"name":                 "role average",
@@ -199,12 +199,12 @@ func TestFindMonitors(t *testing.T) {
 			},
 		},
 		{
-			resp: map[string]interface{}{
+			resp: map[string]any{
 				"id":                 "2cSZzK3XfmG",
 				"type":               "anomalyDetection",
 				"name":               "anomaly detection",
 				"memo":               "my anomaly detection for roles",
-				"scopes":             []interface{}{"myService:myRole"},
+				"scopes":             []any{"myService:myRole"},
 				"warningSensitivity": "insensitive",
 				"maxCheckAttempts":   3,
 			},
@@ -232,7 +232,7 @@ func TestFindMonitors(t *testing.T) {
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusOK)
 				enc := json.NewEncoder(w)
-				enc.Encode([]interface{}{tc.resp})
+				enc.Encode([]any{tc.resp})
 			}))
 			defer ts.Close()
 
@@ -331,7 +331,7 @@ func TestCreateMonitor(t *testing.T) {
 	ptrUint64 := func(v uint64) *uint64 { return &v }
 	tests := []struct {
 		in   Monitor
-		want map[string]interface{}
+		want map[string]any
 	}{
 		{
 			in: &MonitorHostMetric{
@@ -351,7 +351,7 @@ func TestCreateMonitor(t *testing.T) {
 
 				IsMute: true,
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"type":                 "host",
 				"name":                 "disk.aa-00.writes.delta",
 				"memo":                 "This monitor is for Hatena Blog.",
@@ -362,8 +362,8 @@ func TestCreateMonitor(t *testing.T) {
 				"critical":             400000.0,
 				"maxCheckAttempts":     3.0,
 				"notificationInterval": 60.0,
-				"scopes":               []interface{}{"Hatena-Blog"},
-				"excludeScopes":        []interface{}{"Hatena-Bookmark:db-master"},
+				"scopes":               []any{"Hatena-Blog"},
+				"excludeScopes":        []any{"Hatena-Bookmark:db-master"},
 				"isMute":               true,
 			},
 		},
@@ -374,12 +374,12 @@ func TestCreateMonitor(t *testing.T) {
 				Scopes:        []string{"service1"},
 				ExcludeScopes: []string{"service1:role3"},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"type":          "connectivity",
 				"name":          "connectivity service1",
 				"memo":          "A monitor that checks connectivity.",
-				"scopes":        []interface{}{"service1"},
-				"excludeScopes": []interface{}{"service1:role3"},
+				"scopes":        []any{"service1"},
+				"excludeScopes": []any{"service1:role3"},
 			},
 		},
 		{
@@ -401,7 +401,7 @@ func TestCreateMonitor(t *testing.T) {
 
 				IsMute: true,
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"type":                    "service",
 				"name":                    "Hatena-Blog - access_num.4xx_count",
 				"memo":                    "A monitor that checks the number of 4xx for Hatena Blog",
@@ -441,7 +441,7 @@ func TestCreateMonitor(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"type":                            "external",
 				"name":                            "Example Domain",
 				"memo":                            "Monitors example.com",
@@ -456,8 +456,8 @@ func TestCreateMonitor(t *testing.T) {
 				"maxCheckAttempts":                3.0,
 				"certificationExpirationWarning":  90.0,
 				"certificationExpirationCritical": 30.0,
-				"headers": []interface{}{
-					map[string]interface{}{
+				"headers": []any{
+					map[string]any{
 						"name":  "Cache-Control",
 						"value": "no-cache",
 					},
@@ -475,7 +475,7 @@ func TestCreateMonitor(t *testing.T) {
 				Warning:    ptrFloat64(5.0),
 				Critical:   ptrFloat64(10.0),
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"type":                 "expression",
 				"name":                 "role average",
 				"memo":                 "Monitors the average of loadavg5",
@@ -494,11 +494,11 @@ func TestCreateMonitor(t *testing.T) {
 				WarningSensitivity: AnomalyDetectionSensitivityInsensitive,
 				MaxCheckAttempts:   3,
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"type":               "anomalyDetection",
 				"name":               "anomaly detection",
 				"memo":               "my anomaly detection for roles",
-				"scopes":             []interface{}{"myService:myRole"},
+				"scopes":             []any{"myService:myRole"},
 				"warningSensitivity": "insensitive",
 				"maxCheckAttempts":   3.0,
 			},
@@ -515,7 +515,7 @@ func TestCreateMonitor(t *testing.T) {
 					t.Errorf("unexpected path, want %s, got %s", "/api/v0/monitors", r.URL.Path)
 				}
 
-				var data map[string]interface{}
+				var data map[string]any
 				dec := json.NewDecoder(r.Body)
 				if err := dec.Decode(&data); err != nil {
 					t.Error(err)
@@ -555,7 +555,7 @@ func TestCreateMonitor(t *testing.T) {
 					t.Errorf("unexpected path, want %s, got %s", "/api/v0/monitors/2cSZzK3XfmG", r.URL.Path)
 				}
 
-				var data map[string]interface{}
+				var data map[string]any
 				dec := json.NewDecoder(r.Body)
 				if err := dec.Decode(&data); err != nil {
 					t.Error(err)

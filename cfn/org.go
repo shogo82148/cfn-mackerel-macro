@@ -11,7 +11,7 @@ type org struct {
 	Event    cfn.Event
 }
 
-func (o *org) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (o *org) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := o.Function.getclient()
 	ret, err := c.GetOrg(ctx)
 	if err != nil {
@@ -19,17 +19,17 @@ func (o *org) create(ctx context.Context) (physicalResourceID string, data map[s
 	}
 
 	physicalResourceID = "mkr:" + ret.Name
-	data = map[string]interface{}{
+	data = map[string]any{
 		"Name": ret.Name,
 	}
 	return
 }
 
-func (o *org) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (o *org) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	return o.create(ctx)
 }
 
-func (o *org) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (o *org) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	physicalResourceID = o.Event.PhysicalResourceID
 	return
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-lambda-go/cfn"
 	"github.com/google/go-cmp/cmp"
 	"github.com/shogo82148/cfn-mackerel-macro/mackerel"
-	"github.com/shogo82148/pointer"
 )
 
 func TestCreateMonitor_MonitorConnectivity(t *testing.T) {
@@ -40,12 +39,12 @@ func TestCreateMonitor_MonitorConnectivity(t *testing.T) {
 		ResourceType:      "Custom::Monitor",
 		LogicalResourceID: "Monitor",
 		StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Type":                 "connectivity",
 			"Name":                 "foo-bar",
 			"Memo":                 "monitor",
-			"Scopes":               []interface{}{"mkr:test-org:service:my-service"},
-			"ExcludeScopes":        []interface{}{"mkr:test-org:role:my-service:my-role"},
+			"Scopes":               []any{"mkr:test-org:service:my-service"},
+			"ExcludeScopes":        []any{"mkr:test-org:role:my-service:my-role"},
 			"NotificationInterval": 60,
 			"IsMute":               true,
 		},
@@ -81,8 +80,8 @@ func TestCreateMonitor_MonitorHostMetric(t *testing.T) {
 					Duration:             3,
 					Metric:               "disk.aa-00.writes.delta",
 					Operator:             ">",
-					Warning:              pointer.Float64(20000.0),
-					Critical:             pointer.Float64(400000.0),
+					Warning:              new(20000.0),
+					Critical:             new(400000.0),
 					MaxCheckAttempts:     3,
 					Scopes:               []string{"Hatena-Blog"},
 					ExcludeScopes:        []string{"Hatena-Bookmark:db-master"},
@@ -104,7 +103,7 @@ func TestCreateMonitor_MonitorHostMetric(t *testing.T) {
 		ResourceType:      "Custom::Monitor",
 		LogicalResourceID: "Monitor",
 		StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Type":                 "host",
 			"Name":                 "disk.aa-00.writes.delta",
 			"Memo":                 "This monitor is for Hatena Blog.",
@@ -114,8 +113,8 @@ func TestCreateMonitor_MonitorHostMetric(t *testing.T) {
 			"Warning":              20000.0,
 			"Critical":             400000.0,
 			"MaxCheckAttempts":     3,
-			"Scopes":               []interface{}{"mkr:test-org:service:Hatena-Blog"},
-			"ExcludeScopes":        []interface{}{"mkr:test-org:role:Hatena-Bookmark:db-master"},
+			"Scopes":               []any{"mkr:test-org:service:Hatena-Blog"},
+			"ExcludeScopes":        []any{"mkr:test-org:role:Hatena-Bookmark:db-master"},
 			"NotificationInterval": 60,
 			"IsMute":               true,
 		},
@@ -152,12 +151,12 @@ func TestCreateMonitor_MonitorServiceMetric(t *testing.T) {
 					Service:                 "Hatena-Blog",
 					Metric:                  "access_num.4xx_count",
 					Operator:                ">",
-					Warning:                 pointer.Float64(50.0),
-					Critical:                pointer.Float64(100.0),
+					Warning:                 new(50.0),
+					Critical:                new(100.0),
 					MaxCheckAttempts:        3,
 					NotificationInterval:    60,
-					MissingDurationWarning:  pointer.Uint64(360),
-					MissingDurationCritical: pointer.Uint64(720),
+					MissingDurationWarning:  new(uint64(360)),
+					MissingDurationCritical: new(uint64(720)),
 					IsMute:                  true,
 				}
 				if diff := cmp.Diff(param, want); diff != "" {
@@ -175,7 +174,7 @@ func TestCreateMonitor_MonitorServiceMetric(t *testing.T) {
 		ResourceType:      "Custom::Monitor",
 		LogicalResourceID: "Monitor",
 		StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Type":                    "service",
 			"Name":                    "Hatena-Blog - access_num.4xx_count",
 			"Memo":                    "A monitor that checks the number of 4xx for Hatena Blog",
@@ -226,12 +225,12 @@ func TestCreateMonitor_MonitorExternalHTTP(t *testing.T) {
 					URL:                             "https://example.com",
 					MaxCheckAttempts:                3,
 					Service:                         "Hatena-Blog",
-					ResponseTimeCritical:            pointer.Float64(10000),
-					ResponseTimeWarning:             pointer.Float64(5000),
-					ResponseTimeDuration:            pointer.Uint64(3),
+					ResponseTimeCritical:            new(float64(10000)),
+					ResponseTimeWarning:             new(float64(5000)),
+					ResponseTimeDuration:            new(uint64(3)),
 					ContainsString:                  "Example",
-					CertificationExpirationCritical: pointer.Uint64(30),
-					CertificationExpirationWarning:  pointer.Uint64(90),
+					CertificationExpirationCritical: new(uint64(30)),
+					CertificationExpirationWarning:  new(uint64(90)),
 					Headers: []mackerel.HeaderField{
 						{
 							Name:  "Cache-Control",
@@ -255,7 +254,7 @@ func TestCreateMonitor_MonitorExternalHTTP(t *testing.T) {
 		ResourceType:      "Custom::Monitor",
 		LogicalResourceID: "Monitor",
 		StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Type":                            "external",
 			"Name":                            "Example Domain",
 			"Memo":                            "Monitors example.com",
@@ -270,8 +269,8 @@ func TestCreateMonitor_MonitorExternalHTTP(t *testing.T) {
 			"MaxCheckAttempts":                3.0,
 			"CertificationExpirationWarning":  90.0,
 			"CertificationExpirationCritical": 30.0,
-			"Headers": []interface{}{
-				map[string]interface{}{
+			"Headers": []any{
+				map[string]any{
 					"Name":  "Cache-Control",
 					"Value": "no-cache",
 				},
@@ -311,8 +310,8 @@ func TestCreateMonitor_MonitorExpression(t *testing.T) {
 
 					Expression: `avg(roleSlots("server:role","loadavg5"))`,
 					Operator:   ">",
-					Warning:    pointer.Float64(5.0),
-					Critical:   pointer.Float64(10.0),
+					Warning:    new(5.0),
+					Critical:   new(10.0),
 					IsMute:     true,
 				}
 				if diff := cmp.Diff(param, want); diff != "" {
@@ -330,7 +329,7 @@ func TestCreateMonitor_MonitorExpression(t *testing.T) {
 		ResourceType:      "Custom::Monitor",
 		LogicalResourceID: "Monitor",
 		StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Type":                 "expression",
 			"Name":                 "role average",
 			"Memo":                 "Monitors the average of loadavg5",
@@ -389,11 +388,11 @@ func TestCreateMonitor_MonitorAnomalyDetection(t *testing.T) {
 		ResourceType:      "Custom::Monitor",
 		LogicalResourceID: "Monitor",
 		StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Type": "anomalyDetection",
 			"Name": "anomaly detection",
 			"Memo": "my anomaly detection for roles",
-			"Scopes": []interface{}{
+			"Scopes": []any{
 				"mkr:test-org:service:myService",
 				"mkr:test-org:role:myService:myRole",
 			},
@@ -448,11 +447,11 @@ func TestUpdateMonitor_updateMutable(t *testing.T) {
 		LogicalResourceID:  "Monitor",
 		PhysicalResourceID: "mkr:test-org:monitor:3yAYEDLXKL5",
 		StackID:            "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Type": "connectivity",
 			"Name": "foo",
 		},
-		OldResourceProperties: map[string]interface{}{
+		OldResourceProperties: map[string]any{
 			"Type": "connectivity",
 			"Name": "bar",
 		},
@@ -501,11 +500,11 @@ func TestUpdateMonitor_updateImmutable(t *testing.T) {
 		LogicalResourceID:  "Monitor",
 		PhysicalResourceID: "mkr:test-org:monitor:old-id",
 		StackID:            "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		ResourceProperties: map[string]interface{}{
+		ResourceProperties: map[string]any{
 			"Type": "connectivity",
 			"Name": "foo-bar",
 		},
-		OldResourceProperties: map[string]interface{}{
+		OldResourceProperties: map[string]any{
 			"Type": "host",
 		},
 	}
@@ -554,7 +553,7 @@ func TestDeleteMonitor(t *testing.T) {
 		LogicalResourceID:  "Monitor",
 		PhysicalResourceID: "mkr:test-org:monitor:delete-monitor",
 		StackID:            "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-		OldResourceProperties: map[string]interface{}{
+		OldResourceProperties: map[string]any{
 			"Type": "host",
 		},
 	}

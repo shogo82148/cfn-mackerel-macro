@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/shogo82148/pointer"
 )
 
 func TestFindAWSIntegrations(t *testing.T) {
@@ -65,8 +64,8 @@ func TestFindAWSIntegrations(t *testing.T) {
 			ID:           "46vGJ7uUsp3",
 			Name:         "shogo82148",
 			Memo:         "",
-			RoleArn:      pointer.String("arn:aws:iam::123456789012:role/foobar"),
-			ExternalID:   pointer.String("hogehoge"),
+			RoleArn:      new("arn:aws:iam::123456789012:role/foobar"),
+			ExternalID:   new("hogehoge"),
 			Region:       "ap-northeast-1",
 			IncludedTags: "",
 			ExcludedTags: "",
@@ -133,8 +132,8 @@ func TestFindAWSIntegration(t *testing.T) {
 		ID:           "46vGJ7uUsp3",
 		Name:         "shogo82148",
 		Memo:         "",
-		RoleArn:      pointer.String("arn:aws:iam::123456789012:role/foobar"),
-		ExternalID:   pointer.String("hogehoge"),
+		RoleArn:      new("arn:aws:iam::123456789012:role/foobar"),
+		ExternalID:   new("hogehoge"),
 		Region:       "ap-northeast-1",
 		IncludedTags: "",
 		ExcludedTags: "",
@@ -160,11 +159,11 @@ func TestCreateAWSIntegration(t *testing.T) {
 			t.Errorf("invalid path: want %s, got %s", "/api/v0/aws-integrations", r.URL.Path)
 		}
 		dec := json.NewDecoder(r.Body)
-		var got interface{}
+		var got any
 		if err := dec.Decode(&got); err != nil {
 			t.Error(err)
 		}
-		want := map[string]interface{}{
+		want := map[string]any{
 			"name":         "shogo82148",
 			"memo":         "",
 			"externalId":   "hogehoge",
@@ -172,11 +171,11 @@ func TestCreateAWSIntegration(t *testing.T) {
 			"includedTags": "",
 			"excludedTags": "",
 			"roleArn":      "arn:aws:iam::123456789012:role/foobar",
-			"services": map[string]interface{}{
-				"S3": map[string]interface{}{
+			"services": map[string]any{
+				"S3": map[string]any{
 					"enable":          false,
 					"role":            nil,
-					"excludedMetrics": []interface{}{},
+					"excludedMetrics": []any{},
 				},
 			},
 		}
@@ -220,8 +219,8 @@ func TestCreateAWSIntegration(t *testing.T) {
 	integrations, err := c.CreateAWSIntegration(context.Background(), &AWSIntegration{
 		Name:         "shogo82148",
 		Memo:         "",
-		RoleArn:      pointer.String("arn:aws:iam::123456789012:role/foobar"),
-		ExternalID:   pointer.String("hogehoge"),
+		RoleArn:      new("arn:aws:iam::123456789012:role/foobar"),
+		ExternalID:   new("hogehoge"),
 		Region:       "ap-northeast-1",
 		IncludedTags: "",
 		ExcludedTags: "",
@@ -240,8 +239,8 @@ func TestCreateAWSIntegration(t *testing.T) {
 		ID:           "46vGJ7uUsp3",
 		Name:         "shogo82148",
 		Memo:         "",
-		RoleArn:      pointer.String("arn:aws:iam::123456789012:role/foobar"),
-		ExternalID:   pointer.String("hogehoge"),
+		RoleArn:      new("arn:aws:iam::123456789012:role/foobar"),
+		ExternalID:   new("hogehoge"),
 		Region:       "ap-northeast-1",
 		IncludedTags: "",
 		ExcludedTags: "",
@@ -302,8 +301,8 @@ func TestUpdateAWSIntegration(t *testing.T) {
 	integrations, err := c.UpdateAWSIntegration(context.Background(), "46vGJ7uUsp3", &AWSIntegration{
 		Name:         "shogo82148",
 		Memo:         "",
-		RoleArn:      pointer.String("arn:aws:iam::123456789012:role/foobar"),
-		ExternalID:   pointer.String("hogehoge"),
+		RoleArn:      new("arn:aws:iam::123456789012:role/foobar"),
+		ExternalID:   new("hogehoge"),
 		Region:       "ap-northeast-1",
 		IncludedTags: "",
 		ExcludedTags: "",
@@ -322,8 +321,8 @@ func TestUpdateAWSIntegration(t *testing.T) {
 		ID:           "46vGJ7uUsp3",
 		Name:         "shogo82148",
 		Memo:         "",
-		RoleArn:      pointer.String("arn:aws:iam::123456789012:role/foobar"),
-		ExternalID:   pointer.String("hogehoge"),
+		RoleArn:      new("arn:aws:iam::123456789012:role/foobar"),
+		ExternalID:   new("hogehoge"),
 		Region:       "ap-northeast-1",
 		IncludedTags: "",
 		ExcludedTags: "",
@@ -389,8 +388,8 @@ func TestDeleteAWSIntegration(t *testing.T) {
 		ID:           "46vGJ7uUsp3",
 		Name:         "shogo82148",
 		Memo:         "",
-		RoleArn:      pointer.String("arn:aws:iam::123456789012:role/foobar"),
-		ExternalID:   pointer.String("hogehoge"),
+		RoleArn:      new("arn:aws:iam::123456789012:role/foobar"),
+		ExternalID:   new("hogehoge"),
 		Region:       "ap-northeast-1",
 		IncludedTags: "",
 		ExcludedTags: "",

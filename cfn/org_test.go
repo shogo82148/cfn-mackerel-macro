@@ -26,7 +26,7 @@ func TestCreateOrg(t *testing.T) {
 			ResourceType:       "Custom:Org",
 			LogicalResourceID:  "Org",
 			StackID:            "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{},
+			ResourceProperties: map[string]any{},
 		},
 	}
 	id, param, err := r.create(context.Background())

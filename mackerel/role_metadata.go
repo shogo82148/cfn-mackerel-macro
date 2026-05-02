@@ -16,7 +16,7 @@ type RoleMetaMetaData struct {
 // GetRoleMetaData gets role metadata and stores the result in the value pointed to by v.
 // GetRoleMetaData uses the json package for storing the result, see https://golang.org/pkg/encoding/json/#Unmarshal for decoding rules.
 // https://mackerel.io/api-docs/entry/metadata#roleget
-func (c *Client) GetRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v interface{}) (*RoleMetaMetaData, error) {
+func (c *Client) GetRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v any) (*RoleMetaMetaData, error) {
 	h, err := c.do(ctx, http.MethodGet, fmt.Sprintf("/api/v0/services/%s/roles/%s/metadata/%s", serviceName, roleName, namespace), nil, v)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (c *Client) GetRoleMetaDataNameSpaces(ctx context.Context, serviceName, rol
 // PutRoleMetaData creates or updates Role metadata by the value of v.
 // PutRoleMetaData uses the json package for putting the metadata, see https://golang.org/pkg/encoding/json/#Marshal for encoding roles.
 // https://mackerel.io/api-docs/entry/metadata#roleput
-func (c *Client) PutRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v interface{}) error {
+func (c *Client) PutRoleMetaData(ctx context.Context, serviceName, roleName, namespace string, v any) error {
 	var data struct {
 		Success bool `json:"success"`
 	}

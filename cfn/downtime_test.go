@@ -98,34 +98,34 @@ func TestCreateDowntime(t *testing.T) {
 			ResourceType:      "Custom:Downtime",
 			LogicalResourceID: "Downtime",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Name":     "Maintenance #1",
 				"Memo":     "Memo #1",
 				"Start":    1563700000.0,
 				"Duration": 60,
-				"Recurrence": map[string]interface{}{
+				"Recurrence": map[string]any{
 					"Type":     "weekly",
 					"Interval": 3,
-					"Weekdays": []interface{}{
+					"Weekdays": []any{
 						"Monday", "Thursday", "Saturday",
 					},
 				},
-				"ServiceScopes": []interface{}{
+				"ServiceScopes": []any{
 					"mkr:test-org:service:service1",
 				},
-				"ServiceExcludeScopes": []interface{}{
+				"ServiceExcludeScopes": []any{
 					"mkr:test-org:service:service2",
 				},
-				"RoleScopes": []interface{}{
+				"RoleScopes": []any{
 					"mkr:test-org:role:service3:role1",
 				},
-				"RoleExcludeScopes": []interface{}{
+				"RoleExcludeScopes": []any{
 					"mkr:test-org:role:service1:role1",
 				},
-				"MonitorScopes": []interface{}{
+				"MonitorScopes": []any{
 					"mkr:test-org:monitor:monitor0",
 				},
-				"MonitorExcludeScopes": []interface{}{
+				"MonitorExcludeScopes": []any{
 					"mkr:test-org:monitor:monitor1",
 				},
 			},

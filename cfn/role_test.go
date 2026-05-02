@@ -28,7 +28,7 @@ func TestCreateRole(t *testing.T) {
 						Name: param.Name,
 					}, nil
 				},
-				putRoleMetaData: func(ctx context.Context, serviceName, roleName, namespace string, v interface{}) error {
+				putRoleMetaData: func(ctx context.Context, serviceName, roleName, namespace string, v any) error {
 					if namespace != "cloudformation" {
 						t.Errorf("unexpected namespace: want cloudformation, got %s", namespace)
 					}
@@ -58,7 +58,7 @@ func TestCreateRole(t *testing.T) {
 			ResourceType:      "Custom::Role",
 			LogicalResourceID: "Role",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Service": "mkr:test-org:service:awesome-service",
 				"Name":    "role-app",
 			},
@@ -92,7 +92,7 @@ func TestCreateRole_AlreadyExists(t *testing.T) {
 						statusCode: http.StatusBadRequest,
 					}
 				},
-				putRoleMetaData: func(ctx context.Context, serviceName, roleName, namespace string, v interface{}) error {
+				putRoleMetaData: func(ctx context.Context, serviceName, roleName, namespace string, v any) error {
 					if namespace != "cloudformation" {
 						t.Errorf("unexpected namespace: want cloudformation, got %s", namespace)
 					}
@@ -122,7 +122,7 @@ func TestCreateRole_AlreadyExists(t *testing.T) {
 			ResourceType:      "Custom:Role",
 			LogicalResourceID: "Role",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Service": "mkr:test-org:service:awesome-service",
 				"Name":    "role-app",
 			},
@@ -172,7 +172,7 @@ func TestDeleteRole(t *testing.T) {
 			ResourceType:      "Custom::Role",
 			LogicalResourceID: "Role",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Service": "mkr:test-org:role:awesome-service:role-app",
 				"Name":    "role-app",
 			},
@@ -217,7 +217,7 @@ func TestDeleteRole_RoleNotFound(t *testing.T) {
 			ResourceType:      "Custom::Role",
 			LogicalResourceID: "Role",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Service": "mkr:test-org:role:awesome-service:role-app",
 				"Name":    "role-app",
 			},

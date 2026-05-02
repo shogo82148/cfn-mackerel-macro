@@ -17,7 +17,7 @@ type awsIntegration struct {
 	Event    cfn.Event
 }
 
-func (r *awsIntegration) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *awsIntegration) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := r.Function.getclient()
 	param, err := r.convertToParam(ctx, r.Event.ResourceProperties)
 	if err != nil {
@@ -31,10 +31,10 @@ func (r *awsIntegration) create(ctx context.Context) (physicalResourceID string,
 	if err != nil {
 		return "", nil, err
 	}
-	return id, map[string]interface{}{}, nil
+	return id, map[string]any{}, nil
 }
 
-func (r *awsIntegration) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *awsIntegration) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := r.Function.getclient()
 	param, err := r.convertToParam(ctx, r.Event.ResourceProperties)
 	if err != nil {
@@ -48,10 +48,10 @@ func (r *awsIntegration) update(ctx context.Context) (physicalResourceID string,
 	if err != nil {
 		return r.Event.PhysicalResourceID, nil, err
 	}
-	return r.Event.PhysicalResourceID, map[string]interface{}{}, nil
+	return r.Event.PhysicalResourceID, map[string]any{}, nil
 }
 
-func (r *awsIntegration) convertToParam(ctx context.Context, properties map[string]interface{}) (*mackerel.AWSIntegration, error) {
+func (r *awsIntegration) convertToParam(ctx context.Context, properties map[string]any) (*mackerel.AWSIntegration, error) {
 	var d dproxy.Drain
 	in := dproxy.New(properties)
 
@@ -70,8 +70,8 @@ func (r *awsIntegration) convertToParam(ctx context.Context, properties map[stri
 		RoleArn:      d.OptionalString(in.M("RoleArn")),
 		ExternalID:   externalID,
 		Region:       d.String(in.M("Region")),
-		IncludedTags: r.convertTagList(&d, dproxy.Default(in.M("IncludedTags"), []interface{}{})),
-		ExcludedTags: r.convertTagList(&d, dproxy.Default(in.M("ExcludedTags"), []interface{}{})),
+		IncludedTags: r.convertTagList(&d, dproxy.Default(in.M("IncludedTags"), []any{})),
+		ExcludedTags: r.convertTagList(&d, dproxy.Default(in.M("ExcludedTags"), []any{})),
 		Services:     r.convertAWSServices(ctx, &d, in.M("Services")),
 	}
 
@@ -116,7 +116,7 @@ func (r *awsIntegration) convertAWSServices(ctx context.Context, d *dproxy.Drain
 	ret := map[string]*mackerel.AWSIntegrationService{}
 	for _, s := range d.ProxyArray(properties.ProxySet()) {
 		name := d.String(s.M("ServiceId"))
-		exclude := dproxy.Default(s.M("ExcludedMetrics"), []interface{}{})
+		exclude := dproxy.Default(s.M("ExcludedMetrics"), []any{})
 
 		var role *string
 		roleID := d.OptionalString(s.M("Role"))
@@ -137,7 +137,7 @@ func (r *awsIntegration) convertAWSServices(ctx context.Context, d *dproxy.Drain
 	return ret
 }
 
-func (r *awsIntegration) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *awsIntegration) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := r.Function.getclient()
 	physicalResourceID = r.Event.PhysicalResourceID
 	id, err := r.Function.parseAWSIntegrationID(ctx, physicalResourceID)
@@ -160,7 +160,7 @@ type awsIntegrationExternalID struct {
 	Event    cfn.Event
 }
 
-func (r *awsIntegrationExternalID) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *awsIntegrationExternalID) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := r.Function.getclient()
 	ret, err := c.CreateAWSIntegrationExternalID(ctx)
 	if err != nil {
@@ -170,12 +170,12 @@ func (r *awsIntegrationExternalID) create(ctx context.Context) (physicalResource
 	if err != nil {
 		return "", nil, err
 	}
-	return id, map[string]interface{}{
+	return id, map[string]any{
 		"Id": ret,
 	}, nil
 }
 
-func (r *awsIntegrationExternalID) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *awsIntegrationExternalID) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := r.Function.getclient()
 	ret, err := c.CreateAWSIntegrationExternalID(ctx)
 	if err != nil {
@@ -185,12 +185,12 @@ func (r *awsIntegrationExternalID) update(ctx context.Context) (physicalResource
 	if err != nil {
 		return "", nil, err
 	}
-	return id, map[string]interface{}{
+	return id, map[string]any{
 		"Id": ret,
 	}, nil
 }
 
-func (r *awsIntegrationExternalID) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *awsIntegrationExternalID) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	physicalResourceID = r.Event.PhysicalResourceID
 	_, err = r.Function.parseAWSIntegrationExternalID(ctx, physicalResourceID)
 	if err != nil {

@@ -27,7 +27,7 @@ func TestCreateService(t *testing.T) {
 						Roles: []string{},
 					}, nil
 				},
-				putServiceMetaData: func(ctx context.Context, serviceName, namespace string, v interface{}) error {
+				putServiceMetaData: func(ctx context.Context, serviceName, namespace string, v any) error {
 					if namespace != "cloudformation" {
 						t.Errorf("unexpected namespace: want cloudformation, got %s", namespace)
 					}
@@ -54,7 +54,7 @@ func TestCreateService(t *testing.T) {
 			ResourceType:      "Custom:Service",
 			LogicalResourceID: "Service",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Name": "awesome-service",
 			},
 		},
@@ -83,7 +83,7 @@ func TestCreateService_AlreadyExists(t *testing.T) {
 						statusCode: http.StatusBadRequest,
 					}
 				},
-				putServiceMetaData: func(ctx context.Context, serviceName, namespace string, v interface{}) error {
+				putServiceMetaData: func(ctx context.Context, serviceName, namespace string, v any) error {
 					if namespace != "cloudformation" {
 						t.Errorf("unexpected namespace: want cloudformation, got %s", namespace)
 					}
@@ -110,7 +110,7 @@ func TestCreateService_AlreadyExists(t *testing.T) {
 			ResourceType:      "Custom:Service",
 			LogicalResourceID: "Service",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Name": "awesome-service",
 			},
 		},
@@ -153,7 +153,7 @@ func TestDeleteService(t *testing.T) {
 			ResourceType:      "Custom:Service",
 			LogicalResourceID: "Service",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Name": "awesome-service",
 			},
 			PhysicalResourceID: "mkr:test-org:service:awesome-service",
@@ -194,7 +194,7 @@ func TestDeleteService_serviceNotFound(t *testing.T) {
 			ResourceType:      "Custom:Service",
 			LogicalResourceID: "Service",
 			StackID:           "arn:aws:cloudformation:ap-northeast-1:1234567890:stack/foobar/12345678-1234-1234-1234-123456789abc",
-			ResourceProperties: map[string]interface{}{
+			ResourceProperties: map[string]any{
 				"Name": "awesome-service",
 			},
 			PhysicalResourceID: "mkr:test-org:service:awesome-service",

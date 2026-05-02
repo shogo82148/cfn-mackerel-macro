@@ -17,7 +17,7 @@ type role struct {
 	Event    cfn.Event
 }
 
-func (r *role) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *role) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	var d dproxy.Drain
 	in := dproxy.New(r.Event.ResourceProperties)
 	name := d.String(in.M("Name"))
@@ -62,14 +62,14 @@ func (r *role) create(ctx context.Context) (physicalResourceID string, data map[
 		return physicalResourceID, nil, err
 	}
 
-	data = map[string]interface{}{
+	data = map[string]any{
 		"Name":     name,
 		"FullName": serviceName + ":" + name,
 	}
 	return
 }
 
-func (r *role) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *role) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	var d dproxy.Drain
 	in := dproxy.New(r.Event.ResourceProperties)
 	old := dproxy.New(r.Event.OldResourceProperties)
@@ -89,7 +89,7 @@ func (r *role) update(ctx context.Context) (physicalResourceID string, data map[
 	}
 	if name == oldName && service == oldService {
 		// No update is needed.
-		return r.Event.PhysicalResourceID, map[string]interface{}{
+		return r.Event.PhysicalResourceID, map[string]any{
 			"Name":     name,
 			"FullName": serviceName + ":" + name,
 		}, nil
@@ -99,7 +99,7 @@ func (r *role) update(ctx context.Context) (physicalResourceID string, data map[
 	return r.create(ctx)
 }
 
-func (r *role) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (r *role) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	physicalResourceID = r.Event.PhysicalResourceID
 	serviceName, roleName, err := r.Function.parseRoleID(ctx, physicalResourceID)
 	if err != nil {

@@ -128,7 +128,7 @@ func (c *Client) newRequest(ctx context.Context, method, path string, body io.Re
 	return req, nil
 }
 
-func (c *Client) do(ctx context.Context, method, path string, in, out interface{}) (http.Header, error) {
+func (c *Client) do(ctx context.Context, method, path string, in, out any) (http.Header, error) {
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 

@@ -19,13 +19,13 @@ func pointer(p Proxy, q string) Proxy {
 			infoStr:   "not start with '/'",
 		}
 	}
-	for _, t := range strings.Split(q[1:], "/") {
+	for t := range strings.SplitSeq(q[1:], "/") {
 		p = p.findJPT(unescapeJPT(t))
 	}
 	return p
 }
 
 // Pointer returns a Proxy which pointed by JSON Pointer's query q
-func Pointer(v interface{}, q string) Proxy {
+func Pointer(v any, q string) Proxy {
 	return pointer(New(v), q)
 }

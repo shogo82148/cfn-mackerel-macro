@@ -17,7 +17,7 @@ type monitor struct {
 	Event    cfn.Event
 }
 
-func (m *monitor) create(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (m *monitor) create(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	c := m.Function.getclient()
 	mm, err := m.convertToParam(ctx, m.Event.ResourceProperties)
 	if err != nil {
@@ -32,14 +32,14 @@ func (m *monitor) create(ctx context.Context) (physicalResourceID string, data m
 	if err != nil {
 		return "", nil, err
 	}
-	return id, map[string]interface{}{
+	return id, map[string]any{
 		"MonitorId": ret.MonitorID(),
 		"Type":      ret.MonitorType().String(),
 		"Name":      ret.MonitorName(),
 	}, nil
 }
 
-func (m *monitor) update(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (m *monitor) update(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	needs, err := m.needsReplace()
 	if err != nil {
 		return m.Event.PhysicalResourceID, nil, err
@@ -63,7 +63,7 @@ func (m *monitor) update(ctx context.Context) (physicalResourceID string, data m
 		return m.Event.PhysicalResourceID, nil, err
 	}
 
-	return m.Event.PhysicalResourceID, map[string]interface{}{
+	return m.Event.PhysicalResourceID, map[string]any{
 		"MonitorId": ret.MonitorID(),
 		"Type":      ret.MonitorType().String(),
 		"Name":      ret.MonitorName(),
@@ -83,7 +83,7 @@ func (m *monitor) needsReplace() (bool, error) {
 	return typ != oldType, nil
 }
 
-func (m *monitor) convertToParam(ctx context.Context, properties map[string]interface{}) (mackerel.Monitor, error) {
+func (m *monitor) convertToParam(ctx context.Context, properties map[string]any) (mackerel.Monitor, error) {
 	in := dproxy.New(properties)
 	typ, err := in.M("Type").String()
 	if err != nil {
@@ -95,7 +95,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 	switch typ {
 	case mackerel.MonitorTypeConnectivity.String():
 		var scopes, excludeScopes []string
-		for _, item := range d.Array(dproxy.Default(in.M("Scopes"), []interface{}{})) {
+		for _, item := range d.Array(dproxy.Default(in.M("Scopes"), []any{})) {
 			s := d.String(dproxy.New(item))
 			if serviceName, err := m.Function.parseServiceID(ctx, s); err == nil {
 				scopes = append(scopes, serviceName)
@@ -105,7 +105,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 				d.Put(fmt.Errorf("scopes should be a service of a role: %s", s))
 			}
 		}
-		for _, item := range d.Array(dproxy.Default(in.M("ExcludeScopes"), []interface{}{})) {
+		for _, item := range d.Array(dproxy.Default(in.M("ExcludeScopes"), []any{})) {
 			s := d.String(dproxy.New(item))
 			if serviceName, err := m.Function.parseServiceID(ctx, s); err == nil {
 				excludeScopes = append(excludeScopes, serviceName)
@@ -125,7 +125,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 		}
 	case mackerel.MonitorTypeHostMetric.String():
 		var scopes, excludeScopes []string
-		for _, item := range d.Array(dproxy.Default(in.M("Scopes"), []interface{}{})) {
+		for _, item := range d.Array(dproxy.Default(in.M("Scopes"), []any{})) {
 			s := d.String(dproxy.New(item))
 			if serviceName, err := m.Function.parseServiceID(ctx, s); err == nil {
 				scopes = append(scopes, serviceName)
@@ -135,7 +135,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 				d.Put(fmt.Errorf("scopes should be a service of a role: %s", s))
 			}
 		}
-		for _, item := range d.Array(dproxy.Default(in.M("ExcludeScopes"), []interface{}{})) {
+		for _, item := range d.Array(dproxy.Default(in.M("ExcludeScopes"), []any{})) {
 			s := d.String(dproxy.New(item))
 			if serviceName, err := m.Function.parseServiceID(ctx, s); err == nil {
 				excludeScopes = append(excludeScopes, serviceName)
@@ -263,7 +263,7 @@ func (m *monitor) convertToParam(ctx context.Context, properties map[string]inte
 	return mm, nil
 }
 
-func (m *monitor) delete(ctx context.Context) (physicalResourceID string, data map[string]interface{}, err error) {
+func (m *monitor) delete(ctx context.Context) (physicalResourceID string, data map[string]any, err error) {
 	physicalResourceID = m.Event.PhysicalResourceID
 	id, err := m.Function.parseMonitorID(ctx, physicalResourceID)
 	if err != nil {
