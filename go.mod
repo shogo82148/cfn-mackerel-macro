@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/kms v1.55.7
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.73.7
 	github.com/google/go-cmp v0.7.0
-	github.com/sirupsen/logrus v1.10.1
+	github.com/sirupsen/logrus v1.10.2
 	github.com/xeipuuv/gojsonschema v1.2.0
 	golang.org/x/sys v0.13.0 // indirect
 )
