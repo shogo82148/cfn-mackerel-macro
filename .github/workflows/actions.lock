@@ -14,7 +14,7 @@ workflows:
     '.github/workflows/test.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/setup-go@v7.0.0'
-        - 'shogo82148/actions-goveralls@v1.11.4'
+        - 'shogo82148/actions-goveralls@v1.11.5'
 dependencies:
     'actions/cache@v6.1.0':
         ref: 'v6.1.0'
@@ -53,8 +53,8 @@ dependencies:
         repo_id: 211116201
         uses:
             - 'reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f'
-    'shogo82148/actions-goveralls@v1.11.4':
-        ref: 'v1.11.4'
-        commit: 'sha1-4b30166c2ac96ac557328a27874a16b777f9b8bd'
+    'shogo82148/actions-goveralls@v1.11.5':
+        ref: 'v1.11.5'
+        commit: 'sha1-548a2a7896df420c38df648845a5525a33f82585'
         owner_id: 1157344
         repo_id: 222089012
