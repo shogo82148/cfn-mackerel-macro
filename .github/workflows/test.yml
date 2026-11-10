@@ -20,6 +20,6 @@ jobs:
           make test
 
       - name: Send coverage
-        uses: shogo82148/actions-goveralls@v1.11.4
+        uses: shogo82148/actions-goveralls@v1.11.5
         with:
           path-to-profile: coverage.out
